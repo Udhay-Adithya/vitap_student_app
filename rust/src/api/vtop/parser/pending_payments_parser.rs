@@ -35,37 +35,34 @@ pub fn parse_pending_payments(html: String) -> Vec<PendingPaymentReceipt> {
         Selector::parse("table.table.table-bordered.table-responsive.table-hover").unwrap();
     if let Some(table) = doc.select(&table_selector).next() {
         let row_selector = Selector::parse("tr").unwrap();
-        for row in table.select(&row_selector).skip(1) {
-            // skip header
-            let tds: Vec<_> = row.select(&Selector::parse("td").unwrap()).collect();
-            if tds.len() >= 8 {
-                let s_no = tds[0].text().collect::<String>().trim().to_string();
-                let fprefno = tds[1].text().collect::<String>().trim().to_string();
-                let fees_heads = tds[2].text().collect::<String>().trim().to_string();
-                let end_date = tds[3].text().collect::<String>().trim().to_string();
-                let amount = tds[4].text().collect::<String>().trim().to_string();
-                let fine = tds[5].text().collect::<String>().trim().to_string();
-                let total_amount = tds[6].text().collect::<String>().trim().to_string();
-                // Payment status is always "Unpaid" for pending payments
-                results.push(PendingPaymentReceipt {
-                    s_no,
-                    fprefno,
-                    fees_heads,
-                    end_date,
-                    amount,
-                    fine,
-                    total_amount,
-                    payment_status: "Unpaid".to_string(),
-                });
+        for var in table.select(&row_selector).take(1) {
+            let tds: Vec<_> = var.select(&Selector::parse("td").unwrap()).collect();
+            let (mut s_no_index, mut fprefno_index, mut fees_heads_index, mut end_date_index, mut amount_index, mut fine_index, mut advance_amount_index, mut total_amount_index) = (-1, -1, -1, -1, -1, -1, -1, -1);
+            for (i, header) in tds.iter().enumerate() {
+                let header_text = header.text().collect::<String>().trim().to_lowercase();
+                match header_text.as_str() {
+                    "sl.no" => s_no_index = i as isize,
+                    "fprefno" => fprefno_index = i as isize,
+                    "fees heads" => fees_heads_index = i as isize,
+                    "end date" => end_date_index = i as isize,
+                    "amount" => amount_index = i as isize,
+                    "fine" => fine_index = i as isize,
+                    "advance amount" => advance_amount_index = i as isize,
+                    "total amount" => total_amount_index = i as isize,
+                    _ => {}
+                }
             }
-            else if tds.len() >= 7 {
-                let s_no = tds[0].text().collect::<String>().trim().to_string();
-                let fprefno = tds[1].text().collect::<String>().trim().to_string();
-                let fees_heads = tds[2].text().collect::<String>().trim().to_string();
-                let end_date = "NA".to_string();
-                let amount = tds[3].text().collect::<String>().trim().to_string();
-                let fine = tds[4].text().collect::<String>().trim().to_string();
-                let total_amount = tds[5].text().collect::<String>().trim().to_string();
+            for row in table.select(&row_selector).skip(1) {
+            let tds: Vec<_> = row.select(&Selector::parse("td").unwrap()).collect();
+            if tds.len() > 0 {
+                let s_no = if s_no_index >= 0 { tds[s_no_index as usize].text().collect::<String>().trim().to_string() } else { "NA".to_string() };
+                let fprefno = if fprefno_index >= 0 { tds[fprefno_index as usize].text().collect::<String>().trim().to_string() } else { "NA".to_string() };
+                let fees_heads = if fees_heads_index >= 0 { tds[fees_heads_index as usize].text().collect::<String>().trim().to_string() } else { "NA".to_string() };
+                let end_date = if end_date_index >= 0 { tds[end_date_index as usize].text().collect::<String>().trim().to_string() } else { "NA".to_string() };
+                let amount = if amount_index >= 0 { tds[amount_index as usize].text().collect::<String>().trim().to_string() } else { "NA".to_string() };
+                let fine = if fine_index >= 0 { tds[fine_index as usize].text().collect::<String>().trim().to_string() } else { "NA".to_string() };
+                let advance_amount = if advance_amount_index >= 0 { tds[advance_amount_index as usize].text().collect::<String>().trim().to_string() } else { "NA".to_string() };
+                let total_amount = if total_amount_index >= 0 { tds[total_amount_index as usize].text().collect::<String>().trim().to_string() } else { "NA".to_string() };
                 // Payment status is always "Unpaid" for pending payments
                 results.push(PendingPaymentReceipt {
                     s_no,
@@ -74,11 +71,13 @@ pub fn parse_pending_payments(html: String) -> Vec<PendingPaymentReceipt> {
                     end_date,
                     amount,
                     fine,
+                    //advance_amount,
                     total_amount,
                     payment_status: "Unpaid".to_string(),
-                });
+                });}
             }
         }
+        
     }
 
     results
@@ -981,5 +980,6 @@ color: white;
         assert_eq!(payments[0].fprefno, "AM250003XXXX");
         assert_eq!(payments[1].total_amount, "₹70000.0");
         assert_eq!(payments[2].end_date, "NA");
+        println!("{:#?}", payments);
     }
 }
