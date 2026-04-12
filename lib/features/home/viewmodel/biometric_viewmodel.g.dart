@@ -43,7 +43,7 @@ final class BiometricViewModelProvider
 }
 
 String _$biometricViewModelHash() =>
-    r'7090b165571489e31f72f4893855f9d2648bf0e3';
+    r'5e7fda0cb2ef8b7c53d225241d419a4d323fe305';
 
 abstract class _$BiometricViewModel
     extends $Notifier<AsyncValue<List<Biometric>>?> {

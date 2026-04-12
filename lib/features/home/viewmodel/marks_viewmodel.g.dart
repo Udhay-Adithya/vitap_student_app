@@ -41,7 +41,7 @@ final class MarksViewModelProvider
   }
 }
 
-String _$marksViewModelHash() => r'eb974808f27ce8f10e687e045eecc3fe2b64bf36';
+String _$marksViewModelHash() => r'c4b71d7a719359564be07819d9b9b8ff30222cbe';
 
 abstract class _$MarksViewModel extends $Notifier<AsyncValue<List<Mark>>?> {
   AsyncValue<List<Mark>>? build();

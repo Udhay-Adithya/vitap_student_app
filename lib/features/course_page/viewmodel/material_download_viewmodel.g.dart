@@ -43,7 +43,7 @@ final class MaterialDownloadViewmodelProvider
 }
 
 String _$materialDownloadViewmodelHash() =>
-    r'daea282a76c00a55a4d5924455d814fe3b3d769c';
+    r'5408e325e23f32f36b02a4ec36be6d439b035f2b';
 
 abstract class _$MaterialDownloadViewmodel
     extends $Notifier<AsyncValue<Uint8List>?> {

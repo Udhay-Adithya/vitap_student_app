@@ -48,7 +48,7 @@ final class GeneralOutingReportsViewModelProvider
 }
 
 String _$generalOutingReportsViewModelHash() =>
-    r'94938cb94ac65ee04e380baf6e37bfae9c0e9421';
+    r'e97aa76c1cb638eace76daae3069f0bb5e487bad';
 
 abstract class _$GeneralOutingReportsViewModel
     extends $Notifier<AsyncValue<List<GeneralOutingReport>>?> {
@@ -116,7 +116,7 @@ final class WeekendOutingReportsViewModelProvider
 }
 
 String _$weekendOutingReportsViewModelHash() =>
-    r'e29e6733e93eb5fcec33ed2f540217af621d52f5';
+    r'b9f1218bd431573b4b67d6e5b40325982aa8bfdf';
 
 abstract class _$WeekendOutingReportsViewModel
     extends $Notifier<AsyncValue<List<WeekendOutingReport>>?> {

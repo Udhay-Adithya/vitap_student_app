@@ -42,7 +42,7 @@ final class GeneralOutingSubmissionProvider
 }
 
 String _$generalOutingSubmissionHash() =>
-    r'f279dd699debcc9a7b39892af27101e821138b28';
+    r'bd91bd695916bb91b3b92aa98bf09938bf5a80c3';
 
 abstract class _$GeneralOutingSubmission
     extends $Notifier<AsyncValue<String>?> {
@@ -96,7 +96,7 @@ final class WeekendOutingSubmissionProvider
 }
 
 String _$weekendOutingSubmissionHash() =>
-    r'926c9b8d1b57c775f77052ffe4dd4b682bca579a';
+    r'bda317e7461865a5ef7f9ed5366e6633fe3ac581';
 
 abstract class _$WeekendOutingSubmission
     extends $Notifier<AsyncValue<String>?> {

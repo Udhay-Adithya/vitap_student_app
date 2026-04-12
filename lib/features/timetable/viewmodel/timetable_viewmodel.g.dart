@@ -42,7 +42,7 @@ final class TimetableViewModelProvider
 }
 
 String _$timetableViewModelHash() =>
-    r'2904a1b84e0a73bed066592ff292a08438d7d747';
+    r'2bbd6dca378696a1b2896b295a8a30de5136f5ce';
 
 abstract class _$TimetableViewModel extends $Notifier<AsyncValue<Timetable>?> {
   AsyncValue<Timetable>? build();

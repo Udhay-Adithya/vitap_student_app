@@ -45,7 +45,7 @@ final class AttendanceViewModeProvider
 }
 
 String _$attendanceViewModeHash() =>
-    r'46321c19d5d058fca76c237dcd8f5b5c1f767683';
+    r'dfd107464163dba5ff5abbe1794e7c8b1cf4c64b';
 
 abstract class _$AttendanceViewMode
     extends $Notifier<AsyncValue<List<Attendance>>?> {
