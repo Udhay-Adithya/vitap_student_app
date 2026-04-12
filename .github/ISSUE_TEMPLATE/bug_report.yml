@@ -1,0 +1,134 @@
+name: Bug Report
+description: Something in the app is not working as expected
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill out all required fields to help us investigate quickly.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of the app is affected?
+      options:
+        - Authentication / Login
+        - Attendance
+        - Timetable
+        - Marks
+        - Exam Schedule
+        - Course Page / Course Materials
+        - Digital Assignments
+        - For You Feed
+        - Home Screen Widget
+        - Notifications
+        - Onboarding
+        - Account / Profile
+        - VTOP WebView
+        - App Settings / Theme
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: App Version
+      description: Found in the app footer or Settings → About. e.g. `2.3.1`
+      placeholder: "2.3.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Android
+        - iOS
+        - Both
+    validations:
+      required: true
+
+  - type: input
+    id: os-version
+    attributes:
+      label: OS Version
+      description: e.g. `Android 14`, `iOS 17.4`
+      placeholder: "Android 14"
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device Model
+      description: e.g. `Pixel 8`, `iPhone 15`
+      placeholder: "Pixel 8"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+      placeholder: Describe what went wrong.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Exact steps to trigger the bug.
+      placeholder: |
+        1. Open the app
+        2. Navigate to ...
+        3. Tap on ...
+        4. See the error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behaviour
+      placeholder: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behaviour
+      placeholder: What actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / Screen Recording
+      description: Drag and drop images or a screen recording here if applicable.
+
+  - type: dropdown
+    id: vtop-related
+    attributes:
+      label: Is this a VTOP connectivity or data issue?
+      description: Helps us triage between app bugs and VTOP server-side problems.
+      options:
+        - "No — app behaves incorrectly regardless of VTOP"
+        - "Yes — VTOP login / session fails"
+        - "Yes — VTOP data looks wrong or fails to load"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other details, logs, or error messages.

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Ask a Question / General Discussion
+    url: https://github.com/Udhay-Adithya/vitap_student_app/discussions
+    about: Use GitHub Discussions for questions, ideas, or anything that doesn't fit a bug or feature request.
+  - name: 📧 Contact the Maintainer
+    url: https://github.com/Udhay-Adithya
+    about: For sensitive issues or private enquiries, email the maintainer directly.

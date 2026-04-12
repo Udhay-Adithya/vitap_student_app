@@ -1,0 +1,82 @@
+name: Feature Request
+description: Suggest a new feature or improvement
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before submitting, please check that there isn't already an open issue or discussion for this idea.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of the app would this affect?
+      options:
+        - Authentication / Login
+        - Attendance
+        - Timetable
+        - Marks
+        - Exam Schedule
+        - Course Page / Course Materials
+        - Digital Assignments
+        - For You Feed
+        - Home Screen Widget
+        - Notifications
+        - Onboarding
+        - Account / Profile
+        - VTOP WebView
+        - App Settings / Theme
+        - New feature area
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: change-type
+    attributes:
+      label: Type of Change
+      options:
+        - New feature (Flutter / UI)
+        - New VTOP data integration (requires Rust changes)
+        - Improvement to existing feature
+        - Performance improvement
+        - Developer experience / tooling
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this solve? What are you trying to do that the app doesn't currently support?
+      placeholder: "As a student, I find it difficult to..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature you'd like to see.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any other approaches you've thought of?
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups / Wireframes
+      description: Drag and drop any design sketches or screenshots here.
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Anything else that would help us evaluate this request.
