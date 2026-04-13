@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/vtop_client.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart';
@@ -17,7 +20,7 @@ class VtopClientService {
   VtopClient? _client;
   bool _isInitialized = false;
   String? _currentUsername;
-  String? _currentPassword;
+  String? _currentPasswordDigest;
   DateTime? _sessionCreatedAt;
 
   // VTOP sessions expire after 15 minutes, we'll refresh at 14 minutes to be safe
@@ -36,6 +39,10 @@ class VtopClientService {
     return instance;
   }
 
+  /// Compute a SHA-256 digest of a password for change-detection only.
+  String _digestOf(String value) =>
+      sha256.convert(utf8.encode(value)).toString();
+
   /// Get the VTOP client instance, initializing if necessary
   /// Automatically handles session expiry and re-authentication
   Future<VtopClient> getClient({
@@ -50,7 +57,7 @@ class VtopClientService {
     final bool needsNewClient = _client == null ||
         !_isInitialized ||
         _currentUsername != username ||
-        _currentPassword != password ||
+        _currentPasswordDigest != _digestOf(password) ||
         _isSessionNearExpiry();
 
     if (needsNewClient) {
@@ -99,7 +106,8 @@ class VtopClientService {
   String _getClientCreationReason(String username, String password) {
     if (_client == null) return 'No existing client';
     if (!_isInitialized) return 'Not initialized';
-    if (_currentUsername != username || _currentPassword != password) {
+    if (_currentUsername != username ||
+        _currentPasswordDigest != _digestOf(password)) {
       return 'Different credentials';
     }
     if (_isSessionExpired()) {
@@ -125,14 +133,14 @@ class VtopClientService {
 
       // Store current credentials and session timestamp
       _currentUsername = username;
-      _currentPassword = password;
+      _currentPasswordDigest = _digestOf(password);
       _sessionCreatedAt = DateTime.now();
       _isInitialized = true;
     } catch (e) {
       _isInitialized = false;
       _client = null;
       _currentUsername = null;
-      _currentPassword = null;
+      _currentPasswordDigest = null;
       _sessionCreatedAt = null;
       rethrow;
     }
@@ -206,7 +214,7 @@ class VtopClientService {
     _client = null;
     _isInitialized = false;
     _currentUsername = null;
-    _currentPassword = null;
+    _currentPasswordDigest = null;
     _sessionCreatedAt = null;
   }
 
@@ -220,7 +228,7 @@ class VtopClientService {
   bool hasSessionFor({required String username, required String password}) {
     return _isInitialized &&
         _currentUsername == username &&
-        _currentPassword == password &&
+        _currentPasswordDigest == _digestOf(password) &&
         !_isSessionExpired();
   }
 
@@ -229,7 +237,7 @@ class VtopClientService {
     return {
       'isInitialized': _isInitialized,
       'hasClient': _client != null,
-      'username': _currentUsername,
+      'hasUser': _currentUsername != null,
       'sessionCreatedAt': _sessionCreatedAt?.toIso8601String(),
       'sessionAge': _getSessionAge(),
       'isNearExpiry': _isSessionNearExpiry(),
