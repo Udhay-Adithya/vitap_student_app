@@ -12,15 +12,6 @@ class ContributorsBottomSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final contributorsState = ref.watch(contributorsViewModelProvider);
 
-    // Trigger fetch if state is null (initial state)
-    if (contributorsState == null) {
-      Future.microtask(
-        () => ref
-            .read(contributorsViewModelProvider.notifier)
-            .fetchContributors(),
-      );
-    }
-
     return Container(
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
@@ -62,9 +53,9 @@ class ContributorsBottomSheet extends ConsumerWidget {
   Widget _buildContent(
     BuildContext context,
     WidgetRef ref,
-    AsyncValue<List<Contributor>>? contributorsState,
+    AsyncValue<List<Contributor>> contributorsState,
   ) {
-    if (contributorsState == null || contributorsState is AsyncLoading) {
+    if (contributorsState is AsyncLoading) {
       return const SizedBox(height: 150, child: Center(child: Loader()));
     }
 

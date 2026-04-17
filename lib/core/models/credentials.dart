@@ -41,6 +41,6 @@ class Credentials {
 
   @override
   String toString() {
-    return 'Credentials(registrationNumber: $registrationNumber, password: $password, semSubId: $semSubId, wifiUsername: $wifiUsername, wifiPassword: $wifiPassword)';
+    return 'Credentials(registrationNumber: $registrationNumber, semSubId: $semSubId)';
   }
 }

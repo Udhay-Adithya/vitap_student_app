@@ -69,7 +69,7 @@ final class ContributorsViewModelProvider
     extends
         $NotifierProvider<
           ContributorsViewModel,
-          AsyncValue<List<Contributor>>?
+          AsyncValue<List<Contributor>>
         > {
   ContributorsViewModelProvider._()
     : super(
@@ -90,10 +90,10 @@ final class ContributorsViewModelProvider
   ContributorsViewModel create() => ContributorsViewModel();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<List<Contributor>>? value) {
+  Override overrideWithValue(AsyncValue<List<Contributor>> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<List<Contributor>>?>(
+      providerOverride: $SyncValueProvider<AsyncValue<List<Contributor>>>(
         value,
       ),
     );
@@ -101,28 +101,28 @@ final class ContributorsViewModelProvider
 }
 
 String _$contributorsViewModelHash() =>
-    r'1336ad5c28ed4641e04eabcaa4c534e6a3cdee62';
+    r'49ec85e9df21acbd74909f2a68985887e26b1c33';
 
 abstract class _$ContributorsViewModel
-    extends $Notifier<AsyncValue<List<Contributor>>?> {
-  AsyncValue<List<Contributor>>? build();
+    extends $Notifier<AsyncValue<List<Contributor>>> {
+  AsyncValue<List<Contributor>> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final ref =
         this.ref
             as $Ref<
-              AsyncValue<List<Contributor>>?,
-              AsyncValue<List<Contributor>>?
+              AsyncValue<List<Contributor>>,
+              AsyncValue<List<Contributor>>
             >;
     final element =
         ref.element
             as $ClassProviderElement<
               AnyNotifier<
-                AsyncValue<List<Contributor>>?,
-                AsyncValue<List<Contributor>>?
+                AsyncValue<List<Contributor>>,
+                AsyncValue<List<Contributor>>
               >,
-              AsyncValue<List<Contributor>>?,
+              AsyncValue<List<Contributor>>,
               Object?,
               Object?
             >;

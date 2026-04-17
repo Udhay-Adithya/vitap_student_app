@@ -35,12 +35,13 @@ Future<void> initDependencies() async {
   // Register the InterceptedClient
   serviceLocator.registerSingleton<http.Client>(Client());
 
-  // Register ssl verification bypass client
+  // Register SSL client that trusts the VTOP server certificate
   serviceLocator.registerSingleton<IOClient>(
     IOClient(
       HttpClient()
         ..badCertificateCallback =
-            (X509Certificate cert, String host, int port) => true,
+            (X509Certificate cert, String host, int port) =>
+                host == ServerConstants.vtopDomain,
     ),
   );
 

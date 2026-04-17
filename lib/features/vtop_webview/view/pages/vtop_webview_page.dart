@@ -78,8 +78,6 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
       final cookieBytes = await fetchCookies(client: client);
       final cookieString = String.fromCharCodes(cookieBytes);
 
-      debugPrint('Cookie string received: $cookieString');
-
       if (cookieString.isEmpty) {
         setState(() {
           _isLoading = false;
@@ -91,9 +89,6 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
       // Get CSRF token and username from Rust session
       _csrfToken = await fetchCsrfToken(client: client);
       _authorizedId = await fetchUsername(client: client);
-
-      debugPrint('CSRF Token: $_csrfToken');
-      debugPrint('Authorized ID: $_authorizedId');
 
       await _injectCookies(cookieString);
 
@@ -211,18 +206,24 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
       final token = result.toString().replaceAll('"', '');
       if (token.isNotEmpty) {
         _csrfToken = token;
-        debugPrint('Extracted CSRF token: $_csrfToken');
       }
     } catch (e) {
-      debugPrint('Failed to extract CSRF token: $e');
+      debugPrint('Failed to extract CSRF token');
     }
   }
 
   /// Navigate to a VTOP page using POST with CSRF token
+  /// Escape a string for safe inclusion in an HTML attribute.
+  String _htmlAttrEscape(String s) => s
+      .replaceAll('&', '&amp;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;');
+
   Future<void> _navigateWithPost(String path,
       {Map<String, String>? additionalParams, bool verifyMenu = true}) async {
     if (_controller == null || _csrfToken == null) {
-      debugPrint('Cannot navigate: controller=$_controller, csrf=$_csrfToken');
       return;
     }
 
@@ -235,7 +236,8 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
     };
 
     final formFields = params.entries
-        .map((e) => '<input type="hidden" name="${e.key}" value="${e.value}">')
+        .map((e) =>
+            '<input type="hidden" name="${_htmlAttrEscape(e.key)}" value="${_htmlAttrEscape(e.value)}">')
         .join('');
 
     final jsCode = '''
@@ -274,7 +276,6 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
           path: '/',
         ),
       );
-      debugPrint('Injected cookie: ${cookie.name}');
     }
   }
 

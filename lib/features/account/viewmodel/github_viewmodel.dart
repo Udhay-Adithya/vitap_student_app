@@ -21,8 +21,10 @@ class ChangelogViewModel extends _$ChangelogViewModel {
     final result = await _githubRepository.fetchChangelog();
 
     state = switch (result) {
-      Left(value: final failure) =>
-        AsyncValue.error(failure.message, StackTrace.current),
+      Left(value: final failure) => AsyncValue.error(
+        failure.message,
+        StackTrace.current,
+      ),
       Right(value: final changelog) => AsyncValue.data(changelog),
     };
   }
@@ -33,9 +35,10 @@ class ContributorsViewModel extends _$ContributorsViewModel {
   late GithubRepository _githubRepository;
 
   @override
-  AsyncValue<List<Contributor>>? build() {
+  AsyncValue<List<Contributor>> build() {
     _githubRepository = ref.watch(githubRepositoryProvider);
-    return null;
+    Future(fetchContributors);
+    return const AsyncValue.loading();
   }
 
   Future<void> fetchContributors() async {
@@ -44,8 +47,10 @@ class ContributorsViewModel extends _$ContributorsViewModel {
     final result = await _githubRepository.fetchContributors();
 
     state = switch (result) {
-      Left(value: final failure) =>
-        AsyncValue.error(failure.message, StackTrace.current),
+      Left(value: final failure) => AsyncValue.error(
+        failure.message,
+        StackTrace.current,
+      ),
       Right(value: final contributors) => AsyncValue.data(contributors),
     };
   }
