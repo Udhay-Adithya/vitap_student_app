@@ -160,7 +160,7 @@ impl VtopClient {
 
     /// response json : {"status":"INVALID","message":"Invalid OTP. Please try again."}
 
-    pub async fn verify_login_otp(&mut self, otp: &String) -> VtopResult<()> {
+    pub async fn verify_login_otp(&mut self, otp: &str) -> VtopResult<()> {
 
         let csrf = self
             .session
@@ -168,7 +168,7 @@ impl VtopClient {
             .ok_or(VtopError::SessionExpired)?;
 
         let url = format!("{}/vtop/validateSecurityOtp", self.config.base_url);
-        let form_data = Form::new().text("otpCode", otp.clone()).text("_csrf", csrf);
+        let form_data = Form::new().text("otpCode", otp.to_string()).text("_csrf", csrf);
 
         let response = self
             .client
@@ -178,36 +178,49 @@ impl VtopClient {
             .await
             .map_err(map_reqwest_error)?;
 
+        if !response.status().is_success() {
+            return Err(VtopError::AuthenticationFailed(
+                format!("Failed to verify OTP. Server responded with status: {}", response.status()),
+            ));
+        }
+
         let response_json : Value = response.json().await.map_err(map_response_read_error)?;
-        let status = response_json["status"].as_str().unwrap_or("");
+        let status = response_json.get("status").and_then(|v| v.as_str()).unwrap_or("STATUS_NOT_FOUND");
+        let message = response_json.get("message").and_then(|v| v.as_str()).unwrap_or("MESSAGE_NOT_FOUND");
 
-        if status == "SUCCESS"{
+        match status {
 
-            let content_url  = format!("{}/vtop/content", self.config.base_url);
-            let content_response = self
-                        .client
-                        .get(content_url)
-                        .send()
-                        .await
-                        .map_err(map_reqwest_error)?;
-            let response_text = content_response.text().await.map_err(map_response_read_error)?;
+            "SUCCESS" => {
+                let redirect_url = response_json.get("redirectUrl").and_then(|v| v.as_str()).unwrap_or("URL_NOT_FOUND");
+                if redirect_url == "URL_NOT_FOUND" {
+                    return Err(VtopError::AuthenticationFailed("Redirect URL not found in after OTP verification".to_string()));
+                }
+                let content_url  = format!("{}{}", self.config.base_url, redirect_url);
+                let content_response = self
+                            .client
+                            .get(content_url)
+                            .send()
+                            .await
+                            .map_err(map_reqwest_error)?;
+                let response_text = content_response.text().await.map_err(map_response_read_error)?;
+                self.current_page = Some(response_text);
+                self.extract_csrf_token()?;
+                self.get_regno()?;
 
-            self.current_page = Some(response_text);
-            self.extract_csrf_token()?;
-            self.get_regno()?;
+                self.current_page = None;
+                self.captcha_data = None;
 
-            self.current_page = None;
-            self.captcha_data = None;
-            Ok(())
+                self.session.set_authenticated(true);
 
-        } else if status == "INVALID" {
-            return Err(VtopError::LoginOtpIncorrect);
-        } else if status == "EXPIRED" {
-            return Err(VtopError::LoginOtpExpired);
-        } else {
-            Err(VtopError::AuthenticationFailed(Self::get_login_page_error(
-                status,
-            )))
+                Ok(())
+
+            },
+
+            "INVALID" => return Err(VtopError::LoginOtpIncorrect),
+
+            "EXPIRED" => return Err(VtopError::LoginOtpExpired),
+            
+            _ => return Err(VtopError::AuthenticationFailed(format!("{}: {}", status, message)))
         }
     }
 
@@ -236,13 +249,14 @@ impl VtopClient {
 
         if response.status().is_success() {
             let response_json : Value = response.json().await.map_err(map_response_read_error)?;
-            let status = response_json["status"].as_str().unwrap_or("");
+            let status = response_json.get("status").and_then(|v| v.as_str()).unwrap_or("UNKNOWN_STATUS_FOR_RESEND_OTP");
+            let message = response_json.get("message")
+                            .and_then(|v| v.as_str())
+                            .unwrap_or("Failed to resend OTP from server side").to_string();
             if status == "SUCCESS" {
                 Ok(())
             } else {
-                Err(VtopError::AuthenticationFailed(
-                    response_json["message"].as_str().unwrap_or("Failed to resend OTP from server side").to_string(),
-                ))
+                Err(VtopError::AuthenticationFailed(format!("{}: {}", status, message)))
             }
         } else {
             Err(VtopError::AuthenticationFailed(
@@ -256,6 +270,13 @@ impl VtopClient {
     /// This is an internal helper method that handles the HTTP POST request to submit
     /// login credentials along with the solved CAPTCHA. It processes the server response
     /// to determine if authentication was successful or if an error occurred.
+    ///
+    /// OTP is not always required.
+    /// It is required when there is inactivity or a new IP address.
+    /// After successful username, password, and captcha verification,
+    /// the server may redirect to the OTP verification page (vtop/error).
+    /// Sometimes, the login page (vtop/login) itself will include
+    /// the "securityOtpForm" if OTP is required.
     ///
     /// # Arguments
     ///
@@ -273,6 +294,7 @@ impl VtopClient {
     /// - The CSRF token is missing (`VtopError::SessionExpired`)
     /// - Network request fails (`VtopError::NetworkError`)
     /// - The server returns an unexpected error (`VtopError::AuthenticationFailed`)
+    /// - OTP is required for login (`VtopError::LoginOtpRequired`)
     async fn perform_login(&mut self, captcha_answer: &String) -> VtopResult<()> {
         let csrf = self
             .session
@@ -297,10 +319,6 @@ impl VtopClient {
             .map_err(map_reqwest_error)?;
         let response_url = response.url().to_string();
         let response_text = response.text().await.map_err(map_response_read_error)?;
-
-        // Otp is not required every time (required - when inactivity or new IP detected)
-        // Upon sucessfull authentication of username, password and captcha the site redirects to base_url + vtop/error page for otp verification
-        // base_url + vtop/login page also shows up with securityOtpForm after sucessfull authentication of username, password and captcha
 
         if response_url.contains("error") {
             if response_text.contains("Invalid Captcha") {
