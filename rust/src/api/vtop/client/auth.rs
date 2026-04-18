@@ -197,8 +197,6 @@ impl VtopClient {
     /// - `LoginOtpExpired` → OTP expired
     /// - `AuthenticationFailed` → server or parsing error
     /// - `SessionExpired` → missing CSRF/session token
-
-
     pub async fn verify_login_otp(&mut self, otp: &str) -> VtopResult<()> {
 
         let csrf = self
@@ -256,11 +254,11 @@ impl VtopClient {
 
             },
 
-            "INVALID" => return Err(VtopError::LoginOtpIncorrect),
+            "INVALID" => Err(VtopError::LoginOtpIncorrect),
 
-            "EXPIRED" => return Err(VtopError::LoginOtpExpired),
+            "EXPIRED" => Err(VtopError::LoginOtpExpired),
             
-            _ => return Err(VtopError::AuthenticationFailed(format!("{}: {}", status, message)))
+            _ => Err(VtopError::AuthenticationFailed(format!("{}: {}", status, message)))
         }
     }
 
@@ -284,7 +282,6 @@ impl VtopClient {
     /// # Errors
     /// - `AuthenticationFailed` → OTP request failed or server error
     /// - `SessionExpired` → missing CSRF/session token
-
     pub async fn resend_login_otp(&mut self) -> VtopResult<()> {
         let csrf = self
             .session
@@ -381,18 +378,18 @@ impl VtopClient {
                     "Invalid Captcha".to_string(),
                 ));
             } else if Self::is_otp_required(&response_text) {
-                return Err(VtopError::LoginOtpRequired);
+                Err(VtopError::LoginOtpRequired)
             }else if response_text.contains("Invalid LoginId/Password")
                 || response_text.contains("Invalid  Username/Password")
             {
-                return Err(VtopError::InvalidCredentials);
+                Err(VtopError::InvalidCredentials)
             } else {
                 Err(VtopError::AuthenticationFailed(Self::get_login_page_error(
                     &response_text,
                 )))
             }
         } else if Self::is_otp_required(&response_text) {
-            return Err(VtopError::LoginOtpRequired);
+            Err(VtopError::LoginOtpRequired)
         } else {
             self.current_page = Some(response_text);
             self.extract_csrf_token()?;
@@ -617,7 +614,6 @@ impl VtopClient {
     }
 
     /// Checks if authentication requires OTP by looking for a form with id="securityOtpForm" in the response.
-
     fn is_otp_required(data: &str) -> bool {
         let form_selector = Selector::parse(r#"form#securityOtpForm"#).unwrap();
         let document = Html::parse_document(data);
