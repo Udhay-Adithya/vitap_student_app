@@ -1,10 +1,10 @@
 #![allow(dead_code)]
 mod api;
 
+use crate::api::vtop::vtop_errors::VtopError;
 use dotenv::dotenv;
 use std::env;
 use std::io::{self, Write};
-use crate::api::vtop::vtop_errors::VtopError;
 
 fn print_ascii_logo() {
     println!("\x1b[36m"); // Cyan color
@@ -87,9 +87,7 @@ async fn handle_login(client: &mut api::vtop::vtop_client::VtopClient) -> bool {
             print_success("VTOP login successful!");
             true
         }
-        Err(VtopError::LoginOtpRequired) => {
-            handle_login_otp(client).await
-        }
+        Err(VtopError::LoginOtpRequired) => handle_login_otp(client).await,
         Err(e) => {
             print_error(&format!("VTOP login failed: {:?}", e));
             false
@@ -102,19 +100,21 @@ async fn handle_login_otp(client: &mut api::vtop::vtop_client::VtopClient) -> bo
 
     let mut otp_attempts = 0;
 
-    let mut time_stamp = chrono::Local::now().timestamp() + 300;
+    let mut time_stamp = chrono::Local::now().timestamp();
 
     //The number of attempts is not limited by VTOP. This is only to prevent an infinite loop.
     while otp_attempts < 4 {
         otp_attempts += 1;
         let login_otp = get_user_input("Enter OTP sent to your email || NA to resend otp : ");
-        
-        if login_otp.trim().eq_ignore_ascii_case("NA") {
 
+        if login_otp.trim().eq_ignore_ascii_case("NA") {
             if time_stamp > chrono::Local::now().timestamp() {
                 print_error("Please wait before requesting a new OTP.");
                 let wait_time = time_stamp - chrono::Local::now().timestamp();
-                print_info(&format!("You can request a new OTP in {} seconds.", wait_time));
+                print_info(&format!(
+                    "You can request a new OTP in {} seconds.",
+                    wait_time
+                ));
                 otp_attempts -= 1;
                 continue;
             }
@@ -136,7 +136,7 @@ async fn handle_login_otp(client: &mut api::vtop::vtop_client::VtopClient) -> bo
             otp_attempts -= 1;
             continue;
         } else {
-            match api::vtop_get_client::handle_login_otp(client,login_otp).await{
+            match api::vtop_get_client::handle_login_otp(client, login_otp).await {
                 Ok(_) => {
                     print_success("VTOP login successful!");
                     return true;
