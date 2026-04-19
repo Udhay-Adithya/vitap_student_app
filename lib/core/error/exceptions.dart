@@ -160,6 +160,15 @@ class VtopException implements Exception {
       case 'InvalidResponse':
         return 'Received invalid response from server. Please try again.';
 
+      case 'LoginOtpRequired':
+        return 'OTP verification is required for login.';
+
+      case 'LoginOtpIncorrect':
+        return 'Incorrect OTP entered for login. Please try again.';
+
+      case 'LoginOtpExpired':
+        return 'OTP for login has expired. Please request a new OTP and try again.';
+
       default:
         // For any unknown error types, return the user-friendly message from Rust
         return message;

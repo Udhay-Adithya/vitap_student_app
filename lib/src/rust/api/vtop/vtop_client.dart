@@ -1505,6 +1505,28 @@ abstract class VtopClient implements RustOpaqueInterface {
     required String mode,
   });
 
+  /// Requests a new OTP to be sent for login authentication.
+  ///
+  /// This method triggers the VTOP server to resend the OTP to the user.
+  /// It is used when the previous OTP expires or is not received.
+  ///
+  /// # Sample Response (Success)
+  /// ```json
+  /// {
+  ///   "otpSentAt": "2026-04-17T23:18:03.719",
+  ///   "message": "OTP sent successfully",
+  ///   "status": "SUCCESS"
+  /// }
+  /// ```
+  ///
+  /// # Returns
+  /// Returns `Ok(())` if OTP is successfully requested.
+  ///
+  /// # Errors
+  /// - `AuthenticationFailed` → OTP request failed or server error
+  /// - `SessionExpired` → missing CSRF/session token
+  Future<VtopResult> resendLoginOtp();
+
   /// Submits a new general outing application form to VTOP.
   ///
   /// Creates a new day outing application with the provided details. The application will
@@ -1680,6 +1702,47 @@ abstract class VtopClient implements RustOpaqueInterface {
   Future<VtopResultString> uploadCourseDassignmentOtp({
     required String otpEmail,
   });
+
+  /// Verifies the OTP sent during login authentication.
+  ///
+  /// This method submits the OTP entered by the user to VTOP.
+  /// If the OTP is correct, the session is finalized and the user is
+  /// fully authenticated. On success, the method also loads the
+  /// authenticated dashboard page and extracts session details.
+  ///
+  /// # Sample Response (Success)
+  /// ```json
+  /// {
+  ///   "status": "SUCCESS",
+  ///   "redirectUrl": "/vtop/content"
+  /// }
+  /// ```
+  ///
+  /// # Sample Response (Failure)
+  /// ```json
+  /// {
+  ///   "status": "INVALID",
+  ///   "message": "Invalid OTP. Please try again."
+  /// }
+  /// ```
+  ///
+  /// # Sample Response (Failure)
+  /// ```json
+  /// {
+  ///   "status": "EXPIRED",
+  ///   "message": "OTP has expired. Please resend."
+  /// }
+  /// ```
+  ///
+  /// # Returns
+  /// Returns `Ok(())` if OTP verification succeeds and session is authenticated.
+  ///
+  /// # Errors
+  /// - `LoginOtpIncorrect` → OTP is wrong
+  /// - `LoginOtpExpired` → OTP expired
+  /// - `AuthenticationFailed` → server or parsing error
+  /// - `SessionExpired` → missing CSRF/session token
+  Future<VtopResult> verifyLoginOtp({required String otp});
 
   /// Creates a new VtopClient instance with the provided configuration and credentials.
   ///

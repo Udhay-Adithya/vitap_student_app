@@ -10,7 +10,7 @@ pub struct AttendanceRecord {
     pub course_code: String,
     pub course_name: String,
     pub course_type: String,
-    pub course_type_code: String,  // Short code like TH, ETH, ELA
+    pub course_type_code: String, // Short code like TH, ETH, ELA
     pub course_slot: String,
     pub faculty: String,
     pub attended_classes: String,

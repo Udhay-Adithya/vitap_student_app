@@ -18,4 +18,3 @@ pub struct GeneralOutingRecord {
     pub can_download: bool,
     pub leave_id: String,
 }
-

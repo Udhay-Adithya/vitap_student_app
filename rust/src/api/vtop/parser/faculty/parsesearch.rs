@@ -1,10 +1,10 @@
-use scraper::{Html, Selector};
 use crate::api::vtop::types::GetFaculty;
+use scraper::{Html, Selector};
 
 pub fn parse_faculty_search(html: String) -> GetFaculty {
     let document = Html::parse_document(&html);
     let rows_selector = Selector::parse("tr").unwrap();
-    
+
     // Skip header row and find the data row
     for row in document.select(&rows_selector).skip(1) {
         let cells: Vec<_> = row.select(&Selector::parse("td").unwrap()).collect();
@@ -15,18 +15,10 @@ pub fn parse_faculty_search(html: String) -> GetFaculty {
                 if let Some(onclick) = button.value().attr("onclick") {
                     // Extract ID from onclick - handle both &quot; and regular quotes
                     let extracted_id = if onclick.contains("&quot;") {
-                        onclick
-                            .split("&quot;")
-                            .nth(1)
-                            .unwrap_or("")
-                            .to_string()
+                        onclick.split("&quot;").nth(1).unwrap_or("").to_string()
                     } else if onclick.contains('"') {
                         // Handle regular quotes: getEmployeeIdNo("30058");
-                        onclick
-                            .split('"')
-                            .nth(1)
-                            .unwrap_or("")
-                            .to_string()
+                        onclick.split('"').nth(1).unwrap_or("").to_string()
                     } else {
                         // Fallback: extract numbers from the string
                         onclick
@@ -71,7 +63,7 @@ pub fn parse_faculty_search(html: String) -> GetFaculty {
             };
         }
     }
-    
+
     // Return empty faculty if no data found
     GetFaculty {
         faculty_name: String::new(),

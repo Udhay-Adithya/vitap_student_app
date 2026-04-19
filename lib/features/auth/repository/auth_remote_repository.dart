@@ -86,4 +86,30 @@ class AuthRemoteRepository {
       return Left(Failure('An unexpected error occurred. Please try again.'));
     }
   }
+
+  Future<Either<Failure, void>> submitLoginOtp(String otpCode) async {
+    try {
+      await vtopService.submitLoginOtp(otpCode);
+      return const Right(null);
+    } on VtopError catch (rustError) {
+      final failureMessage = await VtopException.getFailureMessage(rustError);
+      return Left(Failure(failureMessage));
+    } catch (e) {
+      debugPrint('OTP submit failed: ${e.toString()}');
+      return Left(Failure('Failed to verify OTP. Please try again.'));
+    }
+  }
+
+  Future<Either<Failure, void>> resendLoginOtp() async {
+    try {
+      await vtopService.resendLoginOtp();
+      return const Right(null);
+    } on VtopError catch (rustError) {
+      final failureMessage = await VtopException.getFailureMessage(rustError);
+      return Left(Failure(failureMessage));
+    } catch (e) {
+      debugPrint('OTP resend failed: ${e.toString()}');
+      return Left(Failure('Failed to resend OTP. Please try again.'));
+    }
+  }
 }

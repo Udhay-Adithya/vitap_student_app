@@ -55,7 +55,7 @@ extension VtopErrorPatterns on VtopError {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( VtopError_NetworkError value)?  networkError,TResult Function( VtopError_TimeoutError value)?  timeoutError,TResult Function( VtopError_SslError value)?  sslError,TResult Function( VtopError_DnsError value)?  dnsError,TResult Function( VtopError_ConnectionRefused value)?  connectionRefused,TResult Function( VtopError_VtopServerError value)?  vtopServerError,TResult Function( VtopError_AuthenticationFailed value)?  authenticationFailed,TResult Function( VtopError_RegistrationParsingError value)?  registrationParsingError,TResult Function( VtopError_InvalidCredentials value)?  invalidCredentials,TResult Function( VtopError_SessionExpired value)?  sessionExpired,TResult Function( VtopError_ParseError value)?  parseError,TResult Function( VtopError_ConfigurationError value)?  configurationError,TResult Function( VtopError_CaptchaRequired value)?  captchaRequired,TResult Function( VtopError_InvalidResponse value)?  invalidResponse,TResult Function( VtopError_ResponseReadError value)?  responseReadError,TResult Function( VtopError_DigitalAssignmentFileNotFound value)?  digitalAssignmentFileNotFound,TResult Function( VtopError_DigitalAssignmentFileTypeNotSupported value)?  digitalAssignmentFileTypeNotSupported,TResult Function( VtopError_DigitalAssignmentFileSizeExceeded value)?  digitalAssignmentFileSizeExceeded,TResult Function( VtopError_DigitalAssignmentUploadOtpRequired value)?  digitalAssignmentUploadOtpRequired,TResult Function( VtopError_DigitalAssignmentUploadIncorrectOtp value)?  digitalAssignmentUploadIncorrectOtp,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( VtopError_NetworkError value)?  networkError,TResult Function( VtopError_TimeoutError value)?  timeoutError,TResult Function( VtopError_SslError value)?  sslError,TResult Function( VtopError_DnsError value)?  dnsError,TResult Function( VtopError_ConnectionRefused value)?  connectionRefused,TResult Function( VtopError_VtopServerError value)?  vtopServerError,TResult Function( VtopError_AuthenticationFailed value)?  authenticationFailed,TResult Function( VtopError_RegistrationParsingError value)?  registrationParsingError,TResult Function( VtopError_InvalidCredentials value)?  invalidCredentials,TResult Function( VtopError_SessionExpired value)?  sessionExpired,TResult Function( VtopError_ParseError value)?  parseError,TResult Function( VtopError_ConfigurationError value)?  configurationError,TResult Function( VtopError_CaptchaRequired value)?  captchaRequired,TResult Function( VtopError_InvalidResponse value)?  invalidResponse,TResult Function( VtopError_ResponseReadError value)?  responseReadError,TResult Function( VtopError_DigitalAssignmentFileNotFound value)?  digitalAssignmentFileNotFound,TResult Function( VtopError_DigitalAssignmentFileTypeNotSupported value)?  digitalAssignmentFileTypeNotSupported,TResult Function( VtopError_DigitalAssignmentFileSizeExceeded value)?  digitalAssignmentFileSizeExceeded,TResult Function( VtopError_DigitalAssignmentUploadOtpRequired value)?  digitalAssignmentUploadOtpRequired,TResult Function( VtopError_DigitalAssignmentUploadIncorrectOtp value)?  digitalAssignmentUploadIncorrectOtp,TResult Function( VtopError_LoginOtpRequired value)?  loginOtpRequired,TResult Function( VtopError_LoginOtpIncorrect value)?  loginOtpIncorrect,TResult Function( VtopError_LoginOtpExpired value)?  loginOtpExpired,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case VtopError_NetworkError() when networkError != null:
@@ -78,7 +78,10 @@ return digitalAssignmentFileNotFound(_that);case VtopError_DigitalAssignmentFile
 return digitalAssignmentFileTypeNotSupported(_that);case VtopError_DigitalAssignmentFileSizeExceeded() when digitalAssignmentFileSizeExceeded != null:
 return digitalAssignmentFileSizeExceeded(_that);case VtopError_DigitalAssignmentUploadOtpRequired() when digitalAssignmentUploadOtpRequired != null:
 return digitalAssignmentUploadOtpRequired(_that);case VtopError_DigitalAssignmentUploadIncorrectOtp() when digitalAssignmentUploadIncorrectOtp != null:
-return digitalAssignmentUploadIncorrectOtp(_that);case _:
+return digitalAssignmentUploadIncorrectOtp(_that);case VtopError_LoginOtpRequired() when loginOtpRequired != null:
+return loginOtpRequired(_that);case VtopError_LoginOtpIncorrect() when loginOtpIncorrect != null:
+return loginOtpIncorrect(_that);case VtopError_LoginOtpExpired() when loginOtpExpired != null:
+return loginOtpExpired(_that);case _:
   return orElse();
 
 }
@@ -96,7 +99,7 @@ return digitalAssignmentUploadIncorrectOtp(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( VtopError_NetworkError value)  networkError,required TResult Function( VtopError_TimeoutError value)  timeoutError,required TResult Function( VtopError_SslError value)  sslError,required TResult Function( VtopError_DnsError value)  dnsError,required TResult Function( VtopError_ConnectionRefused value)  connectionRefused,required TResult Function( VtopError_VtopServerError value)  vtopServerError,required TResult Function( VtopError_AuthenticationFailed value)  authenticationFailed,required TResult Function( VtopError_RegistrationParsingError value)  registrationParsingError,required TResult Function( VtopError_InvalidCredentials value)  invalidCredentials,required TResult Function( VtopError_SessionExpired value)  sessionExpired,required TResult Function( VtopError_ParseError value)  parseError,required TResult Function( VtopError_ConfigurationError value)  configurationError,required TResult Function( VtopError_CaptchaRequired value)  captchaRequired,required TResult Function( VtopError_InvalidResponse value)  invalidResponse,required TResult Function( VtopError_ResponseReadError value)  responseReadError,required TResult Function( VtopError_DigitalAssignmentFileNotFound value)  digitalAssignmentFileNotFound,required TResult Function( VtopError_DigitalAssignmentFileTypeNotSupported value)  digitalAssignmentFileTypeNotSupported,required TResult Function( VtopError_DigitalAssignmentFileSizeExceeded value)  digitalAssignmentFileSizeExceeded,required TResult Function( VtopError_DigitalAssignmentUploadOtpRequired value)  digitalAssignmentUploadOtpRequired,required TResult Function( VtopError_DigitalAssignmentUploadIncorrectOtp value)  digitalAssignmentUploadIncorrectOtp,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( VtopError_NetworkError value)  networkError,required TResult Function( VtopError_TimeoutError value)  timeoutError,required TResult Function( VtopError_SslError value)  sslError,required TResult Function( VtopError_DnsError value)  dnsError,required TResult Function( VtopError_ConnectionRefused value)  connectionRefused,required TResult Function( VtopError_VtopServerError value)  vtopServerError,required TResult Function( VtopError_AuthenticationFailed value)  authenticationFailed,required TResult Function( VtopError_RegistrationParsingError value)  registrationParsingError,required TResult Function( VtopError_InvalidCredentials value)  invalidCredentials,required TResult Function( VtopError_SessionExpired value)  sessionExpired,required TResult Function( VtopError_ParseError value)  parseError,required TResult Function( VtopError_ConfigurationError value)  configurationError,required TResult Function( VtopError_CaptchaRequired value)  captchaRequired,required TResult Function( VtopError_InvalidResponse value)  invalidResponse,required TResult Function( VtopError_ResponseReadError value)  responseReadError,required TResult Function( VtopError_DigitalAssignmentFileNotFound value)  digitalAssignmentFileNotFound,required TResult Function( VtopError_DigitalAssignmentFileTypeNotSupported value)  digitalAssignmentFileTypeNotSupported,required TResult Function( VtopError_DigitalAssignmentFileSizeExceeded value)  digitalAssignmentFileSizeExceeded,required TResult Function( VtopError_DigitalAssignmentUploadOtpRequired value)  digitalAssignmentUploadOtpRequired,required TResult Function( VtopError_DigitalAssignmentUploadIncorrectOtp value)  digitalAssignmentUploadIncorrectOtp,required TResult Function( VtopError_LoginOtpRequired value)  loginOtpRequired,required TResult Function( VtopError_LoginOtpIncorrect value)  loginOtpIncorrect,required TResult Function( VtopError_LoginOtpExpired value)  loginOtpExpired,}){
 final _that = this;
 switch (_that) {
 case VtopError_NetworkError():
@@ -119,7 +122,10 @@ return digitalAssignmentFileNotFound(_that);case VtopError_DigitalAssignmentFile
 return digitalAssignmentFileTypeNotSupported(_that);case VtopError_DigitalAssignmentFileSizeExceeded():
 return digitalAssignmentFileSizeExceeded(_that);case VtopError_DigitalAssignmentUploadOtpRequired():
 return digitalAssignmentUploadOtpRequired(_that);case VtopError_DigitalAssignmentUploadIncorrectOtp():
-return digitalAssignmentUploadIncorrectOtp(_that);}
+return digitalAssignmentUploadIncorrectOtp(_that);case VtopError_LoginOtpRequired():
+return loginOtpRequired(_that);case VtopError_LoginOtpIncorrect():
+return loginOtpIncorrect(_that);case VtopError_LoginOtpExpired():
+return loginOtpExpired(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -133,7 +139,7 @@ return digitalAssignmentUploadIncorrectOtp(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( VtopError_NetworkError value)?  networkError,TResult? Function( VtopError_TimeoutError value)?  timeoutError,TResult? Function( VtopError_SslError value)?  sslError,TResult? Function( VtopError_DnsError value)?  dnsError,TResult? Function( VtopError_ConnectionRefused value)?  connectionRefused,TResult? Function( VtopError_VtopServerError value)?  vtopServerError,TResult? Function( VtopError_AuthenticationFailed value)?  authenticationFailed,TResult? Function( VtopError_RegistrationParsingError value)?  registrationParsingError,TResult? Function( VtopError_InvalidCredentials value)?  invalidCredentials,TResult? Function( VtopError_SessionExpired value)?  sessionExpired,TResult? Function( VtopError_ParseError value)?  parseError,TResult? Function( VtopError_ConfigurationError value)?  configurationError,TResult? Function( VtopError_CaptchaRequired value)?  captchaRequired,TResult? Function( VtopError_InvalidResponse value)?  invalidResponse,TResult? Function( VtopError_ResponseReadError value)?  responseReadError,TResult? Function( VtopError_DigitalAssignmentFileNotFound value)?  digitalAssignmentFileNotFound,TResult? Function( VtopError_DigitalAssignmentFileTypeNotSupported value)?  digitalAssignmentFileTypeNotSupported,TResult? Function( VtopError_DigitalAssignmentFileSizeExceeded value)?  digitalAssignmentFileSizeExceeded,TResult? Function( VtopError_DigitalAssignmentUploadOtpRequired value)?  digitalAssignmentUploadOtpRequired,TResult? Function( VtopError_DigitalAssignmentUploadIncorrectOtp value)?  digitalAssignmentUploadIncorrectOtp,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( VtopError_NetworkError value)?  networkError,TResult? Function( VtopError_TimeoutError value)?  timeoutError,TResult? Function( VtopError_SslError value)?  sslError,TResult? Function( VtopError_DnsError value)?  dnsError,TResult? Function( VtopError_ConnectionRefused value)?  connectionRefused,TResult? Function( VtopError_VtopServerError value)?  vtopServerError,TResult? Function( VtopError_AuthenticationFailed value)?  authenticationFailed,TResult? Function( VtopError_RegistrationParsingError value)?  registrationParsingError,TResult? Function( VtopError_InvalidCredentials value)?  invalidCredentials,TResult? Function( VtopError_SessionExpired value)?  sessionExpired,TResult? Function( VtopError_ParseError value)?  parseError,TResult? Function( VtopError_ConfigurationError value)?  configurationError,TResult? Function( VtopError_CaptchaRequired value)?  captchaRequired,TResult? Function( VtopError_InvalidResponse value)?  invalidResponse,TResult? Function( VtopError_ResponseReadError value)?  responseReadError,TResult? Function( VtopError_DigitalAssignmentFileNotFound value)?  digitalAssignmentFileNotFound,TResult? Function( VtopError_DigitalAssignmentFileTypeNotSupported value)?  digitalAssignmentFileTypeNotSupported,TResult? Function( VtopError_DigitalAssignmentFileSizeExceeded value)?  digitalAssignmentFileSizeExceeded,TResult? Function( VtopError_DigitalAssignmentUploadOtpRequired value)?  digitalAssignmentUploadOtpRequired,TResult? Function( VtopError_DigitalAssignmentUploadIncorrectOtp value)?  digitalAssignmentUploadIncorrectOtp,TResult? Function( VtopError_LoginOtpRequired value)?  loginOtpRequired,TResult? Function( VtopError_LoginOtpIncorrect value)?  loginOtpIncorrect,TResult? Function( VtopError_LoginOtpExpired value)?  loginOtpExpired,}){
 final _that = this;
 switch (_that) {
 case VtopError_NetworkError() when networkError != null:
@@ -156,7 +162,10 @@ return digitalAssignmentFileNotFound(_that);case VtopError_DigitalAssignmentFile
 return digitalAssignmentFileTypeNotSupported(_that);case VtopError_DigitalAssignmentFileSizeExceeded() when digitalAssignmentFileSizeExceeded != null:
 return digitalAssignmentFileSizeExceeded(_that);case VtopError_DigitalAssignmentUploadOtpRequired() when digitalAssignmentUploadOtpRequired != null:
 return digitalAssignmentUploadOtpRequired(_that);case VtopError_DigitalAssignmentUploadIncorrectOtp() when digitalAssignmentUploadIncorrectOtp != null:
-return digitalAssignmentUploadIncorrectOtp(_that);case _:
+return digitalAssignmentUploadIncorrectOtp(_that);case VtopError_LoginOtpRequired() when loginOtpRequired != null:
+return loginOtpRequired(_that);case VtopError_LoginOtpIncorrect() when loginOtpIncorrect != null:
+return loginOtpIncorrect(_that);case VtopError_LoginOtpExpired() when loginOtpExpired != null:
+return loginOtpExpired(_that);case _:
   return null;
 
 }
@@ -173,7 +182,7 @@ return digitalAssignmentUploadIncorrectOtp(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  networkError,TResult Function()?  timeoutError,TResult Function()?  sslError,TResult Function()?  dnsError,TResult Function()?  connectionRefused,TResult Function()?  vtopServerError,TResult Function( String field0)?  authenticationFailed,TResult Function()?  registrationParsingError,TResult Function()?  invalidCredentials,TResult Function()?  sessionExpired,TResult Function( String field0)?  parseError,TResult Function( String field0)?  configurationError,TResult Function()?  captchaRequired,TResult Function()?  invalidResponse,TResult Function()?  responseReadError,TResult Function()?  digitalAssignmentFileNotFound,TResult Function()?  digitalAssignmentFileTypeNotSupported,TResult Function()?  digitalAssignmentFileSizeExceeded,TResult Function()?  digitalAssignmentUploadOtpRequired,TResult Function()?  digitalAssignmentUploadIncorrectOtp,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  networkError,TResult Function()?  timeoutError,TResult Function()?  sslError,TResult Function()?  dnsError,TResult Function()?  connectionRefused,TResult Function()?  vtopServerError,TResult Function( String field0)?  authenticationFailed,TResult Function()?  registrationParsingError,TResult Function()?  invalidCredentials,TResult Function()?  sessionExpired,TResult Function( String field0)?  parseError,TResult Function( String field0)?  configurationError,TResult Function()?  captchaRequired,TResult Function()?  invalidResponse,TResult Function()?  responseReadError,TResult Function()?  digitalAssignmentFileNotFound,TResult Function()?  digitalAssignmentFileTypeNotSupported,TResult Function()?  digitalAssignmentFileSizeExceeded,TResult Function()?  digitalAssignmentUploadOtpRequired,TResult Function()?  digitalAssignmentUploadIncorrectOtp,TResult Function()?  loginOtpRequired,TResult Function()?  loginOtpIncorrect,TResult Function()?  loginOtpExpired,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case VtopError_NetworkError() when networkError != null:
 return networkError();case VtopError_TimeoutError() when timeoutError != null:
@@ -195,7 +204,10 @@ return digitalAssignmentFileNotFound();case VtopError_DigitalAssignmentFileTypeN
 return digitalAssignmentFileTypeNotSupported();case VtopError_DigitalAssignmentFileSizeExceeded() when digitalAssignmentFileSizeExceeded != null:
 return digitalAssignmentFileSizeExceeded();case VtopError_DigitalAssignmentUploadOtpRequired() when digitalAssignmentUploadOtpRequired != null:
 return digitalAssignmentUploadOtpRequired();case VtopError_DigitalAssignmentUploadIncorrectOtp() when digitalAssignmentUploadIncorrectOtp != null:
-return digitalAssignmentUploadIncorrectOtp();case _:
+return digitalAssignmentUploadIncorrectOtp();case VtopError_LoginOtpRequired() when loginOtpRequired != null:
+return loginOtpRequired();case VtopError_LoginOtpIncorrect() when loginOtpIncorrect != null:
+return loginOtpIncorrect();case VtopError_LoginOtpExpired() when loginOtpExpired != null:
+return loginOtpExpired();case _:
   return orElse();
 
 }
@@ -213,7 +225,7 @@ return digitalAssignmentUploadIncorrectOtp();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  networkError,required TResult Function()  timeoutError,required TResult Function()  sslError,required TResult Function()  dnsError,required TResult Function()  connectionRefused,required TResult Function()  vtopServerError,required TResult Function( String field0)  authenticationFailed,required TResult Function()  registrationParsingError,required TResult Function()  invalidCredentials,required TResult Function()  sessionExpired,required TResult Function( String field0)  parseError,required TResult Function( String field0)  configurationError,required TResult Function()  captchaRequired,required TResult Function()  invalidResponse,required TResult Function()  responseReadError,required TResult Function()  digitalAssignmentFileNotFound,required TResult Function()  digitalAssignmentFileTypeNotSupported,required TResult Function()  digitalAssignmentFileSizeExceeded,required TResult Function()  digitalAssignmentUploadOtpRequired,required TResult Function()  digitalAssignmentUploadIncorrectOtp,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  networkError,required TResult Function()  timeoutError,required TResult Function()  sslError,required TResult Function()  dnsError,required TResult Function()  connectionRefused,required TResult Function()  vtopServerError,required TResult Function( String field0)  authenticationFailed,required TResult Function()  registrationParsingError,required TResult Function()  invalidCredentials,required TResult Function()  sessionExpired,required TResult Function( String field0)  parseError,required TResult Function( String field0)  configurationError,required TResult Function()  captchaRequired,required TResult Function()  invalidResponse,required TResult Function()  responseReadError,required TResult Function()  digitalAssignmentFileNotFound,required TResult Function()  digitalAssignmentFileTypeNotSupported,required TResult Function()  digitalAssignmentFileSizeExceeded,required TResult Function()  digitalAssignmentUploadOtpRequired,required TResult Function()  digitalAssignmentUploadIncorrectOtp,required TResult Function()  loginOtpRequired,required TResult Function()  loginOtpIncorrect,required TResult Function()  loginOtpExpired,}) {final _that = this;
 switch (_that) {
 case VtopError_NetworkError():
 return networkError();case VtopError_TimeoutError():
@@ -235,7 +247,10 @@ return digitalAssignmentFileNotFound();case VtopError_DigitalAssignmentFileTypeN
 return digitalAssignmentFileTypeNotSupported();case VtopError_DigitalAssignmentFileSizeExceeded():
 return digitalAssignmentFileSizeExceeded();case VtopError_DigitalAssignmentUploadOtpRequired():
 return digitalAssignmentUploadOtpRequired();case VtopError_DigitalAssignmentUploadIncorrectOtp():
-return digitalAssignmentUploadIncorrectOtp();}
+return digitalAssignmentUploadIncorrectOtp();case VtopError_LoginOtpRequired():
+return loginOtpRequired();case VtopError_LoginOtpIncorrect():
+return loginOtpIncorrect();case VtopError_LoginOtpExpired():
+return loginOtpExpired();}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -249,7 +264,7 @@ return digitalAssignmentUploadIncorrectOtp();}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  networkError,TResult? Function()?  timeoutError,TResult? Function()?  sslError,TResult? Function()?  dnsError,TResult? Function()?  connectionRefused,TResult? Function()?  vtopServerError,TResult? Function( String field0)?  authenticationFailed,TResult? Function()?  registrationParsingError,TResult? Function()?  invalidCredentials,TResult? Function()?  sessionExpired,TResult? Function( String field0)?  parseError,TResult? Function( String field0)?  configurationError,TResult? Function()?  captchaRequired,TResult? Function()?  invalidResponse,TResult? Function()?  responseReadError,TResult? Function()?  digitalAssignmentFileNotFound,TResult? Function()?  digitalAssignmentFileTypeNotSupported,TResult? Function()?  digitalAssignmentFileSizeExceeded,TResult? Function()?  digitalAssignmentUploadOtpRequired,TResult? Function()?  digitalAssignmentUploadIncorrectOtp,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  networkError,TResult? Function()?  timeoutError,TResult? Function()?  sslError,TResult? Function()?  dnsError,TResult? Function()?  connectionRefused,TResult? Function()?  vtopServerError,TResult? Function( String field0)?  authenticationFailed,TResult? Function()?  registrationParsingError,TResult? Function()?  invalidCredentials,TResult? Function()?  sessionExpired,TResult? Function( String field0)?  parseError,TResult? Function( String field0)?  configurationError,TResult? Function()?  captchaRequired,TResult? Function()?  invalidResponse,TResult? Function()?  responseReadError,TResult? Function()?  digitalAssignmentFileNotFound,TResult? Function()?  digitalAssignmentFileTypeNotSupported,TResult? Function()?  digitalAssignmentFileSizeExceeded,TResult? Function()?  digitalAssignmentUploadOtpRequired,TResult? Function()?  digitalAssignmentUploadIncorrectOtp,TResult? Function()?  loginOtpRequired,TResult? Function()?  loginOtpIncorrect,TResult? Function()?  loginOtpExpired,}) {final _that = this;
 switch (_that) {
 case VtopError_NetworkError() when networkError != null:
 return networkError();case VtopError_TimeoutError() when timeoutError != null:
@@ -271,7 +286,10 @@ return digitalAssignmentFileNotFound();case VtopError_DigitalAssignmentFileTypeN
 return digitalAssignmentFileTypeNotSupported();case VtopError_DigitalAssignmentFileSizeExceeded() when digitalAssignmentFileSizeExceeded != null:
 return digitalAssignmentFileSizeExceeded();case VtopError_DigitalAssignmentUploadOtpRequired() when digitalAssignmentUploadOtpRequired != null:
 return digitalAssignmentUploadOtpRequired();case VtopError_DigitalAssignmentUploadIncorrectOtp() when digitalAssignmentUploadIncorrectOtp != null:
-return digitalAssignmentUploadIncorrectOtp();case _:
+return digitalAssignmentUploadIncorrectOtp();case VtopError_LoginOtpRequired() when loginOtpRequired != null:
+return loginOtpRequired();case VtopError_LoginOtpIncorrect() when loginOtpIncorrect != null:
+return loginOtpIncorrect();case VtopError_LoginOtpExpired() when loginOtpExpired != null:
+return loginOtpExpired();case _:
   return null;
 
 }
@@ -1013,6 +1031,102 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
   return 'VtopError.digitalAssignmentUploadIncorrectOtp()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class VtopError_LoginOtpRequired extends VtopError {
+  const VtopError_LoginOtpRequired(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VtopError_LoginOtpRequired);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'VtopError.loginOtpRequired()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class VtopError_LoginOtpIncorrect extends VtopError {
+  const VtopError_LoginOtpIncorrect(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VtopError_LoginOtpIncorrect);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'VtopError.loginOtpIncorrect()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class VtopError_LoginOtpExpired extends VtopError {
+  const VtopError_LoginOtpExpired(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VtopError_LoginOtpExpired);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'VtopError.loginOtpExpired()';
 }
 
 

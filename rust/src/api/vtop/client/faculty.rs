@@ -1,5 +1,9 @@
 use crate::api::vtop::{
-    parser, types::*, vtop_client::VtopClient, vtop_errors::VtopError, vtop_errors::VtopResult,
+    parser,
+    types::*,
+    vtop_client::VtopClient,
+    vtop_errors::VtopError,
+    vtop_errors::VtopResult,
     vtop_errors::{map_reqwest_error, map_response_read_error},
 };
 
@@ -37,8 +41,8 @@ impl VtopClient {
     /// // Search by name
     /// let results = client.get_faculty_search("Sharma".to_string()).await?;
     /// for faculty in results.faculty_list {
-    ///     println!("{} - {} ({})", 
-    ///         faculty.name, 
+    ///     println!("{} - {} ({})",
+    ///         faculty.name,
     ///         faculty.designation,
     ///         faculty.department
     ///     );
@@ -49,10 +53,7 @@ impl VtopClient {
     /// # Ok(())
     /// # }
     /// ```
-    pub async fn get_faculty_search(
-        &mut self,
-        search_term: String,
-    ) -> VtopResult<GetFaculty> {
+    pub async fn get_faculty_search(&mut self, search_term: String) -> VtopResult<GetFaculty> {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
@@ -123,7 +124,7 @@ impl VtopClient {
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // First search for faculty
     /// let search_results = client.get_faculty_search("Sharma".to_string()).await?;
-    /// 
+    ///
     /// // Then get detailed information
     /// if let Some(faculty) = search_results.faculty_list.first() {
     ///     let details = client.get_faculty_data(faculty.emp_id.clone()).await?;

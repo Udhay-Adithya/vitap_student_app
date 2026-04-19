@@ -3,7 +3,6 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use super::super::types::*;
 
-
 pub fn parse_semid_from_timetable(html: String) -> SemesterData {
     let mut sem_names_ids = vec![];
     let document = Html::parse_document(&html);

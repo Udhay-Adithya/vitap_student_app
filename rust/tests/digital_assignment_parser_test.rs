@@ -1,10 +1,11 @@
-use lib_vtop::api::vtop::parser::digital_assignment_parser::
-    {parse_all_assignments, parse_per_course_dassignments,
-     parse_process_upload_assignment_response, parse_upload_assignment_response};
-    #[test]
-    fn test_parse_all_assignments() {
-        //digital assignments page with no data found response
-        let html = r#"<!DOCTYPE html>
+use lib_vtop::api::vtop::parser::digital_assignment_parser::{
+    parse_all_assignments, parse_per_course_dassignments, parse_process_upload_assignment_response,
+    parse_upload_assignment_response,
+};
+#[test]
+fn test_parse_all_assignments() {
+    //digital assignments page with no data found response
+    let html = r#"<!DOCTYPE html>
 <!--
   Author: Prabakaran Ramu
   Date  : 23/06/2018
@@ -164,14 +165,14 @@ use lib_vtop::api::vtop::parser::digital_assignment_parser::
     </div>
   </body>
 </html>"#;
-        let result = parse_all_assignments(html.to_string());
-        assert_eq!(result.is_empty(), true);
-    }
+    let result = parse_all_assignments(html.to_string());
+    assert_eq!(result.is_empty(), true);
+}
 
-    #[test]
-    fn test_parse_per_course_dassignments() {
-        //digital assignments per course with no assignments uploaded
-        let html = r#"<!DOCTYPE html>
+#[test]
+fn test_parse_per_course_dassignments() {
+    //digital assignments per course with no assignments uploaded
+    let html = r#"<!DOCTYPE html>
 <!--
   Author: Prabakaran Ramu
   Date  : 23/06/2018
@@ -661,26 +662,29 @@ use lib_vtop::api::vtop::parser::digital_assignment_parser::
 
 </body>
 </html>"#;
-        let result = parse_per_course_dassignments(html.to_string());
-        assert_eq!(result[0].serial_number, "1");
-        assert_eq!(result[0].assignment_title, "Digital Assessment-1");
-        assert_eq!(result[0].max_assignment_mark, "10");
-        assert_eq!(result[0].assignment_weightage_mark, "10");
-        assert_eq!(result[0].due_date, "02-May-2026");
-        assert_eq!(result[0].can_qp_download, false);
-        assert_eq!(result[0].da_download_url, "examinations/downloadSTudentDA/DA01/AP2025264000667");
-        assert_eq!(result[0].qp_download_url, "");
-        assert_eq!(result[0].can_update, true);
-		assert_eq!(result[0].mcode, "DA01");
-		assert_eq!(result[1].mcode, "DA02");
-        assert_eq!(result[0].submission_status, "20 Jan 2026 03:09 PM");
-        assert_eq!(result.len(), 2);
-    }
+    let result = parse_per_course_dassignments(html.to_string());
+    assert_eq!(result[0].serial_number, "1");
+    assert_eq!(result[0].assignment_title, "Digital Assessment-1");
+    assert_eq!(result[0].max_assignment_mark, "10");
+    assert_eq!(result[0].assignment_weightage_mark, "10");
+    assert_eq!(result[0].due_date, "02-May-2026");
+    assert_eq!(result[0].can_qp_download, false);
+    assert_eq!(
+        result[0].da_download_url,
+        "examinations/downloadSTudentDA/DA01/AP2025264000667"
+    );
+    assert_eq!(result[0].qp_download_url, "");
+    assert_eq!(result[0].can_update, true);
+    assert_eq!(result[0].mcode, "DA01");
+    assert_eq!(result[1].mcode, "DA02");
+    assert_eq!(result[0].submission_status, "20 Jan 2026 03:09 PM");
+    assert_eq!(result.len(), 2);
+}
 
-	#[test]
-	fn test_parse_process_upload_assignment_response() {
-		//digital assignments process upload response
-		let html = r#"<!DOCTYPE html>
+#[test]
+fn test_parse_process_upload_assignment_response() {
+    //digital assignments process upload response
+    let html = r#"<!DOCTYPE html>
 <!--
   Author: Prabakaran Ramu
   Date  : 23/06/2018
@@ -1393,13 +1397,16 @@ use lib_vtop::api::vtop::parser::digital_assignment_parser::
 
 </body>
 </html>"#;
-		assert_eq!(parse_process_upload_assignment_response(html.to_string())[0][1],"Experiment-2");
-	}
+    assert_eq!(
+        parse_process_upload_assignment_response(html.to_string())[0][1],
+        "Experiment-2"
+    );
+}
 
-	#[test]
-	fn test_parse_upload_assignment_response() {
-		//digital assignments upload response
-		let html = r#"<!DOCTYPE html>
+#[test]
+fn test_parse_upload_assignment_response() {
+    //digital assignments upload response
+    let html = r#"<!DOCTYPE html>
 <!--
   Author: Prabakaran Ramu
   Date  : 23/06/2018
@@ -2123,7 +2130,7 @@ use lib_vtop::api::vtop::parser::digital_assignment_parser::
 </html>
 	"#;
 
-		let html1 = r#"<!DOCTYPE html>
+    let html1 = r#"<!DOCTYPE html>
 <!--
   Author: Prabakaran Ramu
   Date  : 23/06/2018
@@ -2718,7 +2725,7 @@ use lib_vtop::api::vtop::parser::digital_assignment_parser::
 </body>
 </html>	"#;
 
-		let html2 = r#"<!DOCTYPE html>
+    let html2 = r#"<!DOCTYPE html>
 <!--
  Author: Packialakshmi V
  Date  : 08/10/2018
@@ -2918,9 +2925,16 @@ use lib_vtop::api::vtop::parser::digital_assignment_parser::
 </body>
 </html>"#;
 
-		assert_eq!(parse_upload_assignment_response(html.to_string()), "Uploaded successfully");
-		assert_eq!(parse_upload_assignment_response(html1.to_string()), "Upload Restricted Mark Awarded");
-		assert_eq!(parse_upload_assignment_response(html2.to_string()), "Invalid OTP. Please try again.");
-
-	}
-
+    assert_eq!(
+        parse_upload_assignment_response(html.to_string()),
+        "Uploaded successfully"
+    );
+    assert_eq!(
+        parse_upload_assignment_response(html1.to_string()),
+        "Upload Restricted Mark Awarded"
+    );
+    assert_eq!(
+        parse_upload_assignment_response(html2.to_string()),
+        "Invalid OTP. Please try again."
+    );
+}
