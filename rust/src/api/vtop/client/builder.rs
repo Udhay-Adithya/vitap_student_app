@@ -212,11 +212,11 @@ impl VtopClient {
         headers.insert("Sec-Fetch-User", HeaderValue::from_static("?1"));
         headers.insert("Priority", HeaderValue::from_static("u=0, i"));
 
-        let mut  client_builder  = reqwest::Client::builder()
+        let mut client_builder = reqwest::Client::builder()
             .default_headers(headers)
             .cookie_store(true)
             .cookie_provider(cookie_store);
-           if let Ok(cert) = Certificate::from_pem(VITAP_CUSTOM_CERT_PEM.as_bytes()) {
+        if let Ok(cert) = Certificate::from_pem(VITAP_CUSTOM_CERT_PEM.as_bytes()) {
             client_builder = client_builder.add_root_certificate(cert);
         }
         let client: Client = client_builder.build().unwrap();

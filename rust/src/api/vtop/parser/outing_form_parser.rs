@@ -5,7 +5,7 @@ use scraper::{Html, Selector};
 pub fn parse_outing_form(html: String) -> Result<OutingInfo, VtopError> {
     let document = Html::parse_document(&html);
 
-        let input_selector = Selector::parse("input")
+    let input_selector = Selector::parse("input")
         .map_err(|_| VtopError::ParseError("Failed to create selector".to_string()))?;
 
     let mut outing_info = OutingInfo {
@@ -37,7 +37,9 @@ pub fn parse_outing_form(html: String) -> Result<OutingInfo, VtopError> {
 
     // Validate that we got the required fields
     if outing_info.registration_number.is_empty() {
-        return Err(VtopError::ParseError("Failed to parse outing form - missing registration number".to_string()));
+        return Err(VtopError::ParseError(
+            "Failed to parse outing form - missing registration number".to_string(),
+        ));
     }
 
     Ok(outing_info)

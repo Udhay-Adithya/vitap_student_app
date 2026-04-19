@@ -145,7 +145,7 @@ pub fn parse_student_profile(html: String) -> StudentProfile {
         credits_registered: "N/A".to_string(),
         credits_earned: "N/A".to_string(),
         cgpa: "N/A".to_string(),
-        courses:  Vec::new(),
+        courses: Vec::new(),
     };
 
     StudentProfile {

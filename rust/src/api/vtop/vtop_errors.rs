@@ -96,7 +96,7 @@ impl VtopError {
             VtopError::ResponseReadError => "Failed to read server response. Please try again.".to_string(),
         }
     }
-    
+
     /// Get the error type as a string for programmatic handling
     #[frb]
     pub fn error_type(&self) -> String {
@@ -119,8 +119,12 @@ impl VtopError {
             VtopError::DigitalAssignmentFileNotFound => "FileNotFound".to_string(),
             VtopError::DigitalAssignmentFileTypeNotSupported => "FileTypeNotSupported".to_string(),
             VtopError::DigitalAssignmentFileSizeExceeded => "FileSizeExceeded".to_string(),
-            VtopError::DigitalAssignmentUploadOtpRequired => "DigitalAssignmentUploadOtpRequired".to_string(),
-            VtopError::DigitalAssignmentUploadIncorrectOtp => "DigitalAssignmentUploadIncorrectOtp".to_string(),
+            VtopError::DigitalAssignmentUploadOtpRequired => {
+                "DigitalAssignmentUploadOtpRequired".to_string()
+            }
+            VtopError::DigitalAssignmentUploadIncorrectOtp => {
+                "DigitalAssignmentUploadIncorrectOtp".to_string()
+            }
             VtopError::LoginOtpRequired => "LoginOtpRequired".to_string(),
             VtopError::LoginOtpIncorrect => "LoginOtpIncorrect".to_string(),
             VtopError::LoginOtpExpired => "LoginOtpExpired".to_string(),
@@ -156,8 +160,12 @@ impl std::fmt::Display for VtopError {
             VtopError::DigitalAssignmentFileNotFound => write!(f, "File Selection Error"),
             VtopError::DigitalAssignmentFileTypeNotSupported => write!(f, "File Selection Error"),
             VtopError::DigitalAssignmentFileSizeExceeded => write!(f, "File Selection Error"),
-            VtopError::DigitalAssignmentUploadOtpRequired => write!(f, "Digital Assignment Upload OTP Required"),
-            VtopError::DigitalAssignmentUploadIncorrectOtp => write!(f, "Digital Assignment Upload Incorrect OTP"),
+            VtopError::DigitalAssignmentUploadOtpRequired => {
+                write!(f, "Digital Assignment Upload OTP Required")
+            }
+            VtopError::DigitalAssignmentUploadIncorrectOtp => {
+                write!(f, "Digital Assignment Upload Incorrect OTP")
+            }
             VtopError::LoginOtpRequired => write!(f, "Login OTP Required"),
             VtopError::LoginOtpIncorrect => write!(f, "Login OTP Incorrect"),
             VtopError::LoginOtpExpired => write!(f, "Login OTP Expired"),
@@ -176,11 +184,17 @@ pub fn map_reqwest_error(err: reqwest::Error) -> VtopError {
     } else if err.is_connect() {
         // Connection errors can have multiple causes
         let err_string = err.to_string().to_lowercase();
-        if err_string.contains("dns") || err_string.contains("resolve") || err_string.contains("getaddrinfo") {
+        if err_string.contains("dns")
+            || err_string.contains("resolve")
+            || err_string.contains("getaddrinfo")
+        {
             VtopError::DnsError
         } else if err_string.contains("refused") {
             VtopError::ConnectionRefused
-        } else if err_string.contains("ssl") || err_string.contains("tls") || err_string.contains("certificate") {
+        } else if err_string.contains("ssl")
+            || err_string.contains("tls")
+            || err_string.contains("certificate")
+        {
             VtopError::SslError
         } else {
             VtopError::NetworkError
@@ -188,7 +202,10 @@ pub fn map_reqwest_error(err: reqwest::Error) -> VtopError {
     } else if err.is_request() {
         // Request building errors
         let err_string = err.to_string().to_lowercase();
-        if err_string.contains("ssl") || err_string.contains("tls") || err_string.contains("certificate") {
+        if err_string.contains("ssl")
+            || err_string.contains("tls")
+            || err_string.contains("certificate")
+        {
             VtopError::SslError
         } else {
             VtopError::NetworkError
