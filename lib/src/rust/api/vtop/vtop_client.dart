@@ -327,6 +327,13 @@ abstract class VtopClient implements RustOpaqueInterface {
     required String semesterId,
   });
 
+  /// Fetches the complete list of all faculty members in a single request.
+  ///
+  /// Uses `empId=` to retrieve every faculty member from VTOP in one HTTP call,
+  /// returning their basic details (name, designation, school, employee ID).
+  /// Use `get_faculty_data()` on a specific `emp_id` to get full profile details.
+  Future<VtopResultVecGetFaculty> getAllFaculty();
+
   /// Retrieves the attendance summary for all courses in a specific semester.
   ///
   /// Fetches attendance statistics for each registered course including total classes,

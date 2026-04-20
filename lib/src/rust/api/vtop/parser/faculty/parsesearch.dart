@@ -9,7 +9,17 @@ import 'package:meta/meta.dart' as meta;
 import '../../../../frb_generated.dart';
 import '../../types/faculty.dart';
 
+// These functions are ignored because they are not marked as `pub`: `clean`, `extract_emp_id_from_row`
+
+/// Parse the first matching faculty from a search-by-name/id response.
+/// Used by the existing single-search flow.
 Future<GetFaculty> parseFacultySearch({required String html}) => RustLib
     .instance
     .api
     .crateApiVtopParserFacultyParsesearchParseFacultySearch(html: html);
+
+/// Parse every row from the faculty-list response (e.g. empId=*).
+/// Returns one `GetFaculty` per data row, skipping the header row.
+Future<List<GetFaculty>> parseAllFacultySearch({required String html}) =>
+    RustLib.instance.api
+        .crateApiVtopParserFacultyParsesearchParseAllFacultySearch(html: html);

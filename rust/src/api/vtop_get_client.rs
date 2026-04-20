@@ -159,6 +159,13 @@ pub async fn fetch_faculty_data(
 }
 
 #[flutter_rust_bridge::frb()]
+pub async fn fetch_all_faculty(client: &mut VtopClient) -> Result<String, VtopError> {
+    let faculty_list = client.get_all_faculty().await?;
+    serde_json::to_string(&faculty_list)
+        .map_err(|e| VtopError::ParseError(format!("Failed to serialize faculty list: {}", e)))
+}
+
+#[flutter_rust_bridge::frb()]
 pub async fn fetch_weekend_outing_reports(client: &mut VtopClient) -> Result<String, VtopError> {
     let weekend_outing_records = client.get_weekend_outing_reports().await?;
     serde_json::to_string(&weekend_outing_records).map_err(|e| {

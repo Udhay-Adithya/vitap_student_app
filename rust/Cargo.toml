@@ -56,3 +56,7 @@ debug = true
 [[bin]]
 name = "dryrun"
 path = "src/dryrun.rs"
+
+[[bin]]
+name = "faculty_fetch"
+path = "src/faculty_fetch.rs"

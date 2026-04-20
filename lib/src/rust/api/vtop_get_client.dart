@@ -124,6 +124,9 @@ Future<FacultyDetails> fetchFacultyData({
   empId: empId,
 );
 
+Future<String> fetchAllFaculty({required VtopClient client}) =>
+    RustLib.instance.api.crateApiVtopGetClientFetchAllFaculty(client: client);
+
 Future<String> fetchWeekendOutingReports({required VtopClient client}) =>
     RustLib.instance.api.crateApiVtopGetClientFetchWeekendOutingReports(
       client: client,

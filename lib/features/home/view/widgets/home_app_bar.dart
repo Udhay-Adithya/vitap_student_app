@@ -4,7 +4,7 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:vit_ap_student_app/core/providers/bottom_nav_provider.dart';
 import 'package:vit_ap_student_app/core/providers/user_preferences_notifier.dart';
 import 'package:vit_ap_student_app/features/course_page/view/pages/course_page.dart';
-import 'package:vit_ap_student_app/features/vtop_webview/view/pages/vtop_webview_page.dart';
+import 'package:vit_ap_student_app/features/home/view/pages/faculty_page.dart';
 
 class HomeAppBar extends ConsumerWidget {
   const HomeAppBar({super.key});
@@ -50,7 +50,7 @@ class HomeAppBar extends ConsumerWidget {
                     height: 60,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.grey.withValues(alpha: 0.2),
+                      color: Theme.of(context).colorScheme.surfaceContainer,
                     ),
                     child: Consumer(
                       builder: (context, ref, child) {
@@ -75,17 +75,16 @@ class HomeAppBar extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 4.0),
                   child: Container(
-                    width: 64,
-                    height: 64,
-                    decoration: const BoxDecoration(shape: BoxShape.circle),
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).colorScheme.surfaceContainer,
+                    ),
                     child: Consumer(
                       builder: (context, ref, child) {
                         return IconButton(
-                          icon: Image.asset(
-                            height: 64,
-                            'assets/images/icons/vitap_icon.png',
-                            fit: BoxFit.fill,
-                          ),
+                          icon: const Icon(Iconsax.teacher_copy, size: 20),
                           splashRadius: 30,
                           color: Theme.of(context).colorScheme.primary,
                           style: IconButton.styleFrom(
@@ -95,7 +94,7 @@ class HomeAppBar extends ConsumerWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute<void>(
-                                builder: (builder) => const VtopWebViewPage(),
+                                builder: (builder) => const FacultiesPage(),
                               ),
                             );
                           },

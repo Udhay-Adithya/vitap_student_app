@@ -12,3 +12,6 @@ abstract class VtopResultFacultyDetails implements RustOpaqueInterface {}
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<VtopResult < GetFaculty >>>
 abstract class VtopResultGetFaculty implements RustOpaqueInterface {}
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<VtopResult < Vec < GetFaculty > >>>
+abstract class VtopResultVecGetFaculty implements RustOpaqueInterface {}
