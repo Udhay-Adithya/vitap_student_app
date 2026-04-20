@@ -21,11 +21,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initDependencies();
 
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -50,9 +46,9 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
     _sessionStartTime = DateTime.now();
     _sessionEnded = false;
 
-    _otpSubscription = serviceLocator<VtopClientService>()
-        .onOtpRequired
-        .listen((_) => _showGlobalOtpSheet());
+    _otpSubscription = serviceLocator<VtopClientService>().onOtpRequired.listen(
+      (_) => _showGlobalOtpSheet(),
+    );
   }
 
   @override
@@ -73,6 +69,13 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
     _isOtpSheetShowing = true;
     showLoginOtpBottomSheet(context: overlay.context).whenComplete(() {
       _isOtpSheetShowing = false;
+      // Safety net: if the sheet closed without resolving OTP
+      // (e.g. unexpected dismissal), cancel the pending completer
+      // so the blocked operation doesn't hang forever.
+      final vtopService = serviceLocator<VtopClientService>();
+      if (vtopService.isOtpPending) {
+        vtopService.cancelOtp();
+      }
     });
   }
 
@@ -108,8 +111,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     // Init home widget
     ref.read(scheduleHomeWidgetProvider.notifier).initializeTimetable();
-    final isLoggedIn =
-        ref.read(currentUserProvider.notifier).isLoggedIn;
+    final isLoggedIn = ref.read(currentUserProvider.notifier).isLoggedIn;
     final themeMode = ref.watch(themeModeProvider);
     final userPreferences = ref.watch(userPreferencesProvider);
 
@@ -126,9 +128,8 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         builder: (context, child) {
           return MediaQuery(
             data: MediaQuery.of(context).copyWith(
-                textScaler: TextScaler.linear(
-              userPreferences.fontScale ?? 1.0,
-            )),
+              textScaler: TextScaler.linear(userPreferences.fontScale ?? 1.0),
+            ),
             child: child!,
           );
         },

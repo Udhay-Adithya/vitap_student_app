@@ -4,10 +4,6 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:vit_ap_student_app/features/digital_assignment/model/digital_assignment_model.dart';
 import 'package:vit_ap_student_app/features/digital_assignment/viewmodel/upload_assignment_viewmodel.dart';
 
-// ---------------------------------------------------------------------------
-// OTP Bottom Sheet – supports retry on incorrect OTP without re-uploading
-// ---------------------------------------------------------------------------
-
 class OtpBottomSheet extends ConsumerStatefulWidget {
   final DigitalAssignment assignment;
   final VoidCallback onCancel;
