@@ -459,17 +459,17 @@ impl VtopClient {
         Ok(parser::exam_schedule_parser::parse_schedule(text))
     }
 
-   /// Retrieves the digital assignments for all courses in a specific semester.
-   ///
-   /// # Arguments
-   ///
-   /// * `semester_id` - The unique identifier for the semester (obtained from `get_semesters()`)
-   ///
-   /// # Returns
-   ///
-   /// Returns a `VtopResult<Vec<DigitalAssignments>>` containing a vector of digital assignments
-   /// where each assignment includes course code, title, type, faculty name, class ID, and
-   /// a list of assignment details (title, due date, submission status, marks).
+    /// Retrieves the digital assignments for all courses in a specific semester.
+    ///
+    /// # Arguments
+    ///
+    /// * `semester_id` - The unique identifier for the semester (obtained from `get_semesters()`)
+    ///
+    /// # Returns
+    ///
+    /// Returns a `VtopResult<Vec<DigitalAssignments>>` containing a vector of digital assignments
+    /// where each assignment includes course code, title, type, faculty name, class ID, and
+    /// a list of assignment details (title, due date, submission status, marks).
 
     pub async fn get_all_digital_assignments(
         &mut self,
@@ -510,16 +510,16 @@ impl VtopClient {
         Ok(assignments)
     }
 
-   /// Retrieves the digital assignments for a specific course.
-   ///
-   /// # Arguments
-   ///
-   /// * `class_id` - The unique identifier for the class (obtained from `get_all_digital_assignments()`)
-   ///
-   /// # Returns
-   ///
-   /// Returns a `VtopResult<Vec<AssignmentRecordEach>>` containing assignment details including
-   /// serial number, title, due date, submission status, marks, and weightage.
+    /// Retrieves the digital assignments for a specific course.
+    ///
+    /// # Arguments
+    ///
+    /// * `class_id` - The unique identifier for the class (obtained from `get_all_digital_assignments()`)
+    ///
+    /// # Returns
+    ///
+    /// Returns a `VtopResult<Vec<AssignmentRecordEach>>` containing assignment details including
+    /// serial number, title, due date, submission status, marks, and weightage.
 
     pub async fn get_per_course_dassignments(
         &mut self,
@@ -536,8 +536,8 @@ impl VtopClient {
         let body = format!(
             "authorizedID={}&x={}&classId={}&_csrf={}",
             self.username,
-                urlencoding::encode(&timestamp).to_string(),
-                class_id,
+            urlencoding::encode(&timestamp).to_string(),
+            class_id,
             self.session
                 .get_csrf_token()
                 .ok_or(VtopError::SessionExpired)?,
@@ -578,7 +578,7 @@ impl VtopClient {
 
     ///     Returns:
     ///     - `VtopResult<Vec<u8>>` containing the PDF bytes of the digital assignment or question paper.
-    
+
     pub async fn get_da_or_qp_pdf(&mut self, da_qp_download_url: String) -> VtopResult<Vec<u8>> {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
@@ -613,14 +613,13 @@ impl VtopClient {
         class_id: &str,
         mode: &str,
     ) -> VtopResult<Vec<Vec<String>>> {
-
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
-    
-    // This method call is required due to a server-side restriction, not to retrieve any information.
-    // Without calling `examinations/processDigitalAssignment` with this specific `class_id` in the request body,
-    // the server will not accept upload requests.
+
+        // This method call is required due to a server-side restriction, not to retrieve any information.
+        // Without calling `examinations/processDigitalAssignment` with this specific `class_id` in the request body,
+        // the server will not accept upload requests.
         let pre_request_url = format!(
             "{}/vtop/examinations/processDigitalAssignment",
             self.config.base_url
@@ -629,15 +628,20 @@ impl VtopClient {
         let pre_request_body = format!(
             "authorizedID={}&x={}&classId={}&_csrf={}",
             self.username,
-                urlencoding::encode(&timestamp).to_string(),
-                class_id,
+            urlencoding::encode(&timestamp).to_string(),
+            class_id,
             self.session
                 .get_csrf_token()
                 .ok_or(VtopError::SessionExpired)?,
         );
-        self.client.post(pre_request_url).body(pre_request_body).send().await.map_err(map_reqwest_error)?;
-    // self.get_per_course_dassignments(class_id).await?;
-    // Proceed to upload after the above call.
+        self.client
+            .post(pre_request_url)
+            .body(pre_request_body)
+            .send()
+            .await
+            .map_err(map_reqwest_error)?;
+        // self.get_per_course_dassignments(class_id).await?;
+        // Proceed to upload after the above call.
 
         let url = format!(
             "{}/vtop/examinations/processDigitalAssignmentUpload",
@@ -647,9 +651,9 @@ impl VtopClient {
         let body = format!(
             "authorizedID={}&x={}&classId={}&mode={}&_csrf={}",
             self.username,
-                urlencoding::encode(&timestamp).to_string(),
-                class_id,
-                    mode,
+            urlencoding::encode(&timestamp).to_string(),
+            class_id,
+            mode,
             self.session
                 .get_csrf_token()
                 .ok_or(VtopError::SessionExpired)?,
@@ -674,11 +678,15 @@ impl VtopClient {
         file_name: String,
         file_bytes: Vec<u8>,
     ) -> VtopResult<String> {
-
         if file_name.is_empty() || file_bytes.is_empty() {
             return Err(VtopError::DigitalAssignmentFileNotFound);
         }
-        if !(file_name.ends_with(".pdf") || file_name.ends_with(".docx") || file_name.ends_with(".doc") || file_name.ends_with(".xls") || file_name.ends_with(".xlsx")) {
+        if !(file_name.ends_with(".pdf")
+            || file_name.ends_with(".docx")
+            || file_name.ends_with(".doc")
+            || file_name.ends_with(".xls")
+            || file_name.ends_with(".xlsx"))
+        {
             return Err(VtopError::DigitalAssignmentFileTypeNotSupported);
         }
         if file_bytes.len() > 4 * 1024 * 1024 {
@@ -690,10 +698,7 @@ impl VtopClient {
         }
 
         let process_vectors = self
-            .process_upload_course_dassignment(
-                class_id,
-                mode,
-            )
+            .process_upload_course_dassignment(class_id, mode)
             .await?;
         let upload_url = format!(
             "{}/vtop/examinations/doDAssignmentUploadMethod",
@@ -720,7 +725,8 @@ impl VtopClient {
             .file_name(file_name)
             .mime_str(mime)
             .unwrap();
-        upload_form = upload_form.part("studDaUpload", file_part)
+        upload_form = upload_form
+            .part("studDaUpload", file_part)
             .text(
                 "_csrf",
                 self.session
@@ -729,7 +735,7 @@ impl VtopClient {
             )
             .text("classId", class_id.to_string())
             .text("mCode", mode.to_string());
-         let res = self
+        let res = self
             .client
             .post(upload_url)
             .multipart(upload_form)
@@ -747,17 +753,12 @@ impl VtopClient {
             // When the `DigitalAssignmentUploadOtpRequired` error occurs,
             // a call should be made to `upload_course_dassignment_otp` with the user-provided OTP.
             Err(VtopError::DigitalAssignmentUploadOtpRequired)
-        }else{
+        } else {
             Ok(result)
         }
-
     }
 
-     pub async fn upload_course_dassignment_otp(
-        &mut self,
-        otp_email: &str,
-    ) -> VtopResult<String> {
-
+    pub async fn upload_course_dassignment_otp(&mut self, otp_email: &str) -> VtopResult<String> {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
@@ -766,7 +767,7 @@ impl VtopClient {
             "{}/vtop/examinations/doDAssignmentOtpUpload",
             self.config.base_url
         );
-        let form = Form::new()  
+        let form = Form::new()
             .text("authorizedID", self.username.clone())
             .text("otpEmail", otp_email.to_string())
             .text(
@@ -775,23 +776,23 @@ impl VtopClient {
                     .get_csrf_token()
                     .ok_or(VtopError::SessionExpired)?,
             );
-            let res = self
-                .client
-                .post(url)
-                .multipart(form)
-                .send()
-                .await
-                .map_err(map_reqwest_error)?;
-            // Check for session expiration and auto re-authenticate if needed
-            self.handle_session_check(&res).await?;
-            let text = res.text().await.map_err(map_response_read_error)?;
-            let result = parser::digital_assignment_parser::parse_upload_assignment_response(text);
-            if result=="Invalid OTP. Please try again.".to_string() {
-                // OTP was incorrect.
-                // Need to call again upload_course_dassignment_otp with correct OTP.
-                Err(VtopError::DigitalAssignmentUploadIncorrectOtp)
-            }else{
-                Ok(result)
-            }
+        let res = self
+            .client
+            .post(url)
+            .multipart(form)
+            .send()
+            .await
+            .map_err(map_reqwest_error)?;
+        // Check for session expiration and auto re-authenticate if needed
+        self.handle_session_check(&res).await?;
+        let text = res.text().await.map_err(map_response_read_error)?;
+        let result = parser::digital_assignment_parser::parse_upload_assignment_response(text);
+        if result == "Invalid OTP. Please try again.".to_string() {
+            // OTP was incorrect.
+            // Need to call again upload_course_dassignment_otp with correct OTP.
+            Err(VtopError::DigitalAssignmentUploadIncorrectOtp)
+        } else {
+            Ok(result)
+        }
     }
 }

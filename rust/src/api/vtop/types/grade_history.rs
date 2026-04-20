@@ -1,6 +1,6 @@
+use super::GradeCourseHistory;
 use flutter_rust_bridge::frb;
 use serde::{Deserialize, Serialize};
-use super::GradeCourseHistory;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[frb(dart_metadata=("freezed", "immutable" import "package:meta/meta.dart" as meta))]

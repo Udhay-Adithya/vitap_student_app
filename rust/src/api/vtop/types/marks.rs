@@ -29,4 +29,3 @@ pub struct Marks {
     pub slot: String,
     pub details: Vec<MarksRecordEach>,
 }
-

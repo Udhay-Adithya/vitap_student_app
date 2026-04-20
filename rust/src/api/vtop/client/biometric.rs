@@ -1,5 +1,9 @@
 use crate::api::vtop::{
-    parser, types::*, vtop_client::VtopClient, vtop_errors::VtopError, vtop_errors::VtopResult,
+    parser,
+    types::*,
+    vtop_client::VtopClient,
+    vtop_errors::VtopError,
+    vtop_errors::VtopResult,
     vtop_errors::{map_reqwest_error, map_response_read_error},
 };
 
@@ -39,18 +43,15 @@ impl VtopClient {
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let records = client.get_biometric_data("15-Oct-2024".to_string()).await?;
     /// for record in records {
-    ///     println!("Entry: {}, Exit: {}", 
-    ///         record.entry_time, 
+    ///     println!("Entry: {}, Exit: {}",
+    ///         record.entry_time,
     ///         record.exit_time
     ///     );
     /// }
     /// # Ok(())
     /// # }
     /// ```
-    pub async fn get_biometric_data(
-        &mut self,
-        date: String,
-    ) -> VtopResult<Vec<BiometricRecord>> {
+    pub async fn get_biometric_data(&mut self, date: String) -> VtopResult<Vec<BiometricRecord>> {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }

@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use fake_user_agent::get_rua;
+use serde::{Deserialize, Serialize};
 
 use super::{session_manager::SessionManager, vtop_client::VtopClient};
 

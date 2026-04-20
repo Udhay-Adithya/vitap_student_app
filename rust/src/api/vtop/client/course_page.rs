@@ -1,6 +1,9 @@
 use crate::api::vtop::{
-    parser::course_page_parser, types::course_page::*, vtop_client::VtopClient, 
-    vtop_errors::VtopError, vtop_errors::VtopResult,
+    parser::course_page_parser,
+    types::course_page::*,
+    vtop_client::VtopClient,
+    vtop_errors::VtopError,
+    vtop_errors::VtopResult,
     vtop_errors::{map_reqwest_error, map_response_read_error},
 };
 use chrono::Utc;
@@ -188,7 +191,10 @@ impl VtopClient {
         self.handle_session_check(&res).await?;
 
         let text = res.text().await.map_err(map_response_read_error)?;
-        Ok(course_page_parser::parse_slots_for_course_page(text, semester_id))
+        Ok(course_page_parser::parse_slots_for_course_page(
+            text,
+            semester_id,
+        ))
     }
 
     /// Retrieves the detailed course page with all lectures and materials.
@@ -304,7 +310,7 @@ impl VtopClient {
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Get course detail first
     /// let detail = client.get_course_detail("AP2025264", "70735", "AP2025264000442").await?;
-    /// 
+    ///
     /// // Download a specific lecture material
     /// if let Some(lecture) = detail.lectures.first() {
     ///     if let Some(material) = lecture.reference_materials.first() {
@@ -371,7 +377,7 @@ impl VtopClient {
     /// ```
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let detail = client.get_course_detail("AP2025264", "70735", "AP2025264000442").await?;
-    /// 
+    ///
     /// if let Some(download_path) = detail.download_all_path {
     ///     let bytes = client.download_all_course_materials(&download_path).await?;
     ///     std::fs::write("all_materials.zip", bytes)?;
@@ -380,7 +386,10 @@ impl VtopClient {
     /// # Ok(())
     /// # }
     /// ```
-    pub async fn download_all_course_materials(&mut self, download_path: &str) -> VtopResult<Vec<u8>> {
+    pub async fn download_all_course_materials(
+        &mut self,
+        download_path: &str,
+    ) -> VtopResult<Vec<u8>> {
         // This uses the same mechanism as download_course_material
         self.download_course_material(download_path).await
     }

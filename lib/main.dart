@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +11,8 @@ import 'package:vit_ap_student_app/core/providers/schedule_home_widget_notifier.
 import 'package:vit_ap_student_app/core/providers/theme_mode_notifier.dart';
 import 'package:vit_ap_student_app/core/providers/user_preferences_notifier.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
+import 'package:vit_ap_student_app/core/services/vtop_service.dart';
+import 'package:vit_ap_student_app/features/auth/view/widgets/login_otp_bottom_sheet.dart';
 import 'package:vit_ap_student_app/features/onboarding/view/pages/onboarding_page.dart';
 import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:wiredash/wiredash.dart';
@@ -33,8 +37,11 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   final AnalyticsRouteObserver _routeObserver = AnalyticsRouteObserver();
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   DateTime? _sessionStartTime;
   bool _sessionEnded = false;
+  StreamSubscription<void>? _otpSubscription;
+  bool _isOtpSheetShowing = false;
 
   @override
   void initState() {
@@ -42,13 +49,31 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _sessionStartTime = DateTime.now();
     _sessionEnded = false;
+
+    _otpSubscription = serviceLocator<VtopClientService>()
+        .onOtpRequired
+        .listen((_) => _showGlobalOtpSheet());
   }
 
   @override
   void dispose() {
+    _otpSubscription?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     _endSessionIfNeeded();
     super.dispose();
+  }
+
+  void _showGlobalOtpSheet() {
+    if (_isOtpSheetShowing) return;
+    final navigatorState = _navigatorKey.currentState;
+    if (navigatorState == null) return;
+    final overlay = navigatorState.overlay;
+    if (overlay == null) return;
+
+    _isOtpSheetShowing = true;
+    showLoginOtpBottomSheet(context: overlay.context).whenComplete(() {
+      _isOtpSheetShowing = false;
+    });
   }
 
   void _endSessionIfNeeded() {
@@ -92,6 +117,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       projectId: 'vit-ap-student-app-uh1uuvl',
       secret: dotenv.env['WIREDASH_SECRET_KEY']!,
       child: MaterialApp(
+        navigatorKey: _navigatorKey,
         themeAnimationCurve: Curves.easeInOut,
         debugShowCheckedModeBanner: false,
         theme: themeMode,

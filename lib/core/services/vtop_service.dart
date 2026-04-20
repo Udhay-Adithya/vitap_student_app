@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/vtop_client.dart';
+import 'package:vit_ap_student_app/src/rust/api/vtop/vtop_errors.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart';
 
 /// Singleton service for managing VTOP client instances
@@ -14,14 +16,19 @@ import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart';
 /// - Proactive session renewal before expiry
 /// - Automatic retry mechanism for failed requests
 /// - Proper error handling and session state management
+/// - Transparent OTP handling via Completer pattern
 
 class VtopClientService {
   static VtopClientService? _instance;
   VtopClient? _client;
   bool _isInitialized = false;
+  bool _otpPending = false;
   String? _currentUsername;
   String? _currentPasswordDigest;
   DateTime? _sessionCreatedAt;
+  Completer<void>? _otpCompleter;
+  final StreamController<void> _otpRequiredController =
+      StreamController<void>.broadcast();
 
   // VTOP sessions expire after 15 minutes, we'll refresh at 14 minutes to be safe
   static const Duration _sessionExpiryDuration = Duration(minutes: 15);
@@ -43,17 +50,25 @@ class VtopClientService {
   String _digestOf(String value) =>
       sha256.convert(utf8.encode(value)).toString();
 
+  /// Stream that emits when OTP verification is required.
+  /// The global UI listener subscribes to this to show the OTP bottom sheet.
+  Stream<void> get onOtpRequired => _otpRequiredController.stream;
+
   /// Get the VTOP client instance, initializing if necessary
   /// Automatically handles session expiry and re-authentication
+  /// If OTP is pending, waits for OTP resolution before returning
   Future<VtopClient> getClient({
     required String username,
     required String password,
   }) async {
-    // Check if we need to create a new client due to:
-    // 1. No existing client
-    // 2. Not initialized
-    // 3. Different credentials
-    // 4. Session approaching expiry (proactive refresh)
+    // If OTP is pending, wait for resolution instead of returning partial client
+    if (_otpPending && _otpCompleter != null) {
+      await _otpCompleter!.future;
+      if (_client != null && _isInitialized) {
+        return _client!;
+      }
+    }
+
     final bool needsNewClient = _client == null ||
         !_isInitialized ||
         _currentUsername != username ||
@@ -120,6 +135,9 @@ class VtopClientService {
   }
 
   /// Initialize the VTOP client and login
+  /// When OTP is required, pauses and waits for the user to verify via the
+  /// global OTP bottom sheet. The operation that triggered this call
+  /// transparently resumes once OTP is verified.
   Future<void> _initializeClient({
     required String username,
     required String password,
@@ -136,6 +154,31 @@ class VtopClientService {
       _currentPasswordDigest = _digestOf(password);
       _sessionCreatedAt = DateTime.now();
       _isInitialized = true;
+    } on VtopError_LoginOtpRequired {
+      // Keep the client alive — OTP must be submitted on the same session
+      _currentUsername = username;
+      _currentPasswordDigest = _digestOf(password);
+      _otpPending = true;
+      _otpCompleter = Completer<void>();
+
+      // Notify the global UI listener to show the OTP bottom sheet
+      _otpRequiredController.add(null);
+
+      try {
+        // Wait for OTP to be resolved (submitLoginOtp completes this)
+        await _otpCompleter!.future;
+        // OTP verified successfully — session is now established
+      } catch (e) {
+        // OTP was cancelled — clean up
+        _isInitialized = false;
+        _client = null;
+        _currentUsername = null;
+        _currentPasswordDigest = null;
+        _sessionCreatedAt = null;
+        _otpPending = false;
+        _otpCompleter = null;
+        rethrow;
+      }
     } catch (e) {
       _isInitialized = false;
       _client = null;
@@ -197,8 +240,55 @@ class VtopClientService {
     throw Exception('Max retries exceeded');
   }
 
+  /// Submit login OTP on the pending client session.
+  /// On success, completes the internal Completer, which unblocks the
+  /// original getClient/executeWithRetry call transparently.
+  Future<void> submitLoginOtp(String otpCode) async {
+    if (!_otpPending || _client == null) {
+      throw StateError('No OTP-pending session');
+    }
+    await handleLoginOtp(client: _client!, otpCode: otpCode);
+    _otpPending = false;
+    _isInitialized = true;
+    _sessionCreatedAt = DateTime.now();
+    final completer = _otpCompleter;
+    _otpCompleter = null;
+    completer?.complete();
+  }
+
+  /// Resend login OTP on the pending client session
+  Future<void> resendLoginOtp() async {
+    if (!_otpPending || _client == null) {
+      throw StateError('No OTP-pending session');
+    }
+    await handleLoginOtpResend(client: _client!);
+  }
+
+  /// Whether an OTP is pending on the current client session
+  bool get isOtpPending => _otpPending;
+
+  /// Cancel the pending OTP verification.
+  /// Completes the internal Completer with an error so that the blocked
+  /// getClient/executeWithRetry call propagates a cancellation failure.
+  void cancelOtp() {
+    if (!_otpPending || _otpCompleter == null) return;
+    _otpPending = false;
+    final completer = _otpCompleter!;
+    _otpCompleter = null;
+    completer.completeError(
+      Exception('Login verification was cancelled. Please try again.'),
+    );
+  }
+
   /// Check if an error is retryable (session-related)
   bool _isRetryableError(dynamic error) {
+    // OTP errors are not retryable — they require user interaction
+    if (error is VtopError_LoginOtpRequired ||
+        error is VtopError_LoginOtpIncorrect ||
+        error is VtopError_LoginOtpExpired) {
+      return false;
+    }
+
     final errorString = error.toString().toLowerCase();
 
     // Check for session expiry indicators
@@ -211,8 +301,13 @@ class VtopClientService {
 
   /// Reset the client (for logout or credential changes)
   void resetClient() {
+    if (_otpPending && _otpCompleter != null) {
+      cancelOtp();
+    }
     _client = null;
     _isInitialized = false;
+    _otpPending = false;
+    _otpCompleter = null;
     _currentUsername = null;
     _currentPasswordDigest = null;
     _sessionCreatedAt = null;
@@ -253,5 +348,10 @@ class VtopClientService {
     final timeRemaining = expiryTime.difference(DateTime.now());
 
     return timeRemaining.isNegative ? Duration.zero : timeRemaining;
+  }
+
+  /// Dispose of the service resources
+  void dispose() {
+    _otpRequiredController.close();
   }
 }

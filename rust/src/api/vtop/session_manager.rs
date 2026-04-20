@@ -59,10 +59,10 @@ impl SessionManager {
     }
 
     /// Checks if a response indicates session expiration and handles it.
-    /// 
+    ///
     /// # Arguments
     /// * `response` - The HTTP response to check
-    /// 
+    ///
     /// # Returns
     /// Returns `Ok(())` if session is still valid, or `Err(VtopError::SessionExpired)` if expired
     pub fn check_session_expiration(&mut self, response: &Response) -> VtopResult<()> {

@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 mod api;
 
+use crate::api::vtop::vtop_errors::VtopError;
 use dotenv::dotenv;
 use std::env;
 use std::io::{self, Write};
@@ -86,11 +87,83 @@ async fn handle_login(client: &mut api::vtop::vtop_client::VtopClient) -> bool {
             print_success("VTOP login successful!");
             true
         }
+        Err(VtopError::LoginOtpRequired) => handle_login_otp(client).await,
         Err(e) => {
             print_error(&format!("VTOP login failed: {:?}", e));
             false
         }
     }
+}
+
+async fn handle_login_otp(client: &mut api::vtop::vtop_client::VtopClient) -> bool {
+    print_separator();
+
+    let mut otp_attempts = 0;
+
+    let mut time_stamp = chrono::Local::now().timestamp();
+
+    //The number of attempts is not limited by VTOP. This is only to prevent an infinite loop.
+    while otp_attempts < 4 {
+        otp_attempts += 1;
+        let login_otp = get_user_input("Enter OTP sent to your email || NA to resend otp : ");
+
+        if login_otp.trim().eq_ignore_ascii_case("NA") {
+            if time_stamp > chrono::Local::now().timestamp() {
+                print_error("Please wait before requesting a new OTP.");
+                let wait_time = time_stamp - chrono::Local::now().timestamp();
+                print_info(&format!(
+                    "You can request a new OTP in {} seconds.",
+                    wait_time
+                ));
+                otp_attempts -= 1;
+                continue;
+            }
+
+            match api::vtop_get_client::handle_login_otp_resend(client).await {
+                Ok(_) => {
+                    print_success("OTP resent successfully! Please check your email.");
+                    time_stamp = chrono::Local::now().timestamp() + 180;
+                    otp_attempts = 0;
+                    continue;
+                }
+                Err(e) => {
+                    print_error(&format!("Failed to resend OTP: {:?}", e));
+                    return false;
+                }
+            }
+        } else if login_otp.trim().len() != 6 {
+            print_error("OTP must be 6 characters long. Please try again.");
+            otp_attempts -= 1;
+            continue;
+        } else {
+            match api::vtop_get_client::handle_login_otp(client, login_otp).await {
+                Ok(_) => {
+                    print_success("VTOP login successful!");
+                    return true;
+                }
+                Err(VtopError::LoginOtpIncorrect) => {
+                    print_error("Incorrect OTP. Please try again.");
+                    if otp_attempts == 4 {
+                        print_error("Maximum OTP attempts reached. Login failed.");
+                        return false;
+                    } else {
+                        print_info(&format!("Attempt {}/4", otp_attempts));
+                        continue;
+                    }
+                }
+                Err(VtopError::LoginOtpExpired) => {
+                    otp_attempts -= 1; // Don't count expired OTP as an attempt
+                    print_error("OTP has expired. Please request a new one.");
+                    continue;
+                }
+                Err(e) => {
+                    print_error(&format!("VTOP login failed: {:?}", e));
+                    return false;
+                }
+            }
+        }
+    }
+    false
 }
 
 async fn handle_student_profile(client: &mut api::vtop::vtop_client::VtopClient) {

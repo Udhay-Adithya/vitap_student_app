@@ -1,5 +1,9 @@
 use crate::api::vtop::{
-    parser, types::*, vtop_client::VtopClient, vtop_errors::VtopError, vtop_errors::VtopResult,
+    parser,
+    types::*,
+    vtop_client::VtopClient,
+    vtop_errors::VtopError,
+    vtop_errors::VtopResult,
     vtop_errors::{map_reqwest_error, map_response_read_error},
 };
 
@@ -105,7 +109,7 @@ impl VtopClient {
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // First get the outing records
     /// let outings = client.get_general_outing_reports().await?;
-    /// 
+    ///
     /// // Download PDF for an approved outing
     /// if let Some(outing) = outings.iter().find(|o| o.status == "Approved") {
     ///     let pdf_bytes = client.get_general_outing_pdf(outing.leave_id.clone()).await?;
@@ -249,7 +253,7 @@ impl VtopClient {
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Get weekend outing records
     /// let outings = client.get_weekend_outing_reports().await?;
-    /// 
+    ///
     /// // Download PDF for a confirmed booking
     /// if let Some(outing) = outings.iter().find(|o| o.status == "Confirmed") {
     ///     let pdf_bytes = client.get_hostel_outing_pdf(outing.booking_id.clone()).await?;
@@ -342,7 +346,7 @@ impl VtopClient {
     ///     "15-Mar-2024".to_string(),
     ///     "18:00".to_string(),
     /// ).await?;
-    /// 
+    ///
     /// println!("Application response: {}", response);
     /// # Ok(())
     /// # }
@@ -359,7 +363,7 @@ impl VtopClient {
     ///     "20-Mar-2024".to_string(),
     ///     "21:00".to_string(),
     /// ).await?;
-    /// 
+    ///
     /// if response.contains("success") || response.contains("submitted") {
     ///     println!("Outing application submitted successfully");
     /// }
@@ -401,7 +405,7 @@ impl VtopClient {
 
         self.handle_session_check(&init_res).await?;
         let init_text = init_res.text().await.map_err(map_response_read_error)?;
-        
+
         // Parse the form to get student info
         let form_info = parser::outing_form_parser::parse_outing_form(init_text)?;
 
@@ -409,9 +413,11 @@ impl VtopClient {
         // Split times into hours and minutes
         let out_time_parts: Vec<&str> = out_time.split(':').collect();
         let in_time_parts: Vec<&str> = in_time.split(':').collect();
-        
+
         if out_time_parts.len() != 2 || in_time_parts.len() != 2 {
-            return Err(VtopError::ParseError("Invalid time format. Expected HH:MM".to_string()));
+            return Err(VtopError::ParseError(
+                "Invalid time format. Expected HH:MM".to_string(),
+            ));
         }
 
         let submit_url = format!("{}/vtop/hostel/saveGeneralOutingForm", self.config.base_url);
@@ -450,7 +456,7 @@ impl VtopClient {
 
         self.handle_session_check(&submit_res).await?;
         let response_text = submit_res.text().await.map_err(map_response_read_error)?;
-        
+
         // Parse the HTML response to extract the success/error message
         let parsed_message = parser::outing_response_parser::parse_outing_response(response_text);
         Ok(parsed_message)
@@ -505,7 +511,7 @@ impl VtopClient {
     ///     "18:00".to_string(),
     ///     "9876543210".to_string(),
     /// ).await?;
-    /// 
+    ///
     /// println!("Booking response: {}", response);
     /// # Ok(())
     /// # }
@@ -521,7 +527,7 @@ impl VtopClient {
     ///     "16:00".to_string(),
     ///     "9123456789".to_string(),
     /// ).await?;
-    /// 
+    ///
     /// if response.contains("success") || response.contains("booked") {
     ///     println!("Weekend outing booked successfully");
     /// }
@@ -562,7 +568,7 @@ impl VtopClient {
 
         self.handle_session_check(&init_res).await?;
         let init_text = init_res.text().await.map_err(map_response_read_error)?;
-        
+
         // Parse the form to get student info
         let form_info = parser::outing_form_parser::parse_outing_form(init_text)?;
 
@@ -600,7 +606,7 @@ impl VtopClient {
 
         self.handle_session_check(&submit_res).await?;
         let response_text = submit_res.text().await.map_err(map_response_read_error)?;
-        
+
         // Parse the HTML response to extract the success/error message
         let parsed_message = parser::outing_response_parser::parse_outing_response(response_text);
         Ok(parsed_message)
@@ -643,7 +649,7 @@ impl VtopClient {
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Delete a general outing application
     /// let response = client.delete_general_outing("L24044195432".to_string()).await?;
-    /// 
+    ///
     /// if response.contains("success") || response.contains("deleted") {
     ///     println!("Outing application deleted successfully");
     /// }
@@ -668,7 +674,10 @@ impl VtopClient {
             return Err(VtopError::SessionExpired);
         }
 
-        let url = format!("{}/vtop/hostel/deleteGeneralOutingInfo", self.config.base_url);
+        let url = format!(
+            "{}/vtop/hostel/deleteGeneralOutingInfo",
+            self.config.base_url
+        );
         let body = format!(
             "_csrf={}&LeaveId={}&authorizedID={}&x={}",
             self.session
@@ -682,7 +691,10 @@ impl VtopClient {
         let res = self
             .client
             .post(&url)
-            .header("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+            .header(
+                "Content-Type",
+                "application/x-www-form-urlencoded; charset=UTF-8",
+            )
             .header("X-Requested-With", "XMLHttpRequest")
             .body(body)
             .send()
@@ -729,7 +741,7 @@ impl VtopClient {
     /// let response = client.delete_weekend_outing(
     ///     "W24044341477".to_string(),
     /// ).await?;
-    /// 
+    ///
     /// if response.contains("success") || response.contains("deleted") {
     ///     println!("Weekend outing deleted successfully");
     /// }
@@ -755,7 +767,10 @@ impl VtopClient {
         let res = self
             .client
             .post(&url)
-            .header("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+            .header(
+                "Content-Type",
+                "application/x-www-form-urlencoded; charset=UTF-8",
+            )
             .header("X-Requested-With", "XMLHttpRequest")
             .body(body)
             .send()

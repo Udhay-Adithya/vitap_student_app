@@ -1,8 +1,8 @@
 use lib_vtop::api::vtop::parser::pending_payments_parser::parse_pending_payments;
 
-    #[test]
-    fn test_parse_pending_payments() {
-        let html = r#"
+#[test]
+fn test_parse_pending_payments() {
+    let html = r#"
        <!-- <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -888,10 +888,10 @@ color: white;
 </body>
 </html>
         "#;
-        let payments = parse_pending_payments(html.to_string());
-        assert_eq!(payments.len(), 3);
-        assert_eq!(payments[0].fprefno, "AM250003XXXX");
-        assert_eq!(payments[1].total_amount, "₹70000.0");
-        assert_eq!(payments[2].end_date, "NA");
-        println!("{:#?}", payments);
-    }
+    let payments = parse_pending_payments(html.to_string());
+    assert_eq!(payments.len(), 3);
+    assert_eq!(payments[0].fprefno, "AM250003XXXX");
+    assert_eq!(payments[1].total_amount, "₹70000.0");
+    assert_eq!(payments[2].end_date, "NA");
+    println!("{:#?}", payments);
+}

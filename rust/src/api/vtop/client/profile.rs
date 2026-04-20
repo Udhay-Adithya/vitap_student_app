@@ -1,5 +1,9 @@
 use crate::api::vtop::{
-    parser, types::*, vtop_client::VtopClient, vtop_errors::VtopError, vtop_errors::VtopResult,
+    parser,
+    types::*,
+    vtop_client::VtopClient,
+    vtop_errors::VtopError,
+    vtop_errors::VtopResult,
     vtop_errors::{map_reqwest_error, map_response_read_error},
 };
 
@@ -47,17 +51,17 @@ impl VtopClient {
     /// ```
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let grade_history = client.get_grade_history().await?;
-    /// 
+    ///
     /// // Display overall performance
     /// println!("CGPA: {:.2}", grade_history.cgpa);
     /// println!("Total Credits: {}", grade_history.total_credits);
-    /// 
+    ///
     /// // Display semester-wise performance
     /// for semester in &grade_history.semesters {
     ///     println!("\n{} - SGPA: {:.2}", semester.name, semester.sgpa);
     ///     
     ///     for course in &semester.courses {
-    ///         println!("  {} | {} | Grade: {} | Credits: {}", 
+    ///         println!("  {} | {} | Grade: {} | Credits: {}",
     ///             course.code,
     ///             course.name,
     ///             course.grade,
@@ -73,7 +77,7 @@ impl VtopClient {
     /// # async fn example2(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Calculate semester-wise GPA trend
     /// let grade_history = client.get_grade_history().await?;
-    /// 
+    ///
     /// println!("Academic Performance Trend:");
     /// for semester in &grade_history.semesters {
     ///     let bar = "█".repeat((semester.sgpa * 10.0) as usize);
@@ -165,7 +169,7 @@ impl VtopClient {
     /// This method makes two internal API calls:
     /// 1. Fetches basic profile information
     /// 2. Fetches grade history (via `get_grade_history()`)
-    /// 
+    ///
     /// Both are combined into a single `StudentProfile` object for convenience.
     ///
     /// # Examples
@@ -173,7 +177,7 @@ impl VtopClient {
     /// ```
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let profile = client.get_student_profile().await?;
-    /// 
+    ///
     /// // Display student information
     /// println!("=== Student Profile ===");
     /// println!("Name: {}", profile.student_name);
@@ -192,7 +196,7 @@ impl VtopClient {
     /// # async fn example2(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Generate a student report card
     /// let profile = client.get_student_profile().await?;
-    /// 
+    ///
     /// println!("╔═══════════════════════════════════════╗");
     /// println!("║       STUDENT ACADEMIC REPORT         ║");
     /// println!("╠═══════════════════════════════════════╣");

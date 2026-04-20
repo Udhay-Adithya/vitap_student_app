@@ -1,5 +1,9 @@
 use crate::api::vtop::{
-    parser, types::*, vtop_client::VtopClient, vtop_errors::VtopError, vtop_errors::VtopResult,
+    parser,
+    types::*,
+    vtop_client::VtopClient,
+    vtop_errors::VtopError,
+    vtop_errors::VtopResult,
     vtop_errors::{map_reqwest_error, map_response_read_error},
 };
 
@@ -41,7 +45,7 @@ impl VtopClient {
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // First get the list of receipts
     /// let receipts = client.get_payment_receipts().await?;
-    /// 
+    ///
     /// // Download a specific receipt
     /// if let Some(receipt) = receipts.first() {
     ///     let receipt_html = client.download_payment_receipt(
@@ -123,16 +127,16 @@ impl VtopClient {
     /// ```
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let receipts = client.get_payment_receipts().await?;
-    /// 
+    ///
     /// // Display payment history
     /// for receipt in &receipts {
-    ///     println!("Receipt: {} | Amount: ₹{} | Date: {}", 
+    ///     println!("Receipt: {} | Amount: ₹{} | Date: {}",
     ///         receipt.receipt_no,
     ///         receipt.amount,
     ///         receipt.payment_date
     ///     );
     /// }
-    /// 
+    ///
     /// // Calculate total paid
     /// let total: f64 = receipts.iter()
     ///     .map(|r| r.amount)
@@ -202,14 +206,14 @@ impl VtopClient {
     /// ```
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let pending = client.get_pending_payment().await?;
-    /// 
+    ///
     /// if pending.is_empty() {
     ///     println!("No pending payments - all clear!");
     /// } else {
     ///     println!("You have {} pending payment(s):", pending.len());
     ///     
     ///     for payment in &pending {
-    ///         println!("- {} | Amount: ₹{} | Due: {}", 
+    ///         println!("- {} | Amount: ₹{} | Due: {}",
     ///             payment.description,
     ///             payment.amount,
     ///             payment.due_date

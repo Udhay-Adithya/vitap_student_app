@@ -78,6 +78,15 @@ sealed class VtopError with _$VtopError implements FrbException {
   const factory VtopError.digitalAssignmentUploadIncorrectOtp() =
       VtopError_DigitalAssignmentUploadIncorrectOtp;
 
+  /// Login otp verification required
+  const factory VtopError.loginOtpRequired() = VtopError_LoginOtpRequired;
+
+  /// Login otp is incorrect
+  const factory VtopError.loginOtpIncorrect() = VtopError_LoginOtpIncorrect;
+
+  ///Login otp expired
+  const factory VtopError.loginOtpExpired() = VtopError_LoginOtpExpired;
+
   /// Get the raw error details for debugging (not for end users)
   Future<String> debugMessage() => RustLib.instance.api
       .crateApiVtopVtopErrorsVtopErrorDebugMessage(that: this);
