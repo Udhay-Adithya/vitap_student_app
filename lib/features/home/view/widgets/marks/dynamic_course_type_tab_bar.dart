@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vit_ap_student_app/core/common/widget/app_tab_bar.dart';
 
 /// A dynamic tab bar widget that handles all course types
 /// Including: Theory, Lab, Project, and any other course types
@@ -16,53 +17,12 @@ class DynamicCourseTypeTabBar extends StatelessWidget
   @override
   Size get preferredSize => const Size.fromHeight(80);
 
-  Widget _buildTab(BuildContext context, String label) {
-    return Container(
-      height: 60,
-      alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      decoration: BoxDecoration(
-        color: Theme.of(context)
-            .colorScheme
-            .secondaryContainer
-            .withValues(alpha: 0.25),
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Tab(
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: TabBar(
-        controller: controller,
-        isScrollable: courseTypes.length > 3,
-        dividerColor: Theme.of(context).colorScheme.surface,
-        labelPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-        splashBorderRadius: BorderRadius.circular(30),
-        labelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        unselectedLabelColor:
-            Theme.of(context).colorScheme.onSecondaryContainer,
-        labelColor: Theme.of(context).colorScheme.onSecondaryContainer,
-        indicator: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryContainer,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        splashFactory: InkRipple.splashFactory,
-        overlayColor: WidgetStateColor.resolveWith(
-          (states) => Theme.of(context).colorScheme.secondaryContainer,
-        ),
-        tabAlignment: courseTypes.length > 3 ? TabAlignment.start : null,
-        tabs: courseTypes.map((type) => _buildTab(context, type)).toList(),
-      ),
+    return AppTabBar(
+      controller: controller,
+      tabs: courseTypes,
+      isScrollable: courseTypes.length > 3,
     );
   }
 }
