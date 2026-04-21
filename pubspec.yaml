@@ -1,7 +1,7 @@
 name: vit_ap_student_app
 description: "VITAP Student"
 publish_to: "none"
-version: 2.3.1+24
+version: 2.3.2+25
 
 environment:
   sdk: ">=3.8.0 <4.0.0"

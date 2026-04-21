@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.2] - 2026-04-21
+
+### Added
+
+- Detailed account-locked instruction sheet shown when incorrect password is entered and the account is locked
+- Pull-to-refresh support on timetable, attendance, marks, exam schedule, and payment pages
+- OTP-based two-factor authentication support (Thanks to [@tarun-ainampudi](https://github.com/tarun-ainampudi))([#21](https://github.com/VITAP-Student-Project/vitap_student_app/pull/21))
+- Faculty page re-introduced
+
+### Changed
+
+- Outing and exam schedule pages now use a unified tab bar style for visual consistency
+- Wiredash feedback prompt frequency increased from 30 to 60 days
+- Migrated iOS app lifecycle to UIScene
+- Updated Rust dependencies
+
+### Fixed
+
+- Fixed contributors sheet failing to load intermittently
+- Fixed pending payments always appearing empty due to a parsing issue (Thanks to [@tarun-ainampudi](https://github.com/tarun-ainampudi))([#16](https://github.com/VITAP-Student-Project/vitap_student_app/pull/16))
+- Scoped SSL certificate bypass to the VTOP domain only, reducing the certificate trust surface
+- Added HTML attribute escaping in the webview form builder to prevent injection via dynamic values
+
+### Removed
+
+- Direct VTOP login feature temporarily removed
+
 ## [2.3.1] - 2026-03-05
 
 ### Changed

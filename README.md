@@ -16,7 +16,7 @@
     <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
     </a>
-    <img src="https://img.shields.io/badge/Version-2.3.1-blue.svg" alt="Version 2.3.1">
+    <img src="https://img.shields.io/badge/Version-2.3.2-blue.svg" alt="Version 2.3.2">
     <a href="https://github.com/Udhay-Adithya/vit_ap_student_app/issues">
     <img src="https://img.shields.io/github/issues/Udhay-Adithya/vit_ap_student_app" alt="License: MIT">
     </a>
@@ -198,7 +198,7 @@ See `LICENSE` for more information.
 
 ## 📢 Disclaimer
 
-> ***Note : This app is not an official application from VIT-AP University; it is developed by a fellow student for the benefit of other students. The app aims to provide a convenient tool for accessing academic information and fostering student interaction.***
+> ***Note : This app is not an official application from VIT-AP University; it is developed by a fellow student for the benefit of other students. The app aims to provide a convenient tool for accessing academic information only.***
 
 ## 📧 Contact
 
