@@ -181,7 +181,23 @@ impl VtopClient {
     /// - `Priority`: Request priority hints
     #[cfg(not(target_arch = "wasm32"))]
     fn make_client(cookie_store: Arc<Jar>, user_agent: &str) -> Client {
-        use reqwest::Certificate;
+        use rustls::{ClientConfig, RootCertStore};
+
+        // Build root cert store: Mozilla trusted roots + VITAP's Sectigo intermediate CA
+        let mut root_store = RootCertStore::empty();
+        root_store.extend(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
+
+        let mut pem_reader = std::io::BufReader::new(VITAP_CUSTOM_CERT_PEM.as_bytes());
+        for cert in rustls_pemfile::certs(&mut pem_reader).flatten() {
+            let _ = root_store.add(cert);
+        }
+
+        let tls_config =
+            ClientConfig::builder_with_provider(Arc::new(rustls::crypto::ring::default_provider()))
+                .with_safe_default_protocol_versions()
+                .unwrap()
+                .with_root_certificates(root_store)
+                .with_no_client_auth();
 
         let mut headers = HeaderMap::new();
 
@@ -212,14 +228,12 @@ impl VtopClient {
         headers.insert("Sec-Fetch-User", HeaderValue::from_static("?1"));
         headers.insert("Priority", HeaderValue::from_static("u=0, i"));
 
-        let mut client_builder = reqwest::Client::builder()
+        reqwest::Client::builder()
+            .use_preconfigured_tls(tls_config)
             .default_headers(headers)
             .cookie_store(true)
-            .cookie_provider(cookie_store);
-        if let Ok(cert) = Certificate::from_pem(VITAP_CUSTOM_CERT_PEM.as_bytes()) {
-            client_builder = client_builder.add_root_certificate(cert);
-        }
-        let client: Client = client_builder.build().unwrap();
-        client
+            .cookie_provider(cookie_store)
+            .build()
+            .unwrap()
     }
 }
