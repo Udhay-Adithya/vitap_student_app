@@ -16,7 +16,7 @@
     <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
     </a>
-    <img src="https://img.shields.io/badge/Version-2.3.2-blue.svg" alt="Version 2.3.2">
+    <img src="https://img.shields.io/badge/Version-2.3.3-blue.svg" alt="Version 2.3.3">
     <a href="https://github.com/Udhay-Adithya/vit_ap_student_app/issues">
     <img src="https://img.shields.io/github/issues/Udhay-Adithya/vit_ap_student_app" alt="License: MIT">
     </a>
