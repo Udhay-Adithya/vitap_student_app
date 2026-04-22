@@ -9,6 +9,14 @@ class ServerException implements Exception {
   String toString() => 'ServerException: $message';
 }
 
+class OtpResendException implements Exception {
+  final String message;
+  const OtpResendException(this.message);
+
+  @override
+  String toString() => message;
+}
+
 class SecureStorageException implements Exception {
   final String message;
   SecureStorageException(this.message);

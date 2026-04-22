@@ -51,8 +51,8 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
       _errorMessage = null;
       _resendSuccess = false;
     });
-    await ref.read(loginOtpViewModelProvider.notifier).resendOtp();
-    if (mounted) {
+    final response = await ref.read(loginOtpViewModelProvider.notifier).resendOtp();
+    if (mounted && response) {
       setState(() => _resendSuccess = true);
     }
   }

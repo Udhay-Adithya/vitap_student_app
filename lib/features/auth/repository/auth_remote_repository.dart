@@ -104,6 +104,8 @@ class AuthRemoteRepository {
     try {
       await vtopService.resendLoginOtp();
       return const Right(null);
+    } on OtpResendException catch (e) {
+      return Left(Failure(e.message));
     } on VtopError catch (rustError) {
       final failureMessage = await VtopException.getFailureMessage(rustError);
       return Left(Failure(failureMessage));
