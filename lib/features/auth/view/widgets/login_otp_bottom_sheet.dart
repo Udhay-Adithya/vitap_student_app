@@ -28,6 +28,9 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
   final _focusNode = FocusNode();
   String? _errorMessage;
   bool _resendSuccess = false;
+  bool isCooldown = true;
+  int seconds = 180;
+  String? _resendButtonText = 'Resend in\n180s';
 
   @override
   void dispose() {
@@ -47,13 +50,21 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
   }
 
   Future<void> _resend() async {
+    if(isCooldown) {
+      return;
+    }
     setState(() {
       _errorMessage = null;
       _resendSuccess = false;
     });
-    await ref.read(loginOtpViewModelProvider.notifier).resendOtp();
-    if (mounted) {
-      setState(() => _resendSuccess = true);
+    final response = await ref.read(loginOtpViewModelProvider.notifier).resendOtp();
+    if (mounted && response) {
+      setState((){
+        _resendSuccess = true;
+        isCooldown = true;
+        seconds = 180;
+      });
+      _updateResendButtonText();
     }
   }
 
@@ -82,6 +93,28 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
       serviceLocator<VtopClientService>().cancelOtp();
       Navigator.of(context).pop();
     }
+  }
+
+  Future<void> _updateResendButtonText() async {
+    while (seconds > 0) {
+      await Future.delayed(const Duration(seconds: 1));
+      if (mounted) {
+        setState(() => _resendButtonText = 'Resend in\n${seconds.toString().padLeft(2, '0')}s');
+      }
+      seconds--;
+    }
+    if (mounted) {
+      setState(() {
+        _resendButtonText = 'Resend OTP';
+        isCooldown = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _updateResendButtonText();
   }
 
   @override
@@ -256,7 +289,9 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
                         borderRadius: BorderRadius.circular(9),
                       ),
                     ),
-                    child: const Text('Resend OTP'),
+                    child: Text(_resendButtonText ?? 'Resend OTP',
+                      maxLines: 2,
+                      textAlign: TextAlign.center),
                   ),
                 ),
                 const SizedBox(width: 12),
