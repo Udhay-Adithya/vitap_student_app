@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
-import 'package:vit_ap_student_app/core/error/exceptions.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/vtop_client.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/vtop_errors.dart';
@@ -289,7 +288,7 @@ class VtopClientService {
       throw StateError('No OTP-pending session');
     }else if (_otpCanBeRequestedAt != null && DateTime.now().isBefore(_otpCanBeRequestedAt!)) {
       final waitDuration = _otpCanBeRequestedAt!.difference(DateTime.now());
-      throw OtpResendException('OTP can be resent in ${waitDuration.inSeconds} seconds');
+      throw Exception('OTP can be resent in ${waitDuration.inSeconds} seconds');
     }
     await handleLoginOtpResend(client: _client!);
     _otpCanBeRequestedAt = DateTime.now().add(const Duration(seconds: 180));
