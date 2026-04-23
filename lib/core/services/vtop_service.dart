@@ -185,7 +185,7 @@ class VtopClientService {
       _currentUsername = username;
       _currentPasswordDigest = _digestOf(password);
       _otpPending = true;
-      _otpCanBeRequestedAt = DateTime.now().add(const Duration(seconds: 215));
+      _otpCanBeRequestedAt = DateTime.now().add(const Duration(seconds: 180));
       _otpCompleter = Completer<void>();
 
       // Notify the global UI listener to show the OTP bottom sheet
