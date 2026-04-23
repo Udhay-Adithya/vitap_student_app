@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2025-09-15T12:10:00Z",
+  "lastUpdated": "2026-04-23T12:00:00Z",
   "announcements": [
     {
       "id": "ann_academic_venue_update_2025_09_15",
@@ -13,11 +13,34 @@
       "isActive": true,
       "actionUrl": null,
       "actionText": null
+    },
+    {
+      "id": "ann_system_ios_update_delay_2026_04_23",
+      "title": "iOS Update Delay",
+      "message": "iOS updates are currently delayed. We are working on it and will release them as soon as possible. We appreciate your patience and understanding.",
+      "type": "system",
+      "importance": "high",
+      "createdAt": "2026-04-23T12:00:00Z",
+      "expiresAt": "2026-05-07T23:59:59Z",
+      "isActive": true,
+      "actionUrl": null,
+      "actionText": null
     }
   ],
   "metadata": {
-    "supportedTypes": ["academic", "facility", "maintenance", "system", "general"],
-    "importanceLevels": ["low", "medium", "high", "critical"],
+    "supportedTypes": [
+      "academic",
+      "facility",
+      "maintenance",
+      "system",
+      "general"
+    ],
+    "importanceLevels": [
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ],
     "maxActiveAnnouncements": 5
   }
 }
