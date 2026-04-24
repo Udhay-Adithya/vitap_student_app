@@ -12,6 +12,7 @@ fn parse_timetable_direct(html: String) -> Timetable {
     #[derive(serde::Serialize, serde::Deserialize)]
     struct Timing {
         serial: String,
+        course_type: String,
         start_time: String,
         end_time: String,
     }
@@ -194,10 +195,12 @@ fn parse_timetable_direct(html: String) -> Timetable {
                 }
 
                 for (index, val) in cells.iter().enumerate() {
-                    if count_for_offset < 2 {
+                    if count_for_offset < 4 {
+                        // offset 0 and 1 extract theory timings
                         if count_for_offset == 0 {
                             let timing = Timing {
                                 serial: index.to_string(),
+                                course_type: "ETH".to_string(),
                                 start_time: val
                                     .text()
                                     .collect::<Vec<_>>()
@@ -210,6 +213,32 @@ fn parse_timetable_direct(html: String) -> Timetable {
                             timings_temp.push(timing);
                         } else if count_for_offset == 1 {
                             if let Some(timing) = timings_temp.get_mut(index) {
+                                timing.end_time = val
+                                    .text()
+                                    .collect::<Vec<_>>()
+                                    .join("")
+                                    .trim()
+                                    .replace("\t", "")
+                                    .replace("\n", "");
+                            }
+                        // LAB timings are appended after theory timings in the timings_temp vector
+                        } else if count_for_offset == 2 {
+                            let timing = Timing {
+                                serial: index.to_string(),
+                                course_type: "ELA".to_string(),
+                                start_time: val
+                                    .text()
+                                    .collect::<Vec<_>>()
+                                    .join("")
+                                    .trim()
+                                    .replace("\t", "")
+                                    .replace("\n", ""),
+                                end_time: "".to_string(),
+                            };
+                            timings_temp.push(timing);
+                        } else if count_for_offset == 3 {
+                            // 0 - 21 are theory timings so we need to offset by 22 to get the correct lab end timing
+                            if let Some(timing) = timings_temp.get_mut((22 + index) as usize) {
                                 timing.end_time = val
                                     .text()
                                     .collect::<Vec<_>>()
@@ -324,7 +353,8 @@ fn parse_timetable_direct(html: String) -> Timetable {
 
     // Assign timings to slots
     for slot in &mut raw_slots {
-        if let Some(times) = timings_temp.iter().find(|t| t.serial == slot.serial) {
+        // Thoery timings are assigned to courses with course type ETH or TH, while lab timings are assigned to courses with course type ELA
+        if let Some(times) = timings_temp.iter().find(|t| t.serial == slot.serial && (t.course_type == slot.course_type || t.course_type.contains(&slot.course_type))) {
             slot.start_time = times.start_time.clone();
             slot.end_time = times.end_time.clone();
         }
