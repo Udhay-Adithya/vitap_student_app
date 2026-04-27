@@ -20,8 +20,8 @@
       "message": "iOS updates are currently delayed. We are working on it and will release them as soon as possible. We appreciate your patience and understanding.",
       "type": "system",
       "importance": "high",
-      "createdAt": "2026-04-27T12:00:00Z",
-      "expiresAt": "2026-05-11T23:59:59Z",
+      "createdAt": "2026-04-23T12:00:00Z",
+      "expiresAt": "2026-04-27T12:00:00Z",
       "isActive": false,
       "actionUrl": null,
       "actionText": null
