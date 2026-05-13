@@ -27,7 +27,7 @@ class LoginOtpViewModel extends _$LoginOtpViewModel {
     }
   }
 
-  Future<void> resendOtp() async {
+  Future<bool> resendOtp() async {
     state = const AsyncValue.loading();
 
     final res = await _repository.resendLoginOtp();
@@ -35,9 +35,11 @@ class LoginOtpViewModel extends _$LoginOtpViewModel {
     switch (res) {
       case Left(value: final failure):
         state = AsyncValue.error(failure.message, StackTrace.current);
+        return false;
       case Right():
         // Reset to idle after successful resend so user can enter OTP
         state = null;
+        return true;
     }
   }
 }

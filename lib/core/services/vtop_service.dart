@@ -26,6 +26,7 @@ class VtopClientService {
   String? _currentUsername;
   String? _currentPasswordDigest;
   DateTime? _sessionCreatedAt;
+  DateTime? _otpCanBeRequestedAt;
   Completer<void>? _otpCompleter;
   final StreamController<void> _otpRequiredController =
       StreamController<void>.broadcast();
@@ -183,6 +184,7 @@ class VtopClientService {
       _currentUsername = username;
       _currentPasswordDigest = _digestOf(password);
       _otpPending = true;
+      _otpCanBeRequestedAt = DateTime.now().add(const Duration(seconds: 180));
       _otpCompleter = Completer<void>();
 
       // Notify the global UI listener to show the OTP bottom sheet
@@ -284,8 +286,12 @@ class VtopClientService {
   Future<void> resendLoginOtp() async {
     if (!_otpPending || _client == null) {
       throw StateError('No OTP-pending session');
+    }else if (_otpCanBeRequestedAt != null && DateTime.now().isBefore(_otpCanBeRequestedAt!)) {
+      final waitDuration = _otpCanBeRequestedAt!.difference(DateTime.now());
+      throw Exception('OTP can be resent in ${waitDuration.inSeconds} seconds');
     }
     await handleLoginOtpResend(client: _client!);
+    _otpCanBeRequestedAt = DateTime.now().add(const Duration(seconds: 180));
   }
 
   /// Whether an OTP is pending on the current client session
