@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pinput/pinput.dart';
@@ -28,12 +30,12 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
   final _focusNode = FocusNode();
   String? _errorMessage;
   bool _resendSuccess = false;
-  bool isCooldown = true;
-  int seconds = 180;
-  String? _resendButtonText = 'Resend in\n180s';
+  Timer? _cooldownTimer;
+  int _remainingSeconds = 0;
 
   @override
   void dispose() {
+    _cooldownTimer?.cancel();
     _pinController.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -50,22 +52,31 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
   }
 
   Future<void> _resend() async {
-    if(isCooldown) {
-      return;
-    }
     setState(() {
       _errorMessage = null;
       _resendSuccess = false;
     });
-    final response = await ref.read(loginOtpViewModelProvider.notifier).resendOtp();
-    if (mounted && response) {
-      setState((){
-        _resendSuccess = true;
-        isCooldown = true;
-        seconds = 180;
-      });
-      _updateResendButtonText();
+    await ref.read(loginOtpViewModelProvider.notifier).resendOtp();
+    if (mounted) {
+      setState(() => _resendSuccess = true);
+      _startCooldown();
     }
+  }
+
+  void _startCooldown() {
+    setState(() {
+      _remainingSeconds = 180;
+    });
+    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _remainingSeconds--;
+      });
+
+      if (_remainingSeconds <= 0) {
+        _cooldownTimer?.cancel();
+        _cooldownTimer = null;
+      }
+    });
   }
 
   Future<void> _cancel() async {
@@ -95,33 +106,12 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
     }
   }
 
-  Future<void> _updateResendButtonText() async {
-    while (seconds > 0) {
-      await Future.delayed(const Duration(seconds: 1));
-      if (mounted) {
-        setState(() => _resendButtonText = 'Resend in\n${seconds.toString().padLeft(2, '0')}s');
-      }
-      seconds--;
-    }
-    if (mounted) {
-      setState(() {
-        _resendButtonText = 'Resend OTP';
-        isCooldown = false;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _updateResendButtonText();
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final otpState = ref.watch(loginOtpViewModelProvider);
     final isLoading = otpState?.isLoading == true;
+    final isOnCooldown = _remainingSeconds > 0;
 
     ref.listen(loginOtpViewModelProvider, (previous, next) {
       if (next == null) return;
@@ -282,16 +272,18 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: isLoading ? null : _resend,
+                    onPressed: (isLoading || isOnCooldown) ? null : _resend,
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size.fromHeight(48),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(9),
                       ),
                     ),
-                    child: Text(_resendButtonText ?? 'Resend OTP',
-                      maxLines: 2,
-                      textAlign: TextAlign.center),
+                    child: Text(
+                      isOnCooldown
+                          ? 'Resend OTP (${_remainingSeconds}s)'
+                          : 'Resend OTP',
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
