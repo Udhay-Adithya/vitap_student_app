@@ -4,13 +4,26 @@ import 'package:vit_ap_student_app/core/theme/app_theme_enum.dart';
 ThemeData getThemeData({
   required AppTheme appTheme,
   required bool isDarkMode,
+  bool isAmoled = false,
 }) {
+  // AMOLED only applies when dark mode is enabled
+  final shouldApplyAmoled = isDarkMode && isAmoled;
+
+  final colorScheme = ColorScheme.fromSeed(
+    seedColor: appTheme.seedColor,
+    dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+    brightness: isDarkMode ? Brightness.dark : Brightness.light,
+    surfaceTint: shouldApplyAmoled ? Colors.transparent : null,
+  );
+
   return ThemeData(
     useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: appTheme.seedColor,
-      dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
-      brightness: isDarkMode ? Brightness.dark : Brightness.light,
+    colorScheme: colorScheme,
+    scaffoldBackgroundColor: shouldApplyAmoled
+        ? Colors.black
+        : colorScheme.surface,
+    appBarTheme: AppBarTheme(
+      backgroundColor: shouldApplyAmoled ? Colors.black : colorScheme.surface,
     ),
     fontFamily: 'Poppins',
   );
