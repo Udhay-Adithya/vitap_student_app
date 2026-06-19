@@ -22,7 +22,8 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:label="VITAP Student"
-        android:networkSecurityConfig="@xml/network">
+        android:networkSecurityConfig="@xml/network"
+        android:enableOnBackInvokedCallback="true">
 
         <activity
             android:name=".MainActivity"
