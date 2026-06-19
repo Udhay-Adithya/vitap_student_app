@@ -19,6 +19,12 @@ ThemeData getThemeData({
   return ThemeData(
     useMaterial3: true,
     colorScheme: colorScheme,
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: <TargetPlatform, PageTransitionsBuilder>{
+        // Set the predictive back transitions for Android.
+        TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+      },
+    ),
     scaffoldBackgroundColor: shouldApplyAmoled
         ? Colors.black
         : colorScheme.surface,
@@ -29,7 +35,6 @@ ThemeData getThemeData({
   );
 }
 
-// Legacy support - keeping these for backward compatibility
 final ThemeData lightTheme = getThemeData(
   appTheme: AppTheme.blue,
   isDarkMode: false,
