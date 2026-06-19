@@ -38,8 +38,10 @@ class _GradeHistoryPageState extends ConsumerState<GradeHistoryPage> {
   }
 
   List<String> _getUniqueExamMonths(GradeHistory gradeHistory) {
-    final months =
-        gradeHistory.courses.map((course) => course.examMonth).toSet().toList();
+    final months = gradeHistory.courses
+        .map((course) => course.examMonth)
+        .toSet()
+        .toList();
     months.sort();
     return ['All', ...months];
   }
@@ -57,17 +59,21 @@ class _GradeHistoryPageState extends ConsumerState<GradeHistoryPage> {
     // Apply search filter
     if (searchQuery.isNotEmpty) {
       courses = courses
-          .where((course) =>
-              course.courseTitle
-                  .toLowerCase()
-                  .contains(searchQuery.toLowerCase()) ||
-              course.courseCode
-                  .toLowerCase()
-                  .contains(searchQuery.toLowerCase()) ||
-              course.grade.toLowerCase().contains(searchQuery.toLowerCase()) ||
-              course.examMonth
-                  .toLowerCase()
-                  .contains(searchQuery.toLowerCase()))
+          .where(
+            (course) =>
+                course.courseTitle.toLowerCase().contains(
+                  searchQuery.toLowerCase(),
+                ) ||
+                course.courseCode.toLowerCase().contains(
+                  searchQuery.toLowerCase(),
+                ) ||
+                course.grade.toLowerCase().contains(
+                  searchQuery.toLowerCase(),
+                ) ||
+                course.examMonth.toLowerCase().contains(
+                  searchQuery.toLowerCase(),
+                ),
+          )
           .toList();
     }
 
@@ -80,8 +86,8 @@ class _GradeHistoryPageState extends ConsumerState<GradeHistoryPage> {
     final gradeHistory = user?.profile.target?.gradeHistory.target;
 
     return Scaffold(
-      floatingActionButton: (gradeHistory != null &&
-              gradeHistory.courses.isNotEmpty)
+      floatingActionButton:
+          (gradeHistory != null && gradeHistory.courses.isNotEmpty)
           ? FloatingActionButton.extended(
               onPressed: () {
                 try {
@@ -109,20 +115,25 @@ class _GradeHistoryPageState extends ConsumerState<GradeHistoryPage> {
             automaticallyImplyLeading: true,
             expandedHeight: 75,
             centerTitle: false,
-            backgroundColor: Theme.of(context).colorScheme.surface,
             actions: (gradeHistory != null && gradeHistory.courses.isNotEmpty)
                 ? [
                     IconButton(
                       onPressed: () async {
                         try {
-                          final cgpaUrl =
-                              generateCgpaCalculatorUrl(gradeHistory);
-                          await ShareUtils.instance
-                              .shareCgpaCalculator(cgpaUrl, context);
-                          await AnalyticsService.logEvent('cgpa_calculator_shared', {
-                            'from': 'GradeHistoryPage',
-                            'timestamp': DateTime.now().toIso8601String(),
-                          });
+                          final cgpaUrl = generateCgpaCalculatorUrl(
+                            gradeHistory,
+                          );
+                          await ShareUtils.instance.shareCgpaCalculator(
+                            cgpaUrl,
+                            context,
+                          );
+                          await AnalyticsService.logEvent(
+                            'cgpa_calculator_shared',
+                            {
+                              'from': 'GradeHistoryPage',
+                              'timestamp': DateTime.now().toIso8601String(),
+                            },
+                          );
                         } catch (e) {
                           if (mounted) {
                             showSnackBar(
@@ -144,10 +155,9 @@ class _GradeHistoryPageState extends ConsumerState<GradeHistoryPage> {
               children: [
                 Text(
                   'Grade History',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineSmall
-                      ?.copyWith(fontWeight: FontWeight.w500),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 if (gradeHistory != null && gradeHistory.courses.isNotEmpty)
                   Text(
@@ -163,9 +173,7 @@ class _GradeHistoryPageState extends ConsumerState<GradeHistoryPage> {
           ),
           if (user == null)
             const SliverFillRemaining(
-              child: ErrorContentView(
-                error: 'User not found!',
-              ),
+              child: ErrorContentView(error: 'User not found!'),
             )
           else if (gradeHistory == null || gradeHistory.courses.isEmpty)
             const SliverFillRemaining(
@@ -179,8 +187,10 @@ class _GradeHistoryPageState extends ConsumerState<GradeHistoryPage> {
             // Search bar with filter button
             SliverToBoxAdapter(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: Row(
                   children: [
                     Expanded(
@@ -198,10 +208,9 @@ class _GradeHistoryPageState extends ConsumerState<GradeHistoryPage> {
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .outline
-                                  .withValues(alpha: 0.5),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.outline.withValues(alpha: 0.5),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
@@ -212,7 +221,9 @@ class _GradeHistoryPageState extends ConsumerState<GradeHistoryPage> {
                             ),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                         ),
                         onChanged: (value) {
                           setState(() {
@@ -244,8 +255,10 @@ class _GradeHistoryPageState extends ConsumerState<GradeHistoryPage> {
               SliverToBoxAdapter(
                 child: Container(
                   height: 60,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 8,
+                  ),
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: _getUniqueExamMonths(gradeHistory).length,
@@ -288,32 +301,28 @@ class _GradeHistoryPageState extends ConsumerState<GradeHistoryPage> {
                             Icon(
                               Icons.search_off,
                               size: 48,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                             const SizedBox(height: 16),
                             Text(
                               'No courses found',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
+                              style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               'Try adjusting your search or filter criteria',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
+                              style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                               textAlign: TextAlign.center,
                             ),

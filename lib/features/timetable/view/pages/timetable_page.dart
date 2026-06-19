@@ -124,7 +124,6 @@ class _TimetablePageState extends ConsumerState<TimetablePage>
                       automaticallyImplyLeading: true,
                       expandedHeight: 75,
                       centerTitle: false,
-                      backgroundColor: Theme.of(context).colorScheme.surface,
                       actions: [
                         IconButton(
                           icon: Icon(

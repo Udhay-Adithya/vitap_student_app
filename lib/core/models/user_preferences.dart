@@ -13,6 +13,7 @@ class UserPreferences {
   int examScheduleNotificationDelay;
   bool isPrivacyEnabled;
   bool isDarkModeEnabled;
+  bool isAmoledEnabled;
   bool bypassWeekendOutingRestriction;
   String? appTheme; // Store theme as string: 'blue', 'sakura', etc.
   double? fontScale;
@@ -39,6 +40,7 @@ class UserPreferences {
     this.examScheduleNotificationDelay = 60,
     this.isPrivacyEnabled = true,
     this.isDarkModeEnabled = false,
+    this.isAmoledEnabled = false,
     this.bypassWeekendOutingRestriction = false,
     this.appTheme = 'blue',
     this.fontScale = 1.0,
@@ -58,6 +60,7 @@ class UserPreferences {
     int? examScheduleNotificationDelay,
     bool? isPrivacyEnabled,
     bool? isDarkModeEnabled,
+    bool? isAmoledEnabled,
     bool? bypassWeekendOutingRestriction,
     String? appTheme,
     double? fontScale,
@@ -70,9 +73,11 @@ class UserPreferences {
     return UserPreferences(
       id: id ?? this.id,
       pfpPath: pfpPath ?? this.pfpPath,
-      isTimetableNotificationsEnabled: isTimetableNotificationsEnabled ??
+      isTimetableNotificationsEnabled:
+          isTimetableNotificationsEnabled ??
           this.isTimetableNotificationsEnabled,
-      isExamScheduleNotificationEnabled: isExamScheduleNotificationEnabled ??
+      isExamScheduleNotificationEnabled:
+          isExamScheduleNotificationEnabled ??
           this.isExamScheduleNotificationEnabled,
       timetableNotificationDelay:
           timetableNotificationDelay ?? this.timetableNotificationDelay,
@@ -80,6 +85,7 @@ class UserPreferences {
           examScheduleNotificationDelay ?? this.examScheduleNotificationDelay,
       isPrivacyEnabled: isPrivacyEnabled ?? this.isPrivacyEnabled,
       isDarkModeEnabled: isDarkModeEnabled ?? this.isDarkModeEnabled,
+      isAmoledEnabled: isAmoledEnabled ?? this.isAmoledEnabled,
       bypassWeekendOutingRestriction:
           bypassWeekendOutingRestriction ?? this.bypassWeekendOutingRestriction,
       appTheme: appTheme ?? this.appTheme,

@@ -50,32 +50,23 @@ class _BiometricPageState extends ConsumerState<BiometricPage> {
     final String formattedDate = DateFormat('dd/MM/yyyy').format(selectedDate);
     final biometric = ref.watch(biometricViewModelProvider);
     final biometricNotifier = ref.read(biometricViewModelProvider.notifier);
-    ref.listen(
-      biometricViewModelProvider,
-      (_, next) {
-        next?.when(
-          data: (data) {},
-          loading: () {},
-          error: (error, st) {
-            showSnackBar(
-              context,
-              error.toString(),
-              SnackBarType.error,
-            );
-          },
-        );
-      },
-    );
+    ref.listen(biometricViewModelProvider, (_, next) {
+      next?.when(
+        data: (data) {},
+        loading: () {},
+        error: (error, st) {
+          showSnackBar(context, error.toString(), SnackBarType.error);
+        },
+      );
+    });
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
         title: Text(
           'Biometric Log',
-          style: Theme.of(context)
-              .textTheme
-              .headlineSmall
-              ?.copyWith(fontWeight: FontWeight.w500),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w500),
         ),
       ),
       body: Column(
@@ -85,10 +76,7 @@ class _BiometricPageState extends ConsumerState<BiometricPage> {
           const SizedBox(height: 8),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
-            child: Text(
-              'Pick a date',
-              style: TextStyle(fontSize: 18),
-            ),
+            child: Text('Pick a date', style: TextStyle(fontSize: 18)),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -173,7 +161,7 @@ class _BiometricPageState extends ConsumerState<BiometricPage> {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
           const SizedBox(height: 4),
@@ -199,9 +187,8 @@ class _BiometricPageState extends ConsumerState<BiometricPage> {
                     ),
                   ],
                 ),
-                error: (error, stackTrace) => ErrorContentView(
-                  error: error.toString(),
-                ),
+                error: (error, stackTrace) =>
+                    ErrorContentView(error: error.toString()),
                 data: (data) {
                   final biometricLog = data;
                   if (data.isEmpty) {
@@ -218,53 +205,61 @@ class _BiometricPageState extends ConsumerState<BiometricPage> {
                       final Biometric logEntry = biometricLog[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 4.0, horizontal: 8.0),
+                          vertical: 4.0,
+                          horizontal: 8.0,
+                        ),
                         child: ListTile(
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(9)),
-                          tileColor:
-                              Theme.of(context).colorScheme.surfaceContainerLow,
+                            borderRadius: BorderRadius.circular(9),
+                          ),
+                          tileColor: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerLow,
                           onLongPress: () {},
                           leading: Container(
                             height: 55,
                             width: 55,
                             decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerHighest,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(9),
                             ),
-                            child: logEntry.location.contains('MH') ||
+                            child:
+                                logEntry.location.contains('MH') ||
                                     logEntry.location.contains('LH')
                                 ? Icon(
                                     Iconsax.building_3,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .tertiaryContainer,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.tertiaryContainer,
                                   )
                                 : Icon(
                                     Iconsax.book_1,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                           ),
                           title: Text(
                             logEntry.location,
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                fontWeight: FontWeight.w500),
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                           subtitle: Text(
                             formattedDate,
                             style: TextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                           ),
                           trailing: Text(
-                            DateFormat.jm()
-                                .format(DateFormat.Hm().parse(logEntry.time)),
+                            DateFormat.jm().format(
+                              DateFormat.Hm().parse(logEntry.time),
+                            ),
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: 12,

@@ -723,7 +723,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(12, 8803805611900482677),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(16, 6106480015965950401),
+    lastPropertyId: const obx_int.IdUid(17, 4385940901864991068),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -820,6 +820,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(16, 6106480015965950401),
         name: 'fontScale',
         type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(17, 4385940901864991068),
+        name: 'isAmoledEnabled',
+        type: 1,
         flags: 0,
       ),
     ],
@@ -2073,7 +2079,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final appThemeOffset = object.appTheme == null
             ? null
             : fbb.writeString(object.appTheme!);
-        fbb.startTable(17);
+        fbb.startTable(18);
         fbb.addInt64(0, object.id ?? 0);
         fbb.addOffset(1, pfpPathOffset);
         fbb.addBool(2, object.isTimetableNotificationsEnabled);
@@ -2090,6 +2096,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addBool(13, object.bypassWeekendOutingRestriction);
         fbb.addOffset(14, appThemeOffset);
         fbb.addFloat64(15, object.fontScale);
+        fbb.addBool(16, object.isAmoledEnabled);
         fbb.finish(fbb.endTable());
         return object.id ?? 0;
       },
@@ -2138,6 +2145,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
           18,
           false,
         );
+        final isAmoledEnabledParam = const fb.BoolReader().vTableGet(
+          buffer,
+          rootOffset,
+          36,
+          false,
+        );
         final bypassWeekendOutingRestrictionParam = const fb.BoolReader()
             .vTableGet(buffer, rootOffset, 30, false);
         final appThemeParam = const fb.StringReader(
@@ -2176,6 +2189,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           examScheduleNotificationDelay: examScheduleNotificationDelayParam,
           isPrivacyEnabled: isPrivacyEnabledParam,
           isDarkModeEnabled: isDarkModeEnabledParam,
+          isAmoledEnabled: isAmoledEnabledParam,
           bypassWeekendOutingRestriction: bypassWeekendOutingRestrictionParam,
           appTheme: appThemeParam,
           fontScale: fontScaleParam,
@@ -3110,6 +3124,11 @@ class UserPreferences_ {
   /// See [UserPreferences.fontScale].
   static final fontScale = obx.QueryDoubleProperty<UserPreferences>(
     _entities[11].properties[15],
+  );
+
+  /// See [UserPreferences.isAmoledEnabled].
+  static final isAmoledEnabled = obx.QueryBooleanProperty<UserPreferences>(
+    _entities[11].properties[16],
   );
 }
 
