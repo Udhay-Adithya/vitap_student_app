@@ -601,7 +601,7 @@
     },
     {
       "id": "12:8803805611900482677",
-      "lastPropertyId": "16:6106480015965950401",
+      "lastPropertyId": "17:4385940901864991068",
       "name": "UserPreferences",
       "properties": [
         {
@@ -684,6 +684,11 @@
           "id": "16:6106480015965950401",
           "name": "fontScale",
           "type": 8
+        },
+        {
+          "id": "17:4385940901864991068",
+          "name": "isAmoledEnabled",
+          "type": 1
         }
       ],
       "relations": []
