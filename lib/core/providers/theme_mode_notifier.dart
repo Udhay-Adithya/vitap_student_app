@@ -29,6 +29,7 @@ class ThemeModeNotifier extends _$ThemeModeNotifier {
     return getThemeData(
       appTheme: selectedTheme,
       isDarkMode: userPreferences.isDarkModeEnabled,
+      isAmoled: userPreferences.isAmoledEnabled,
     );
   }
 
@@ -70,6 +71,26 @@ class ThemeModeNotifier extends _$ThemeModeNotifier {
         .updatePreferences(updatedPreferences);
 
     // Rebuild theme with new color
+    ref.invalidateSelf();
+  }
+
+  Future<void> toggleAmoled() async {
+    final currentPreferences = ref.read(userPreferencesProvider);
+    final newAmoledMode = !currentPreferences.isAmoledEnabled;
+
+    // await AnalyticsService.logEvent('amoled_toggled', {
+    //   'amoled_enabled': newAmoledMode,
+    //   'timestamp': DateTime.now().toIso8601String(),
+    // });
+
+    final updatedPreferences = currentPreferences.copyWith(
+      isAmoledEnabled: newAmoledMode,
+    );
+    await ref
+        .read(userPreferencesProvider.notifier)
+        .updatePreferences(updatedPreferences);
+
+    // Rebuild theme with new AMOLED mode
     ref.invalidateSelf();
   }
 }

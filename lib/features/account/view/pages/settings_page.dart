@@ -367,6 +367,42 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 ),
               ),
 
+              const SizedBox(height: 12),
+              ListTile(
+                tileColor: Theme.of(context).colorScheme.surfaceContainerLow,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.circular(9),
+                ),
+                leading: Icon(
+                  Iconsax.battery_full_copy,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(
+                  'AMOLED Mode',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                subtitle: Text(
+                  'Pure black theme (saves battery)',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                trailing: Transform.scale(
+                  scale: 0.8,
+                  child: Switch.adaptive(
+                    value: userPreferences.isAmoledEnabled,
+                    onChanged: (value) {
+                      ref.read(themeModeProvider.notifier).toggleAmoled();
+                    },
+                  ),
+                ),
+              ),
+
               const SizedBox(height: 24),
 
               // App Theme Section
