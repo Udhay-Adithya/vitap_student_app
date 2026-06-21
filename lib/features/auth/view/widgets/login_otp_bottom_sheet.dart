@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pinput/pinput.dart';
@@ -28,9 +30,12 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
   final _focusNode = FocusNode();
   String? _errorMessage;
   bool _resendSuccess = false;
+  Timer? _cooldownTimer;
+  int _remainingSeconds = 0;
 
   @override
   void dispose() {
+    _cooldownTimer?.cancel();
     _pinController.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -54,7 +59,24 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
     await ref.read(loginOtpViewModelProvider.notifier).resendOtp();
     if (mounted) {
       setState(() => _resendSuccess = true);
+      _startCooldown();
     }
+  }
+
+  void _startCooldown() {
+    setState(() {
+      _remainingSeconds = 180;
+    });
+    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        _remainingSeconds--;
+      });
+
+      if (_remainingSeconds <= 0) {
+        _cooldownTimer?.cancel();
+        _cooldownTimer = null;
+      }
+    });
   }
 
   Future<void> _cancel() async {
@@ -89,6 +111,7 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
     final theme = Theme.of(context);
     final otpState = ref.watch(loginOtpViewModelProvider);
     final isLoading = otpState?.isLoading == true;
+    final isOnCooldown = _remainingSeconds > 0;
 
     ref.listen(loginOtpViewModelProvider, (previous, next) {
       if (next == null) return;
@@ -249,14 +272,18 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: isLoading ? null : _resend,
+                    onPressed: (isLoading || isOnCooldown) ? null : _resend,
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size.fromHeight(48),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(9),
                       ),
                     ),
-                    child: const Text('Resend OTP'),
+                    child: Text(
+                      isOnCooldown
+                          ? 'Resend OTP (${_remainingSeconds}s)'
+                          : 'Resend OTP',
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
