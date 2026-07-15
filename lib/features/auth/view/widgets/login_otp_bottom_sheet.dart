@@ -34,6 +34,12 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
   int _remainingSeconds = 0;
 
   @override
+  void initState() {
+    super.initState();
+    _startCooldown();
+  }
+
+  @override
   void dispose() {
     _cooldownTimer?.cancel();
     _pinController.dispose();
