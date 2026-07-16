@@ -35,29 +35,15 @@ void showMarksDetailBottomSheet(Mark course, BuildContext context) {
                   Text(
                     course.courseTitle,
                     style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  course.courseType.contains('Theory')
-                      ? Image.asset(
-                          'assets/images/icons/theory.png',
-                          height: 24,
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.only(top: 4.0),
-                          child: Image.asset(
-                            'assets/images/icons/lab.png',
-                            height: 24,
-                          ),
-                        ),
+                  const SizedBox(width: 4),
                 ],
               ),
               const SizedBox(height: 8),
-              SizedBox(
-                width: MediaQuery.sizeOf(context).width,
-              ),
+              SizedBox(width: MediaQuery.sizeOf(context).width),
               const SizedBox(height: 8),
               Text(
                 'Faculty',
@@ -117,8 +103,9 @@ void showMarksDetailBottomSheet(Mark course, BuildContext context) {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                            ),
                             child: Text(
                               totalWeightage.toStringAsFixed(1),
                               style: TextStyle(
@@ -167,8 +154,9 @@ void showMarksDetailBottomSheet(Mark course, BuildContext context) {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                            ),
                             child: Text(
                               lostWeightage.toStringAsFixed(1),
                               style: TextStyle(
@@ -198,9 +186,7 @@ void showMarksDetailBottomSheet(Mark course, BuildContext context) {
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
               Text(
                 'Details:',
                 style: TextStyle(
