@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:vit_ap_student_app/core/common/widget/developer_sheet.dart';
 import 'package:vit_ap_student_app/core/common/widget/loader.dart';
 import 'package:vit_ap_student_app/core/utils/package_version.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/contributors_bottom_sheet.dart';
-import 'package:vit_ap_student_app/features/account/view/widgets/developer_bottom_sheet.dart';
 
 class Footer extends StatefulWidget {
   final VoidCallback? onVersionTap;
@@ -21,28 +21,24 @@ class _FooterState extends State<Footer> {
   late TapGestureRecognizer _contributorsTapRecognizer;
   String? _cachedVersion;
 
-  // Developer information
-  static const _udhayInfo = DeveloperInfo(
-    name: 'Udhay Adithya',
-    githubUsername: 'Udhay-Adithya',
-    linkedInUrl: 'https://www.linkedin.com/in/udhay-adithya/',
-    role: 'Mobile Application Developer',
-  );
-
-  static const _sanjayInfo = DeveloperInfo(
-    name: 'Sai Sanjay',
-    githubUsername: 'sanjay7178',
-    role: 'Backend/DevOps Engineer',
-  );
-
   @override
   void initState() {
     super.initState();
     _udhayTapRecognizer = TapGestureRecognizer();
-    _udhayTapRecognizer.onTap = () => _showDeveloperBottomSheet(_udhayInfo);
+    _udhayTapRecognizer.onTap = () => _showDeveloperSheet(
+      name: 'Udhay Adithya',
+      githubUsername: 'Udhay-Adithya',
+      description: 'Mobile Application Developer',
+      linkedInUrl: 'https://www.linkedin.com/in/udhay-adithya/',
+      email: 'udhayxd@gmail.com',
+    );
 
     _sanjayTapRecognizer = TapGestureRecognizer();
-    _sanjayTapRecognizer.onTap = () => _showDeveloperBottomSheet(_sanjayInfo);
+    _sanjayTapRecognizer.onTap = () => _showDeveloperSheet(
+      name: 'Sai Sanjay',
+      githubUsername: 'sanjay7178',
+      description: 'Backend/DevOps Engineer',
+    );
 
     _contributorsTapRecognizer = TapGestureRecognizer();
     _contributorsTapRecognizer.onTap = _showContributorsBottomSheet;
@@ -167,25 +163,32 @@ class _FooterState extends State<Footer> {
                     fontSize: 12,
                     fontStyle: FontStyle.normal,
                     fontWeight: FontWeight.w400,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: Theme.of(context).colorScheme.outline,
                   ),
                 ),
               ),
             ],
+            const SizedBox(height: 12),
           ],
         ),
       ),
     );
   }
 
-  Future<void> _showDeveloperBottomSheet(DeveloperInfo developerInfo) {
-    return showModalBottomSheet<void>(
-      showDragHandle: false,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(40.0)),
-      ),
-      context: context,
-      builder: (context) => DeveloperBottomSheet(developerInfo: developerInfo),
+  Future<void> _showDeveloperSheet({
+    required String name,
+    required String githubUsername,
+    required String description,
+    String? linkedInUrl,
+    String? email,
+  }) {
+    return DeveloperSheet.show(
+      context,
+      name: name,
+      githubUsername: githubUsername,
+      description: description,
+      linkedInUrl: linkedInUrl,
+      email: email,
     );
   }
 
