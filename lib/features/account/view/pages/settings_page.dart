@@ -10,6 +10,8 @@ import 'package:vit_ap_student_app/core/theme/app_theme_enum.dart';
 import 'package:vit_ap_student_app/core/utils/show_toast.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/circular_theme_indicator.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/developer_mode_tiles.dart';
+import 'package:vit_ap_student_app/features/account/view/widgets/menu_section.dart';
+import 'package:vit_ap_student_app/features/account/view/widgets/menu_tile.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   final bool isDeveloperModeEnabled;
@@ -48,7 +50,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         );
       }
 
-      if (mounted) showToast(context, '✅ Notifications rescheduled');
+      if (mounted) showToast(context, 'Notifications rescheduled');
       await AnalyticsService.logEvent('notifications_reset');
     } catch (e) {
       if (mounted) showToast(context, 'Failed to reset notifications');
@@ -90,81 +92,49 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSectionHeader('Notifications'),
-
-              // Class Notifications Toggle
-              ListTile(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.circular(9),
-                ),
-                tileColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                title: Text(
-                  'Class Notifications',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                subtitle: Text(
-                  'Get notified before your classes start',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                trailing: Transform.scale(
-                  scale: 0.8,
-                  child: Switch(
-                    value: userPreferences.isTimetableNotificationsEnabled,
-                    onChanged: (value) async {
-                      final updatedPreferences = userPreferences.copyWith(
-                        isTimetableNotificationsEnabled: value,
-                      );
-                      await userPreferencesNotifier.updatePreferences(
-                        updatedPreferences,
-                      );
-                      await AnalyticsService.logEvent(
-                        'is_timetable_notification_enabled',
-                        {'value': value.toString()},
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              // Class Notification Delay Slider
-              if (userPreferences.isTimetableNotificationsEnabled) ...[
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14.0,
-                    vertical: 8,
-                  ),
-                  child: Text(
-                    'Class Notification delay (${userPreferences.timetableNotificationDelay} min)',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w500,
+              MenuSection(
+                label: 'Notifications',
+                children: [
+                  MenuTile(
+                    icon: Iconsax.notification_copy,
+                    title: 'Class Notifications',
+                    trailing: Transform.scale(
+                      scale: 0.8,
+                      child: Switch(
+                        value: userPreferences.isTimetableNotificationsEnabled,
+                        thumbIcon: const WidgetStateProperty<Icon?>.fromMap({
+                          WidgetState.selected: Icon(Icons.check_rounded),
+                          WidgetState.any: Icon(Icons.close_rounded),
+                        }),
+                        onChanged: (value) async {
+                          final updatedPreferences = userPreferences.copyWith(
+                            isTimetableNotificationsEnabled: value,
+                          );
+                          await userPreferencesNotifier.updatePreferences(
+                            updatedPreferences,
+                          );
+                          await AnalyticsService.logEvent(
+                            'is_timetable_notification_enabled',
+                            {'value': value.toString()},
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-                Column(
-                  children: [
-                    Slider(
+                  if (userPreferences.isTimetableNotificationsEnabled)
+                    _buildDelaySlider(
+                      title:
+                          'Class Notification delay (${userPreferences.timetableNotificationDelay} min)',
                       value: userPreferences.timetableNotificationDelay
                           .toDouble(),
-                      min: 0,
                       max: 60,
                       divisions: 12,
-                      label: userPreferences.timetableNotificationDelay
-                          .toString(),
+                      labels: const ['0', '15', '30', '45', '60'],
                       onChanged: (value) async {
                         final updatedPreferences = userPreferences.copyWith(
                           timetableNotificationDelay: value.round(),
@@ -178,93 +148,49 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         );
                       },
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('0'),
-                          Text('15'),
-                          Text('30'),
-                          Text('45'),
-                          Text('60'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
 
               const SizedBox(height: 24),
 
-              // Exam Notifications Toggle
-              ListTile(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.circular(9),
-                ),
-                tileColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                title: Text(
-                  'Exam Notifications',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                subtitle: Text(
-                  'Get notified before your exams',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                trailing: Transform.scale(
-                  scale: 0.8,
-                  child: Switch(
-                    value: userPreferences.isExamScheduleNotificationEnabled,
-                    onChanged: (value) async {
-                      final updatedPreferences = userPreferences.copyWith(
-                        isExamScheduleNotificationEnabled: value,
-                      );
-                      await userPreferencesNotifier.updatePreferences(
-                        updatedPreferences,
-                      );
-                      await AnalyticsService.logEvent(
-                        'is_exam_schedule_notification_enabled',
-                        {'value': value.toString()},
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              // Exam Notification Delay Slider
-              if (userPreferences.isExamScheduleNotificationEnabled) ...[
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14.0,
-                    vertical: 8,
-                  ),
-                  child: Text(
-                    'Exam Notification delay (${userPreferences.examScheduleNotificationDelay} min)',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w500,
+              MenuSection(
+                children: [
+                  MenuTile(
+                    icon: Iconsax.notification_copy,
+                    title: 'Exam Notifications',
+                    trailing: Transform.scale(
+                      scale: 0.8,
+                      child: Switch(
+                        value:
+                            userPreferences.isExamScheduleNotificationEnabled,
+                        thumbIcon: const WidgetStateProperty<Icon?>.fromMap({
+                          WidgetState.selected: Icon(Icons.check_rounded),
+                          WidgetState.any: Icon(Icons.close_rounded),
+                        }),
+                        onChanged: (value) async {
+                          final updatedPreferences = userPreferences.copyWith(
+                            isExamScheduleNotificationEnabled: value,
+                          );
+                          await userPreferencesNotifier.updatePreferences(
+                            updatedPreferences,
+                          );
+                          await AnalyticsService.logEvent(
+                            'is_exam_schedule_notification_enabled',
+                            {'value': value.toString()},
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-                Column(
-                  children: [
-                    Slider(
+                  if (userPreferences.isExamScheduleNotificationEnabled)
+                    _buildDelaySlider(
+                      title:
+                          'Exam Notification delay (${userPreferences.examScheduleNotificationDelay} min)',
                       value: userPreferences.examScheduleNotificationDelay
                           .toDouble(),
-                      min: 0,
                       max: 180,
                       divisions: 18,
-                      label: userPreferences.examScheduleNotificationDelay
-                          .toString(),
+                      labels: const ['0', '45', '90', '135', '180'],
                       onChanged: (value) async {
                         final updatedPreferences = userPreferences.copyWith(
                           examScheduleNotificationDelay: value.round(),
@@ -278,236 +204,147 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         );
                       },
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('0'),
-                          Text('45'),
-                          Text('90'),
-                          Text('135'),
-                          Text('180'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-
-              const SizedBox(height: 16),
-
-              // Reset Notifications
-              ListTile(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.circular(9),
-                ),
-                tileColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                leading: Icon(
-                  Iconsax.refresh,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                title: Text(
-                  'Reset Notifications',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                subtitle: Text(
-                  'Reschedule all notifications',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                onTap: _resetNotifications,
-              ),
-
-              _buildSectionHeader('Appearance'),
-
-              // Dark Mode Toggle
-              ListTile(
-                tileColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.circular(9),
-                ),
-                leading: Icon(
-                  userPreferences.isDarkModeEnabled
-                      ? Iconsax.moon_copy
-                      : Iconsax.sun_1_copy,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                title: Text(
-                  'Dark Mode',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                subtitle: Text(
-                  userPreferences.isDarkModeEnabled
-                      ? 'Using dark theme'
-                      : 'Using light theme',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                trailing: Transform.scale(
-                  scale: 0.8,
-                  child: Switch.adaptive(
-                    value: userPreferences.isDarkModeEnabled,
-                    onChanged: (value) {
-                      ref.read(themeModeProvider.notifier).toggleTheme();
-                    },
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 12),
-              ListTile(
-                tileColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.circular(9),
-                ),
-                leading: Icon(
-                  Iconsax.battery_full_copy,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                title: Text(
-                  'AMOLED Mode',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                subtitle: Text(
-                  'Pure black theme (saves battery)',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                trailing: Transform.scale(
-                  scale: 0.8,
-                  child: Switch.adaptive(
-                    value: userPreferences.isAmoledEnabled,
-                    onChanged: (value) {
-                      ref.read(themeModeProvider.notifier).toggleAmoled();
-                    },
-                  ),
-                ),
+                ],
               ),
 
               const SizedBox(height: 24),
 
-              // App Theme Section
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14.0,
-                  vertical: 8,
-                ),
-                child: Text(
-                  'App Theme',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w600,
+              MenuSection(
+                children: [
+                  MenuTile(
+                    icon: Iconsax.refresh,
+                    title: 'Reset Notifications',
+                    onTap: _resetNotifications,
                   ),
-                ),
+                ],
               ),
 
-              // Horizontal Theme Selector
-              SizedBox(
-                height: 110,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                  itemCount: AppTheme.values.length,
-                  itemBuilder: (context, index) {
-                    final theme = AppTheme.values[index];
-                    final isSelected =
-                        (userPreferences.appTheme ?? 'blue') == theme.name;
+              const SizedBox(height: 24),
 
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: CircularThemeIndicator(
-                        theme: theme,
-                        isDarkMode: userPreferences.isDarkModeEnabled,
-                        isSelected: isSelected,
-                        onTap: () async {
-                          await ref
-                              .read(themeModeProvider.notifier)
-                              .setAppTheme(theme);
+              MenuSection(
+                label: 'Appearance',
+                children: [
+                  MenuTile(
+                    icon: Iconsax.moon_copy,
+                    title: 'Dark Mode',
+                    trailing: Transform.scale(
+                      scale: 0.8,
+                      child: Switch.adaptive(
+                        value: userPreferences.isDarkModeEnabled,
+                        thumbIcon: const WidgetStateProperty<Icon?>.fromMap({
+                          WidgetState.selected: Icon(Icons.dark_mode_rounded),
+                          WidgetState.any: Icon(Icons.light_mode_rounded),
+                        }),
+                        onChanged: (value) {
+                          ref.read(themeModeProvider.notifier).toggleTheme();
                         },
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                  MenuTile(
+                    icon: Iconsax.battery_full_copy,
+                    title: 'AMOLED Mode',
+                    trailing: Transform.scale(
+                      scale: 0.8,
+                      child: Switch.adaptive(
+                        value: userPreferences.isAmoledEnabled,
+                        thumbIcon: const WidgetStateProperty<Icon?>.fromMap({
+                          WidgetState.selected: Icon(Icons.check_rounded),
+                          WidgetState.any: Icon(Icons.close_rounded),
+                        }),
+                        onChanged: (value) {
+                          ref.read(themeModeProvider.notifier).toggleAmoled();
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
 
               const SizedBox(height: 24),
 
-              // Font Scale Section
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14.0,
-                  vertical: 8,
-                ),
-                child: Text(
-                  'Font Scale (${(userPreferences.fontScale ?? 1.0).toStringAsFixed(1)}x)',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+              MenuSection(
+                label: 'App Theme',
+                children: [
+                  SizedBox(
+                    height: 110,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                      itemCount: AppTheme.values.length,
+                      itemBuilder: (context, index) {
+                        final theme = AppTheme.values[index];
+                        final isSelected =
+                            (userPreferences.appTheme ?? 'blue') == theme.name;
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                child: Column(
-                  children: [
-                    Slider(
-                      value: userPreferences.fontScale ?? 1.0,
-                      min: 0.8,
-                      max: 1.3,
-                      divisions: 5,
-                      label:
-                          '${(userPreferences.fontScale ?? 1.0).toStringAsFixed(1)}x',
-                      onChanged: (value) async {
-                        final updatedPreferences = userPreferences.copyWith(
-                          fontScale: value,
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 16.0),
+                          child: CircularThemeIndicator(
+                            theme: theme,
+                            isDarkMode: userPreferences.isDarkModeEnabled,
+                            isSelected: isSelected,
+                            onTap: () async {
+                              await ref
+                                  .read(themeModeProvider.notifier)
+                                  .setAppTheme(theme);
+                            },
+                          ),
                         );
-                        await userPreferencesNotifier.updatePreferences(
-                          updatedPreferences,
-                        );
-                        await AnalyticsService.logEvent('font_scale_changed', {
-                          'scale': value.toStringAsFixed(1),
-                        });
                       },
                     ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('0.8x', style: TextStyle(fontSize: 12)),
-                          Text('1.0x', style: TextStyle(fontSize: 12)),
-                          Text('1.3x', style: TextStyle(fontSize: 12)),
-                        ],
-                      ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              MenuSection(
+                label:
+                    'Font Scale (${(userPreferences.fontScale ?? 1.0).toStringAsFixed(1)}x)',
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                    child: Column(
+                      children: [
+                        Slider(
+                          value: userPreferences.fontScale ?? 1.0,
+                          min: 0.8,
+                          max: 1.3,
+                          divisions: 5,
+                          label:
+                              '${(userPreferences.fontScale ?? 1.0).toStringAsFixed(1)}x',
+                          onChanged: (value) async {
+                            final updatedPreferences = userPreferences.copyWith(
+                              fontScale: value,
+                            );
+                            await userPreferencesNotifier.updatePreferences(
+                              updatedPreferences,
+                            );
+                            await AnalyticsService.logEvent(
+                              'font_scale_changed',
+                              {'scale': value.toStringAsFixed(1)},
+                            );
+                          },
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('0.8x', style: TextStyle(fontSize: 12)),
+                              Text('1.0x', style: TextStyle(fontSize: 12)),
+                              Text('1.3x', style: TextStyle(fontSize: 12)),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
 
               if (widget.isDeveloperModeEnabled) ...[
-                _buildSectionHeader('Developer Options'),
+                const SizedBox(height: 24),
                 const DeveloperModeTiles(),
               ],
 
@@ -519,16 +356,45 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildDelaySlider({
+    required String title,
+    required double value,
+    required double max,
+    required int divisions,
+    required List<String> labels,
+    required ValueChanged<double> onChanged,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(left: 14.0, top: 24, bottom: 12),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 18,
-          color: Theme.of(context).colorScheme.primary,
-          fontWeight: FontWeight.w600,
-        ),
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14.0),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Slider(
+            value: value,
+            max: max,
+            divisions: divisions,
+            label: value.round().toString(),
+            onChanged: onChanged,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [for (final label in labels) Text(label)],
+            ),
+          ),
+        ],
       ),
     );
   }

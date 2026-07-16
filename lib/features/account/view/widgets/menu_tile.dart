@@ -4,9 +4,10 @@ import 'package:vit_ap_student_app/features/account/view/widgets/menu_section.da
 /// A single row in a grouped settings list. Sized to the M3 list-item spec:
 /// 56dp min height for one line, 72dp with a supporting line, 24dp leading
 /// icon, 16dp horizontal padding. Corner radii are assigned by [MenuSection]
-/// based on the tile's position within its group.
+/// based on the tile's position within its group. The leading [icon] is
+/// optional, so the tile can also render as a plain label/value row.
 class MenuTile extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
   final String title;
   final String? subtitle;
   final String? infoText;
@@ -18,7 +19,7 @@ class MenuTile extends StatelessWidget {
 
   const MenuTile({
     super.key,
-    required this.icon,
+    this.icon,
     required this.title,
     this.subtitle,
     this.infoText,
@@ -52,8 +53,10 @@ class MenuTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                Icon(icon, size: 24, color: accessoryColor),
-                const SizedBox(width: 16),
+                if (icon != null) ...[
+                  Icon(icon, size: 24, color: accessoryColor),
+                  const SizedBox(width: 16),
+                ],
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

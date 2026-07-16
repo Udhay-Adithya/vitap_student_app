@@ -3,6 +3,8 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:vit_ap_student_app/core/utils/launch_web.dart';
 import 'package:vit_ap_student_app/core/utils/package_version.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/footer.dart';
+import 'package:vit_ap_student_app/features/account/view/widgets/menu_section.dart';
+import 'package:vit_ap_student_app/features/account/view/widgets/menu_tile.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -98,34 +100,23 @@ class _AboutPageState extends State<AboutPage> {
             const SizedBox(
               height: 24,
             ),
-            ListTile(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadiusGeometry.circular(9),
-              ),
-              leading: const Icon(Iconsax.document_copy),
-              trailing: Icon(
-                Icons.arrow_forward_rounded,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              title: const Text('Privacy Policy'),
-              onTap: () async {
-                await directToWeb('https://vitap.udhay-adithya.me/privacy');
-              },
-            ),
-            const Divider(),
-            ListTile(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadiusGeometry.circular(9),
-              ),
-              title: const Text('Terms of Use'),
-              leading: const Icon(Iconsax.document_1_copy),
-              trailing: Icon(
-                Icons.arrow_forward_rounded,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              onTap: () async {
-                await directToWeb('https://vitap.udhay-adithya.me/terms');
-              },
+            MenuSection(
+              children: [
+                MenuTile(
+                  icon: Iconsax.document_copy,
+                  title: 'Privacy Policy',
+                  onTap: () async {
+                    await directToWeb('https://vitap.udhay-adithya.me/privacy');
+                  },
+                ),
+                MenuTile(
+                  icon: Iconsax.document_1_copy,
+                  title: 'Terms of Use',
+                  onTap: () async {
+                    await directToWeb('https://vitap.udhay-adithya.me/terms');
+                  },
+                ),
+              ],
             ),
           ],
         ),
