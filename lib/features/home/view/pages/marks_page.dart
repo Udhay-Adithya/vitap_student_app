@@ -67,10 +67,14 @@ class _MarksPageState extends ConsumerState<MarksPage>
   }
 
   Future<void> refreshMarksData() async {
-    await ref.watch(marksViewModelProvider.notifier).refreshMarks();
+    await ref.read(marksViewModelProvider.notifier).refreshMarks();
     await AnalyticsService.logEvent('refresh_marks');
-    lastSynced = DateTime.now();
-    await saveLastSynced();
+    // Only stamp "last synced" when the refresh actually succeeded.
+    final state = ref.read(marksViewModelProvider);
+    if (state != null && !state.hasError) {
+      lastSynced = DateTime.now();
+      await saveLastSynced();
+    }
   }
 
   @override

@@ -67,8 +67,12 @@ class _MyExamScheduleState extends ConsumerState<ExamSchedulePage>
         .read(examScheduleViewModelProvider.notifier)
         .refreshExamSchedule();
     await AnalyticsService.logEvent('refresh_exam_schedule');
-    lastSynced = DateTime.now();
-    await saveLastSynced();
+    // Only stamp "last synced" when the refresh actually succeeded.
+    final state = ref.read(examScheduleViewModelProvider);
+    if (state != null && !state.hasError) {
+      lastSynced = DateTime.now();
+      await saveLastSynced();
+    }
   }
 
   void _autoSelectUpcomingTab(List<ExamSchedule> schedule) {

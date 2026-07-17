@@ -70,8 +70,14 @@ class AttendancePageState extends ConsumerState<AttendancePage>
     await ref
         .read(attendanceViewModeProvider.notifier)
         .refreshAttendance(silentRefresh: silentRefresh);
-    lastSynced = DateTime.now();
-    await saveLastSynced();
+    // Only stamp "last synced" when the refresh actually succeeded. The view
+    // model swallows failures into its error state (e.g. a cancelled/failed
+    // OTP or network error), so advancing the timer unconditionally would lie.
+    final state = ref.read(attendanceViewModeProvider);
+    if (state != null && !state.hasError) {
+      lastSynced = DateTime.now();
+      await saveLastSynced();
+    }
   }
 
   bool _shouldRefresh() {
