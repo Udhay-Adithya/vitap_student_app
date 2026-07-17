@@ -1,0 +1,552 @@
+{
+  "user": {
+    "profile": {
+      "application_number": "2024043196",
+      "student_name": "Demo Student",
+      "dob": "01-Jan-2003",
+      "gender": "Male",
+      "blood_group": "O+",
+      "email": "demo.student2021@vitapstudent.ac.in",
+      "base64_pfp": null,
+      "grade_history": {
+        "credits_registered": "160",
+        "credits_earned": "160",
+        "cgpa": "8.72",
+        "courses": [
+          {
+            "course_code": "CSE1001",
+            "course_title": "Problem Solving and Programming",
+            "course_type": "ELA",
+            "credits": "4",
+            "grade": "S",
+            "exam_month": "Dec-2021",
+            "course_distribution": "CBL"
+          },
+          {
+            "course_code": "CSE2001",
+            "course_title": "Data Structures and Algorithms",
+            "course_type": "ETL",
+            "credits": "4",
+            "grade": "A",
+            "exam_month": "May-2022",
+            "course_distribution": "CBL"
+          },
+          {
+            "course_code": "CSE2005",
+            "course_title": "Operating Systems",
+            "course_type": "ETL",
+            "credits": "4",
+            "grade": "B",
+            "exam_month": "Dec-2022",
+            "course_distribution": "CBL"
+          },
+          {
+            "course_code": "CSE3001",
+            "course_title": "Database Management Systems",
+            "course_type": "ETL",
+            "credits": "4",
+            "grade": "A",
+            "exam_month": "May-2023",
+            "course_distribution": "CBL"
+          }
+        ]
+      },
+      "mentor_details": {
+        "faculty_id": "VITAP0999",
+        "faculty_name": "Dr. Sample Mentor",
+        "faculty_designation": "Associate Professor",
+        "school": "School of Computer Science and Engineering",
+        "cabin": "AB-1, 502-C",
+        "faculty_department": "Computer Science and Engineering",
+        "faculty_email": "sample.mentor@vitap.ac.in",
+        "faculty_intercom": "9123",
+        "faculty_mobile_number": "90000 00000"
+      }
+    },
+    "timetable": {
+      "Monday": [
+        {
+          "start_time": "09:00",
+          "end_time": "09:50",
+          "course_name": "Design and Analysis of Algorithms",
+          "slot": "A1",
+          "venue": "AB1-201",
+          "faculty": "Dr. Sample Faculty A",
+          "course_code": "CSE3011",
+          "course_type": "Theory"
+        },
+        {
+          "start_time": "11:00",
+          "end_time": "11:50",
+          "course_name": "Computer Networks",
+          "slot": "B1",
+          "venue": "AB1-305",
+          "faculty": "Dr. Sample Faculty B",
+          "course_code": "CSE3012",
+          "course_type": "Theory"
+        }
+      ],
+      "Tuesday": [
+        {
+          "start_time": "10:00",
+          "end_time": "10:50",
+          "course_name": "Machine Learning",
+          "slot": "C1",
+          "venue": "AB2-108",
+          "faculty": "Dr. Sample Faculty C",
+          "course_code": "CSE3013",
+          "course_type": "Theory"
+        },
+        {
+          "start_time": "14:00",
+          "end_time": "15:40",
+          "course_name": "Computer Networks Lab",
+          "slot": "L31+L32",
+          "venue": "AB1-Lab-4",
+          "faculty": "Dr. Sample Faculty B",
+          "course_code": "CSE3012",
+          "course_type": "Lab"
+        }
+      ],
+      "Wednesday": [
+        {
+          "start_time": "09:00",
+          "end_time": "09:50",
+          "course_name": "Design and Analysis of Algorithms",
+          "slot": "A1",
+          "venue": "AB1-201",
+          "faculty": "Dr. Sample Faculty A",
+          "course_code": "CSE3011",
+          "course_type": "Theory"
+        }
+      ],
+      "Thursday": [
+        {
+          "start_time": "10:00",
+          "end_time": "10:50",
+          "course_name": "Machine Learning",
+          "slot": "C1",
+          "venue": "AB2-108",
+          "faculty": "Dr. Sample Faculty C",
+          "course_code": "CSE3013",
+          "course_type": "Theory"
+        },
+        {
+          "start_time": "11:00",
+          "end_time": "11:50",
+          "course_name": "Computer Networks",
+          "slot": "B1",
+          "venue": "AB1-305",
+          "faculty": "Dr. Sample Faculty B",
+          "course_code": "CSE3012",
+          "course_type": "Theory"
+        }
+      ],
+      "Friday": [
+        {
+          "start_time": "14:00",
+          "end_time": "15:40",
+          "course_name": "Machine Learning Lab",
+          "slot": "L39+L40",
+          "venue": "AB2-Lab-2",
+          "faculty": "Dr. Sample Faculty C",
+          "course_code": "CSE3013",
+          "course_type": "Lab"
+        }
+      ],
+      "Saturday": [],
+      "Sunday": []
+    },
+    "attendance": [
+      {
+        "class_number": "CH2024250100001",
+        "course_code": "CSE3011",
+        "course_name": "Design and Analysis of Algorithms",
+        "course_type": "Theory",
+        "course_type_code": "TH",
+        "course_slot": "A1",
+        "faculty": "Dr. Sample Faculty A",
+        "attended_classes": "28",
+        "total_classes": "30",
+        "attendance_percentage": "93",
+        "attendance_between_percentage": "90-100",
+        "debar_status": "Not Debarred",
+        "course_id": "CSE3011-A1-TH"
+      },
+      {
+        "class_number": "CH2024250100002",
+        "course_code": "CSE3012",
+        "course_name": "Computer Networks",
+        "course_type": "Theory",
+        "course_type_code": "TH",
+        "course_slot": "B1",
+        "faculty": "Dr. Sample Faculty B",
+        "attended_classes": "24",
+        "total_classes": "29",
+        "attendance_percentage": "82",
+        "attendance_between_percentage": "80-90",
+        "debar_status": "Not Debarred",
+        "course_id": "CSE3012-B1-TH"
+      },
+      {
+        "class_number": "CH2024250100003",
+        "course_code": "CSE3013",
+        "course_name": "Machine Learning",
+        "course_type": "Theory",
+        "course_type_code": "TH",
+        "course_slot": "C1",
+        "faculty": "Dr. Sample Faculty C",
+        "attended_classes": "20",
+        "total_classes": "27",
+        "attendance_percentage": "74",
+        "attendance_between_percentage": "70-80",
+        "debar_status": "Not Debarred",
+        "course_id": "CSE3013-C1-TH"
+      }
+    ],
+    "exam_schedule": [
+      {
+        "exam_type": "CAT-1",
+        "subjects": [
+          {
+            "serial_number": "1",
+            "course_code": "CSE3011",
+            "course_name": "Design and Analysis of Algorithms",
+            "course_type": "Theory",
+            "course_id": "CSE3011-A1-TH",
+            "slot": "A1",
+            "exam_date": "10-Sep-2026",
+            "exam_session": "FN",
+            "reporting_time": "09:00",
+            "exam_time": "09:30 - 11:00",
+            "venue": "AB1-201",
+            "seat_location": "Ground Floor",
+            "seat_number": "12"
+          },
+          {
+            "serial_number": "2",
+            "course_code": "CSE3012",
+            "course_name": "Computer Networks",
+            "course_type": "Theory",
+            "course_id": "CSE3012-B1-TH",
+            "slot": "B1",
+            "exam_date": "12-Sep-2026",
+            "exam_session": "FN",
+            "reporting_time": "09:00",
+            "exam_time": "09:30 - 11:00",
+            "venue": "AB1-305",
+            "seat_location": "First Floor",
+            "seat_number": "27"
+          }
+        ]
+      },
+      {
+        "exam_type": "Final Assessment Test",
+        "subjects": [
+          {
+            "serial_number": "1",
+            "course_code": "CSE3013",
+            "course_name": "Machine Learning",
+            "course_type": "Theory",
+            "course_id": "CSE3013-C1-TH",
+            "slot": "C1",
+            "exam_date": "20-Nov-2026",
+            "exam_session": "AN",
+            "reporting_time": "13:30",
+            "exam_time": "14:00 - 17:00",
+            "venue": "AB2-108",
+            "seat_location": "Ground Floor",
+            "seat_number": "5"
+          }
+        ]
+      }
+    ],
+    "marks": [
+      {
+        "serial_number": "1",
+        "course_code": "CSE3011",
+        "course_title": "Design and Analysis of Algorithms",
+        "course_type": "Theory",
+        "faculty": "Dr. Sample Faculty A",
+        "slot": "A1",
+        "details": [
+          {
+            "serial_number": "1",
+            "mark_title": "Digital Assignment-1",
+            "max_mark": "10",
+            "weightage": "10",
+            "status": "Present",
+            "scored_mark": "9",
+            "weightage_mark": "9.00",
+            "remark": "Good"
+          },
+          {
+            "serial_number": "2",
+            "mark_title": "CAT-1",
+            "max_mark": "50",
+            "weightage": "15",
+            "status": "Present",
+            "scored_mark": "42",
+            "weightage_mark": "12.60",
+            "remark": "-"
+          }
+        ]
+      },
+      {
+        "serial_number": "2",
+        "course_code": "CSE3012",
+        "course_title": "Computer Networks",
+        "course_type": "Theory",
+        "faculty": "Dr. Sample Faculty B",
+        "slot": "B1",
+        "details": [
+          {
+            "serial_number": "1",
+            "mark_title": "Quiz-1",
+            "max_mark": "10",
+            "weightage": "10",
+            "status": "Present",
+            "scored_mark": "8",
+            "weightage_mark": "8.00",
+            "remark": "-"
+          }
+        ]
+      }
+    ]
+  },
+  "detailed_attendance": [
+    {
+      "serial": "1",
+      "date": "15-Jul-2026",
+      "slot": "A1",
+      "day_time": "Monday (09:00)",
+      "status": "Present",
+      "remark": "-"
+    },
+    {
+      "serial": "2",
+      "date": "17-Jul-2026",
+      "slot": "A1",
+      "day_time": "Wednesday (09:00)",
+      "status": "Present",
+      "remark": "-"
+    },
+    {
+      "serial": "3",
+      "date": "22-Jul-2026",
+      "slot": "A1",
+      "day_time": "Monday (09:00)",
+      "status": "Absent",
+      "remark": "On Duty"
+    }
+  ],
+  "biometric": [
+    {
+      "in_time": "08:42 AM",
+      "location": "AB1 Main Gate"
+    },
+    {
+      "in_time": "01:15 PM",
+      "location": "Library Entrance"
+    }
+  ],
+  "pending_payments": [
+    {
+      "s_no": "1",
+      "fprefno": "DEMOREF001",
+      "fees_heads": "Semester Tuition Fee",
+      "end_date": "31-Aug-2026",
+      "amount": "95000",
+      "fine": "0",
+      "total_amount": "95000",
+      "payment_status": "Pending"
+    }
+  ],
+  "payment_receipts": [
+    {
+      "receipt_number": "1",
+      "date": "12-Jan-2026",
+      "amount": "95000",
+      "campus_code": "VITAP",
+      "payment_status": "Success",
+      "receipt_no": "DEMO-RCPT-2026-001"
+    },
+    {
+      "receipt_number": "2",
+      "date": "10-Jul-2025",
+      "amount": "95000",
+      "campus_code": "VITAP",
+      "payment_status": "Success",
+      "receipt_no": "DEMO-RCPT-2025-014"
+    }
+  ],
+  "general_outing_reports": [
+    {
+      "serial": "1",
+      "registration_number": "21BCE7625",
+      "place_of_visit": "Vijayawada",
+      "purpose_of_visit": "Shopping",
+      "from_date": "05-Jul-2026",
+      "from_time": "09:00",
+      "to_date": "05-Jul-2026",
+      "to_time": "18:00",
+      "status": "Approved",
+      "can_download": false,
+      "leave_id": "DEMO-GEN-001"
+    }
+  ],
+  "weekend_outing_reports": [
+    {
+      "serial": "1",
+      "registration_number": "21BCE7625",
+      "hostel_block": "D-Block",
+      "room_number": "512",
+      "place_of_visit": "Guntur",
+      "purpose_of_visit": "Home Visit",
+      "time": "08:00",
+      "contact_number": "90000 00000",
+      "parent_contact_number": "90000 11111",
+      "date": "2026-07-11T00:00:00.000",
+      "booking_id": "DEMO-WKND-001",
+      "status": "Approved",
+      "can_download": false
+    }
+  ],
+  "faculty_details": {
+    "name": "Dr. Sample Faculty A",
+    "designation": "Assistant Professor Senior",
+    "department": "Computer Science and Engineering",
+    "schoolCentre": "School of Computer Science and Engineering",
+    "email": "sample.facultya@vitap.ac.in",
+    "cabinNumber": "AB-1, 410-B",
+    "officeHours": [
+      {
+        "day": "Monday",
+        "timings": "02:00 PM - 04:00 PM"
+      },
+      {
+        "day": "Wednesday",
+        "timings": "02:00 PM - 04:00 PM"
+      }
+    ]
+  },
+  "courses": {
+    "courses": [
+      {
+        "value": "CSE3011-A1-TH",
+        "label": "CSE3011 - Design and Analysis of Algorithms (Theory)",
+        "course_code": "CSE3011",
+        "course_title": "Design and Analysis of Algorithms",
+        "course_type": "Theory"
+      },
+      {
+        "value": "CSE3012-B1-TH",
+        "label": "CSE3012 - Computer Networks (Theory)",
+        "course_code": "CSE3012",
+        "course_title": "Computer Networks",
+        "course_type": "Theory"
+      }
+    ]
+  },
+  "slots": {
+    "slots": [
+      {
+        "value": "A1",
+        "label": "A1"
+      },
+      {
+        "value": "B1",
+        "label": "B1"
+      }
+    ],
+    "class_entries": [
+      {
+        "sl_no": 1,
+        "class_group": "CSE3011-A1",
+        "course_code": "CSE3011",
+        "course_title": "Design and Analysis of Algorithms",
+        "course_type": "Theory",
+        "class_id": "CSE3011-A1-TH",
+        "slot": "A1",
+        "faculty": "Dr. Sample Faculty A",
+        "semester_id": "DEMOSEM2526",
+        "erp_id": "DEMO-ERP-001"
+      }
+    ]
+  },
+  "course_detail": {
+    "course_info": {
+      "class_group": "CSE3011-A1",
+      "course_code": "CSE3011",
+      "course_title": "Design and Analysis of Algorithms",
+      "course_type": "Theory",
+      "class_id": "CSE3011-A1-TH",
+      "slot": "A1",
+      "faculty": "Dr. Sample Faculty A",
+      "course_id": "CSE3011"
+    },
+    "semester_id": "DEMOSEM2526",
+    "download_all_path": null,
+    "download_general_materials_path": null,
+    "syllabus_download_path": null,
+    "course_plan_download_path": null,
+    "lectures": [
+      {
+        "sl_no": 1,
+        "date": "15-Jul-2026",
+        "formatted_date": "15 Jul 2026",
+        "day": "Monday",
+        "topic": "Introduction to Algorithm Analysis and Asymptotic Notation",
+        "reference_materials": []
+      },
+      {
+        "sl_no": 2,
+        "date": "17-Jul-2026",
+        "formatted_date": "17 Jul 2026",
+        "day": "Wednesday",
+        "topic": "Divide and Conquer: Merge Sort and Quick Sort",
+        "reference_materials": []
+      }
+    ]
+  },
+  "digital_assignments": [
+    {
+      "serial_number": "1",
+      "class_id": "CSE3011-A1-TH",
+      "course_code": "CSE3011",
+      "course_title": "Design and Analysis of Algorithms",
+      "course_type": "Theory",
+      "faculty": "Dr. Sample Faculty A",
+      "details": [
+        {
+          "serial_number": "1",
+          "assignment_title": "Digital Assignment-1",
+          "max_assignment_mark": "10",
+          "assignment_weightage_mark": "10",
+          "due_date": "25-Jul-2026",
+          "can_qp_download": false,
+          "qp_download_url": "",
+          "submission_status": "Submitted",
+          "can_update": false,
+          "mcode": "DEMO-MCODE-001",
+          "can_da_download": false,
+          "da_download_url": ""
+        },
+        {
+          "serial_number": "2",
+          "assignment_title": "Digital Assignment-2",
+          "max_assignment_mark": "10",
+          "assignment_weightage_mark": "10",
+          "due_date": "12-Aug-2026",
+          "can_qp_download": false,
+          "qp_download_url": "",
+          "submission_status": "Pending",
+          "can_update": false,
+          "mcode": "DEMO-MCODE-002",
+          "can_da_download": false,
+          "da_download_url": ""
+        }
+      ]
+    }
+  ]
+}
