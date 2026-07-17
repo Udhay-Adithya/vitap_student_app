@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pinput/pinput.dart';
 import 'package:vit_ap_student_app/core/common/widget/loader.dart';
@@ -25,7 +26,8 @@ class _LoginOtpSheet extends ConsumerStatefulWidget {
   ConsumerState<_LoginOtpSheet> createState() => _LoginOtpSheetState();
 }
 
-class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
+class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet>
+    with WidgetsBindingObserver {
   final _pinController = TextEditingController();
   final _focusNode = FocusNode();
   String? _errorMessage;
@@ -36,15 +38,35 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _startCooldown();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _cooldownTimer?.cancel();
     _pinController.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // When the user leaves to read the OTP (e.g. Gmail) and returns, the soft
+    // keyboard was dismissed and `autofocus` does not re-fire. Re-request focus
+    // and force the keyboard back so they can type without tapping the field.
+    if (state == AppLifecycleState.resumed) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (_focusNode.hasFocus) {
+          // Focus was retained but the keyboard is hidden — reshow it.
+          SystemChannels.textInput.invokeMethod<void>('TextInput.show');
+        } else {
+          _focusNode.requestFocus();
+        }
+      });
+    }
   }
 
   Future<void> _submit() async {
