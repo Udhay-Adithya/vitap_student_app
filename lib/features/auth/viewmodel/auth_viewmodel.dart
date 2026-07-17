@@ -5,6 +5,7 @@ import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/auth/repository/auth_remote_repository.dart';
 
 part 'auth_viewmodel.g.dart';
@@ -19,6 +20,42 @@ class AuthViewModel extends _$AuthViewModel {
     _authRemoteRepository = ref.watch(authRemoteRepositoryProvider);
     _currentUserNotifier = ref.watch(currentUserProvider.notifier);
     return null;
+  }
+
+  /// Logs in the bundled demo account for App Store review / demos.
+  ///
+  /// Bypasses the entire VTOP flow (no credential check, no semester fetch, no
+  /// OTP) and seeds local storage from [DemoService]'s sanitized dataset.
+  Future<void> loginDemoUser() async {
+    state = const AsyncValue.loading();
+
+    await AnalyticsService.logEvent('login_attempt', {
+      'method': 'demo',
+    });
+
+    try {
+      final user = await DemoService.instance.loadDemoUser();
+      final credentials = DemoService.instance.credentials;
+
+      await DemoService.instance.setDemoMode(true);
+      await _currentUserNotifier.loginUser(user, credentials);
+
+      await AnalyticsService.logLogin('demo');
+      await AnalyticsService.logEvent('login_success', {
+        'method': 'demo',
+      });
+
+      state = AsyncValue.data(user);
+    } catch (e) {
+      // Roll back the flag so the app doesn't get stuck in a broken demo state.
+      await DemoService.instance.setDemoMode(false);
+      await AnalyticsService.logError('auth_error', 'Demo login failed: $e',
+          location: 'loginDemoUser');
+      state = AsyncValue.error(
+        'Failed to start the demo. Please try again.',
+        StackTrace.current,
+      );
+    }
   }
 
   Future<void> loginUser({

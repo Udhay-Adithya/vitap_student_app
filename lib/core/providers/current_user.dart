@@ -4,6 +4,7 @@ import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/semester_cache.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/providers/user_preferences_notifier.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/notification_service.dart';
 import 'package:vit_ap_student_app/core/services/secure_store_service.dart';
 import 'package:vit_ap_student_app/init_dependencies.dart';
@@ -79,6 +80,10 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
       // Clear user state and storage
       state = null;
       _clearUserDataObjectBox();
+
+      // Exit demo mode (no-op for normal accounts) so a subsequent real login
+      // is not treated as a demo session.
+      await DemoService.instance.setDemoMode(false);
 
       // Remove credentials
       await serviceLocator.get<SecureStorageService>().clearCredentials();
