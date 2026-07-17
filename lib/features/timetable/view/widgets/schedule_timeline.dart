@@ -61,10 +61,7 @@ class ScheduleTimeline extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                formatTo12Hour(startTime),
-                style: const TextStyle(fontSize: 16),
-              ),
+              _buildTimeRange(context, startTime),
               const SizedBox(width: 8),
               _buildClassInfoCard(context),
             ],
@@ -72,6 +69,27 @@ class ScheduleTimeline extends StatelessWidget {
           const SizedBox(height: 8),
         ],
       ),
+    );
+  }
+
+  Widget _buildTimeRange(BuildContext context, String? startTime) {
+    final endLabel = formatTo12Hour(classInfo.endTime);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          formatTo12Hour(startTime),
+          style: const TextStyle(fontSize: 16),
+        ),
+        if (endLabel.isNotEmpty)
+          Text(
+            endLabel,
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+      ],
     );
   }
 

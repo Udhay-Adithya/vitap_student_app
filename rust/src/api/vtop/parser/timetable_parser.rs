@@ -29,6 +29,7 @@ fn parse_timetable_direct(html: String) -> Timetable {
         end_time: String,
         name: String,
         class_nbr: String,
+        is_lab: bool,
     }
 
     let mut weekly_timetable = Timetable {
@@ -48,7 +49,11 @@ fn parse_timetable_direct(html: String) -> Timetable {
     let document = Html::parse_document(&html);
     let rows_selector = Selector::parse("tr").unwrap();
     let mut raw_slots: Vec<RawSlot> = Vec::new();
-    let mut timings_temp: Vec<Timing> = Vec::new();
+    // Theory classes and lab classes have their own timing rows in the grid.
+    // Rows 0/1 hold the theory Start/End timings; rows 2/3 hold the lab Start/End
+    // timings. Column indices are shared between the theory and lab rows.
+    let mut theory_timings: Vec<Timing> = Vec::new();
+    let mut lab_timings: Vec<Timing> = Vec::new();
     let mut count_for_offset = 0;
     let table_selector = Selector::parse("tbody").unwrap();
     let mut table = document.select(&table_selector);
@@ -126,20 +131,24 @@ fn parse_timetable_direct(html: String) -> Timetable {
                             let paragraphs: Vec<_> =
                                 cells[7].select(&Selector::parse("p").unwrap()).collect();
                             if paragraphs.len() >= 2 {
+                                // The slot paragraph can span several indented lines
+                                // (e.g. "L23+L24\n   - "), so collapse all whitespace
+                                // and drop the lone "-" separator token before the venue.
                                 let slot_text = paragraphs[0]
                                     .text()
                                     .collect::<Vec<_>>()
-                                    .join("")
-                                    .trim()
-                                    .replace(" - ", "")
-                                    .replace(" -", "")
-                                    .to_string();
+                                    .join(" ")
+                                    .split_whitespace()
+                                    .filter(|tok| *tok != "-")
+                                    .collect::<Vec<_>>()
+                                    .join(" ");
                                 let venue_text = paragraphs[1]
                                     .text()
                                     .collect::<Vec<_>>()
-                                    .join("")
-                                    .trim()
-                                    .to_string();
+                                    .join(" ")
+                                    .split_whitespace()
+                                    .collect::<Vec<_>>()
+                                    .join(" ");
 
                                 if !slot_text.is_empty() && !venue_text.is_empty() {
                                     course_to_slot_venue
@@ -194,32 +203,40 @@ fn parse_timetable_direct(html: String) -> Timetable {
                 }
 
                 for (index, val) in cells.iter().enumerate() {
-                    if count_for_offset < 2 {
+                    if count_for_offset < 4 {
+                        let cell_text = val
+                            .text()
+                            .collect::<Vec<_>>()
+                            .join("")
+                            .trim()
+                            .replace("\t", "")
+                            .replace("\n", "");
                         if count_for_offset == 0 {
-                            let timing = Timing {
+                            // Theory start times
+                            theory_timings.push(Timing {
                                 serial: index.to_string(),
-                                start_time: val
-                                    .text()
-                                    .collect::<Vec<_>>()
-                                    .join("")
-                                    .trim()
-                                    .replace("\t", "")
-                                    .replace("\n", ""),
+                                start_time: cell_text,
                                 end_time: "".to_string(),
-                            };
-                            timings_temp.push(timing);
+                            });
                         } else if count_for_offset == 1 {
-                            if let Some(timing) = timings_temp.get_mut(index) {
-                                timing.end_time = val
-                                    .text()
-                                    .collect::<Vec<_>>()
-                                    .join("")
-                                    .trim()
-                                    .replace("\t", "")
-                                    .replace("\n", "");
+                            // Theory end times
+                            if let Some(timing) = theory_timings.get_mut(index) {
+                                timing.end_time = cell_text;
+                            }
+                        } else if count_for_offset == 2 {
+                            // Lab start times
+                            lab_timings.push(Timing {
+                                serial: index.to_string(),
+                                start_time: cell_text,
+                                end_time: "".to_string(),
+                            });
+                        } else if count_for_offset == 3 {
+                            // Lab end times
+                            if let Some(timing) = lab_timings.get_mut(index) {
+                                timing.end_time = cell_text;
                             }
                         }
-                    } else if count_for_offset > 3 {
+                    } else {
                         let class_name = val
                             .text()
                             .collect::<Vec<_>>()
@@ -309,6 +326,9 @@ fn parse_timetable_direct(html: String) -> Timetable {
                                             .unwrap_or(&"".to_string())
                                             .to_string()
                                     },
+                                    // Day rows alternate THEORY (even offset) / LAB (odd
+                                    // offset). Lab rows need the lab timing columns.
+                                    is_lab: count_for_offset % 2 == 1,
                                 };
                                 raw_slots.push(slot);
                             }
@@ -322,9 +342,15 @@ fn parse_timetable_direct(html: String) -> Timetable {
         return weekly_timetable;
     }
 
-    // Assign timings to slots
+    // Assign timings to slots. Lab slots use the lab timing row, theory slots use
+    // the theory timing row (they share column serials but have different times).
     for slot in &mut raw_slots {
-        if let Some(times) = timings_temp.iter().find(|t| t.serial == slot.serial) {
+        let timings = if slot.is_lab {
+            &lab_timings
+        } else {
+            &theory_timings
+        };
+        if let Some(times) = timings.iter().find(|t| t.serial == slot.serial) {
             slot.start_time = times.start_time.clone();
             slot.end_time = times.end_time.clone();
         }

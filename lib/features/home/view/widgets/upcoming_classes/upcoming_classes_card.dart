@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:vit_ap_student_app/core/models/timetable.dart';
 import 'package:vit_ap_student_app/core/utils/format_to_12_hour.dart';
+import 'package:vit_ap_student_app/core/utils/parse_class_time.dart';
 
 class UpcomingClassCard extends StatelessWidget {
   final Day classInfo;
@@ -46,7 +47,8 @@ class UpcomingClassCard extends StatelessWidget {
                           width: 4,
                         ),
                         Text(
-                          formatTo12Hour(classInfo.startTime),
+                          formatTimeRange(
+                              classInfo.startTime, classInfo.endTime),
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.w600,
@@ -122,7 +124,7 @@ class UpcomingClassCard extends StatelessWidget {
             ),
           ),
         ),
-        classInfo.courseType!.contains('TH')
+        (classInfo.courseType ?? '').contains('TH')
             ? Positioned(
                 bottom: -26,
                 right: -15,
@@ -147,19 +149,18 @@ class UpcomingClassCard extends StatelessWidget {
 
   (String, Color, Color) _getClassStatus(Day classInfo) {
     final now = DateTime.now();
-    final startTimeString = classInfo.startTime?.trim();
-    final endTimeString = classInfo.endTime?.trim();
 
-// Parse start time
-    final startParts =
-        startTimeString?.split(':').map(int.parse).toList() ?? [];
-    final parsedStartTime =
-        DateTime(now.year, now.month, now.day, startParts[0], startParts[1]);
-
-// Parse end time
-    final endParts = endTimeString?.split(':').map(int.parse).toList() ?? [];
-    final parsedEndTime =
-        DateTime(now.year, now.month, now.day, endParts[0], endParts[1]);
+    // Missing or malformed times (e.g. the "-" placeholder) must not throw and
+    // crash the card — fall back to a neutral "Scheduled" status instead.
+    final parsedStartTime = parseClassTime(classInfo.startTime);
+    final parsedEndTime = parseClassTime(classInfo.endTime);
+    if (parsedStartTime == null || parsedEndTime == null) {
+      return (
+        'Scheduled',
+        Colors.grey.shade400.withValues(alpha: 0.4),
+        Colors.grey.shade700,
+      );
+    }
 
     if (now.isBefore(parsedStartTime)) {
       return (
