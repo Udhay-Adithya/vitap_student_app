@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:vit_ap_student_app/core/models/timetable.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
 import 'package:vit_ap_student_app/core/utils/get_classes.dart';
+import 'package:vit_ap_student_app/core/utils/parse_class_time.dart';
 import 'package:vit_ap_student_app/features/home/view/widgets/timetable_empty_state.dart';
 import 'package:vit_ap_student_app/features/home/view/widgets/upcoming_classes/carousel_indicator.dart';
 import 'package:vit_ap_student_app/features/home/view/widgets/upcoming_classes/upcoming_classes_card.dart';
@@ -94,17 +95,10 @@ class _UpcomingClassesCarouselState
     final now = DateTime.now();
 
     for (int i = 0; i < classes.length; i++) {
-      final classItem = classes[i];
-      if (classItem.startTime == null) continue;
-      final parsedTime = DateFormat('HH:mm').parse(classItem.startTime!);
-
-      final classStartDateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        parsedTime.hour,
-        parsedTime.minute,
-      );
+      // Skip classes whose start time is missing or malformed (e.g. "-") instead
+      // of throwing and taking down the whole home screen.
+      final classStartDateTime = parseClassTime(classes[i].startTime);
+      if (classStartDateTime == null) continue;
 
       if (classStartDateTime.isAfter(now)) {
         return i;
