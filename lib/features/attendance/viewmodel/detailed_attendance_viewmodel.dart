@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/attendance/model/attendance_detail.dart';
 import 'package:vit_ap_student_app/features/attendance/repository/attendance_remote_repository.dart';
 
@@ -22,6 +23,15 @@ class DetailedAttendanceViewmodel extends _$DetailedAttendanceViewmodel {
     required String courseType,
   }) async {
     state = const AsyncValue.loading();
+
+    // Demo mode: serve bundled sample detailed attendance.
+    if (DemoService.isDemoMode) {
+      state = AsyncValue.data(
+        await DemoService.instance.detailedAttendance(),
+      );
+      return;
+    }
+
     final userNotifier = ref.read(currentUserProvider.notifier);
     final Credentials? credentials = await userNotifier.getSavedCredentials();
 

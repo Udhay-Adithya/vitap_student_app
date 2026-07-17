@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/home/model/general_outing_report.dart';
 import 'package:vit_ap_student_app/features/home/model/weekend_outing_report.dart';
 import 'package:vit_ap_student_app/features/home/repository/outing_local_repository.dart';
@@ -22,6 +23,14 @@ class GeneralOutingReportsViewModel extends _$GeneralOutingReportsViewModel {
   }
 
   Future<void> fetchGeneralOutingReports({bool silentRefresh = false}) async {
+    // Demo mode: serve bundled sample general outing reports.
+    if (DemoService.isDemoMode) {
+      state = AsyncValue.data(
+        await DemoService.instance.generalOutingReports(),
+      );
+      return;
+    }
+
     // Check internet connectivity
     final isConnected = await InternetConnection().hasInternetAccess;
 
@@ -94,6 +103,14 @@ class WeekendOutingReportsViewModel extends _$WeekendOutingReportsViewModel {
   }
 
   Future<void> fetchWeekendOutingReports({bool silentRefresh = false}) async {
+    // Demo mode: serve bundled sample weekend outing reports.
+    if (DemoService.isDemoMode) {
+      state = AsyncValue.data(
+        await DemoService.instance.weekendOutingReports(),
+      );
+      return;
+    }
+
     // Check internet connectivity
     final isConnected = await InternetConnection().hasInternetAccess;
 

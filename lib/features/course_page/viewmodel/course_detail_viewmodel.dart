@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/course_page/model/course_page_detail.dart';
 import 'package:vit_ap_student_app/features/course_page/repository/course_page_remote_repository.dart';
 
@@ -22,6 +23,13 @@ class CourseDetailViewmodel extends _$CourseDetailViewmodel {
     required String classId,
   }) async {
     state = const AsyncValue.loading();
+
+    // Demo mode: serve bundled sample course detail.
+    if (DemoService.isDemoMode) {
+      state = AsyncValue.data(await DemoService.instance.courseDetail());
+      return;
+    }
+
     final userNotifier = ref.read(currentUserProvider.notifier);
     final Credentials? credentials = await userNotifier.getSavedCredentials();
 

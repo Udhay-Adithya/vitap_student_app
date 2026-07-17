@@ -5,6 +5,7 @@ import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/exam_schedule.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/home/repository/home_remote_repository.dart';
 
 part 'exam_schedule_viewmodel.g.dart';
@@ -21,6 +22,13 @@ class ExamScheduleViewModel extends _$ExamScheduleViewModel {
   }
 
   Future<void> refreshExamSchedule() async {
+    // Demo mode: serve the exam schedule seeded into the user at login.
+    if (DemoService.isDemoMode) {
+      final demoUser = ref.read(currentUserProvider);
+      state = AsyncValue.data(demoUser?.examSchedule.toList() ?? []);
+      return;
+    }
+
     state = const AsyncValue.loading();
     final User? user = ref.read(currentUserProvider);
     final userNotifier = ref.read(currentUserProvider.notifier);

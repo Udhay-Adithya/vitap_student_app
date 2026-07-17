@@ -5,6 +5,7 @@ import 'package:vit_ap_student_app/core/models/attendance.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/attendance/repository/attendance_remote_repository.dart';
 
 part 'attendance_viewmodel.g.dart';
@@ -21,6 +22,14 @@ class AttendanceViewMode extends _$AttendanceViewMode {
   }
 
   Future<void> refreshAttendance({bool silentRefresh = false}) async {
+    // Demo mode: serve the attendance seeded into the user at login; never
+    // contact VTOP.
+    if (DemoService.isDemoMode) {
+      final demoUser = ref.read(currentUserProvider);
+      state = AsyncValue.data(demoUser?.attendance.toList() ?? []);
+      return;
+    }
+
     if (!silentRefresh) {
       state = const AsyncValue.loading();
     }
