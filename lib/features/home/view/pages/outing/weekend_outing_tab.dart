@@ -5,6 +5,7 @@ import 'package:vit_ap_student_app/core/common/widget/loader.dart';
 import 'package:vit_ap_student_app/core/common/widgets/common_date_picker.dart';
 import 'package:vit_ap_student_app/core/constants/app_constants.dart';
 import 'package:vit_ap_student_app/core/providers/user_preferences_notifier.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/utils/show_snackbar.dart';
 import 'package:vit_ap_student_app/features/home/view/pages/outing/weekend_outing_history_page.dart';
 import 'package:vit_ap_student_app/features/home/viewmodel/outing_submission_viewmodel.dart';
@@ -388,25 +389,29 @@ class _WeekendOutingTabState extends ConsumerState<WeekendOutingTab> {
                     ),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: isLoading
-                      ? const Loader()
-                      : TextButton.icon(
-                          icon: const Icon(
-                            Icons.arrow_forward_sharp,
-                            color: Colors.blue,
-                          ),
-                          iconAlignment: IconAlignment.end,
-                          onPressed: _submitWeekendOuting,
-                          label: const Text(
-                            'Apply',
-                            style: TextStyle(
+                // Submitting an outing is a write action to VTOP, disabled for
+                // the demo account. History remains viewable via the button on
+                // the left.
+                if (!DemoService.isDemoMode)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: isLoading
+                        ? const Loader()
+                        : TextButton.icon(
+                            icon: const Icon(
+                              Icons.arrow_forward_sharp,
                               color: Colors.blue,
                             ),
+                            iconAlignment: IconAlignment.end,
+                            onPressed: _submitWeekendOuting,
+                            label: const Text(
+                              'Apply',
+                              style: TextStyle(
+                                color: Colors.blue,
+                              ),
+                            ),
                           ),
-                        ),
-                ),
+                  ),
               ],
             ),
           ],
