@@ -319,6 +319,7 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet>
                   child: ElevatedButton(
                     onPressed: isLoading ? null : _submit,
                     style: ElevatedButton.styleFrom(
+                      elevation: 0,
                       backgroundColor: theme.colorScheme.secondaryContainer,
                       minimumSize: const Size.fromHeight(48),
                       shape: RoundedRectangleBorder(
