@@ -57,9 +57,13 @@ class _DigitalAssignmentPageState extends ConsumerState<DigitalAssignmentPage>
     await ref
         .read(digitalAssignmentViewModelProvider.notifier)
         .refreshDigitalAssignments(silentRefresh: silentRefresh);
-    setState(() {
-      lastSynced = DateTime.now();
-    });
+    // Only stamp "last synced" when the refresh actually succeeded.
+    final state = ref.read(digitalAssignmentViewModelProvider);
+    if (state != null && !state.hasError) {
+      setState(() {
+        lastSynced = DateTime.now();
+      });
+    }
   }
 
   @override

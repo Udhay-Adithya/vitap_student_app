@@ -21,7 +21,11 @@ class GeneralOutingReportsViewModel extends _$GeneralOutingReportsViewModel {
     return null;
   }
 
-  Future<void> fetchGeneralOutingReports({bool silentRefresh = false}) async {
+  /// Returns `true` only when a fresh copy was successfully fetched from the
+  /// remote. Falling back to cache (offline, or a failed remote fetch while
+  /// cache exists) returns `false`, so callers don't advance the "last synced"
+  /// timer on a stale result.
+  Future<bool> fetchGeneralOutingReports({bool silentRefresh = false}) async {
     // Check internet connectivity
     final isConnected = await InternetConnection().hasInternetAccess;
 
@@ -45,7 +49,7 @@ class GeneralOutingReportsViewModel extends _$GeneralOutingReportsViewModel {
           'User credentials not found. Please login again.',
           StackTrace.current,
         );
-        return;
+        return false;
       }
 
       final res = await _outingRemoteRepository.fetchGeneralOutingReports(
@@ -59,12 +63,12 @@ class GeneralOutingReportsViewModel extends _$GeneralOutingReportsViewModel {
           if (state?.value == null || state!.value!.isEmpty) {
             state = AsyncValue.error(failure.message, StackTrace.current);
           }
-          break;
+          return false;
         case Right(value: final reports):
           // Save to cache and update state
           await _outingLocalRepository.saveGeneralOutingReports(reports);
           state = AsyncValue.data(reports);
-          break;
+          return true;
       }
     } else {
       // No internet - load from cache
@@ -77,6 +81,7 @@ class GeneralOutingReportsViewModel extends _$GeneralOutingReportsViewModel {
           StackTrace.current,
         );
       }
+      return false;
     }
   }
 }
@@ -93,7 +98,11 @@ class WeekendOutingReportsViewModel extends _$WeekendOutingReportsViewModel {
     return null;
   }
 
-  Future<void> fetchWeekendOutingReports({bool silentRefresh = false}) async {
+  /// Returns `true` only when a fresh copy was successfully fetched from the
+  /// remote. Falling back to cache (offline, or a failed remote fetch while
+  /// cache exists) returns `false`, so callers don't advance the "last synced"
+  /// timer on a stale result.
+  Future<bool> fetchWeekendOutingReports({bool silentRefresh = false}) async {
     // Check internet connectivity
     final isConnected = await InternetConnection().hasInternetAccess;
 
@@ -117,7 +126,7 @@ class WeekendOutingReportsViewModel extends _$WeekendOutingReportsViewModel {
           'User credentials not found. Please login again.',
           StackTrace.current,
         );
-        return;
+        return false;
       }
 
       final res = await _outingRemoteRepository.fetchWeekendOutingReports(
@@ -131,12 +140,12 @@ class WeekendOutingReportsViewModel extends _$WeekendOutingReportsViewModel {
           if (state?.value == null || state!.value!.isEmpty) {
             state = AsyncValue.error(failure.message, StackTrace.current);
           }
-          break;
+          return false;
         case Right(value: final reports):
           // Save to cache and update state
           await _outingLocalRepository.saveWeekendOutingReports(reports);
           state = AsyncValue.data(reports);
-          break;
+          return true;
       }
     } else {
       // No internet - load from cache
@@ -149,6 +158,7 @@ class WeekendOutingReportsViewModel extends _$WeekendOutingReportsViewModel {
           StackTrace.current,
         );
       }
+      return false;
     }
   }
 }
