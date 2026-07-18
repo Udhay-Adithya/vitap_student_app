@@ -44,6 +44,13 @@ post_install do |installer|
       if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 12.0
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
       end
+
+      # permission_handler compiles a permission's implementation only when its
+      # macro is set; everything defaults to 0. We only ask for notifications, so
+      # enabling just that keeps camera/location/etc. out of the binary (and out
+      # of App Store Connect's purpose-string checks).
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_NOTIFICATIONS=1'
     end
   end
 end

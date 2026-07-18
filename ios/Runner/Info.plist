@@ -61,6 +61,12 @@
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>This app requires access to the photo library to allow you to select and upload
 			assignments.</string>
+		<key>NSCameraUsageDescription</key>
+		<string>This app can use the camera to capture a photo of your work when you attach a
+			digital assignment.</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>This app does not track your location. The file picker reads the location tag
+			stored in a photo you choose to attach to an assignment.</string>
 		<key>UIApplicationSceneManifest</key>
 		<dict>
 			<key>UIApplicationSupportsMultipleScenes</key>
