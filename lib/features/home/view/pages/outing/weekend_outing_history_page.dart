@@ -37,18 +37,21 @@ class _WeekendOutingHistoryPageState
     super.dispose();
   }
 
-  Future<void> _fetchData() async {
-    await ref
+  Future<bool> _fetchData() async {
+    return ref
         .read(weekendOutingReportsViewModelProvider.notifier)
         .fetchWeekendOutingReports();
   }
 
   Future<void> _refreshData() async {
     await AnalyticsService.logEvent('refresh_weekend_outing_history');
-    setState(() {
-      lastSynced = DateTime.now();
-    });
-    await _fetchData();
+    final didSync = await _fetchData();
+    // Only stamp "last synced" when a fresh remote copy was actually fetched.
+    if (didSync && mounted) {
+      setState(() {
+        lastSynced = DateTime.now();
+      });
+    }
   }
 
   List<WeekendOutingReport> _getFilteredAndSortedReports(
