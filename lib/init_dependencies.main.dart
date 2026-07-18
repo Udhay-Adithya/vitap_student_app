@@ -67,6 +67,9 @@ Future<void> initServices() async {
 
   serviceLocator.registerSingleton<VtopClientService>(VtopClientService());
 
+  // Hydrate the demo-mode flag so it can be read synchronously everywhere.
+  await DemoService.init();
+
   serviceLocator.registerSingleton<ConnectionChecker>(
     ConnectionCheckerImpl(InternetConnection()),
   );

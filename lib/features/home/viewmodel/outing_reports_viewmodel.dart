@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/home/model/general_outing_report.dart';
 import 'package:vit_ap_student_app/features/home/model/weekend_outing_report.dart';
 import 'package:vit_ap_student_app/features/home/repository/outing_local_repository.dart';
@@ -26,6 +27,16 @@ class GeneralOutingReportsViewModel extends _$GeneralOutingReportsViewModel {
   /// cache exists) returns `false`, so callers don't advance the "last synced"
   /// timer on a stale result.
   Future<bool> fetchGeneralOutingReports({bool silentRefresh = false}) async {
+    // Demo mode: serve bundled sample general outing reports. Reported as a
+    // successful sync — the bundled data is always current for the demo, never
+    // a stale cache fallback — so pull-to-refresh stamps "last synced".
+    if (DemoService.isDemoMode) {
+      state = AsyncValue.data(
+        await DemoService.instance.generalOutingReports(),
+      );
+      return true;
+    }
+
     // Check internet connectivity
     final isConnected = await InternetConnection().hasInternetAccess;
 
@@ -98,11 +109,17 @@ class WeekendOutingReportsViewModel extends _$WeekendOutingReportsViewModel {
     return null;
   }
 
-  /// Returns `true` only when a fresh copy was successfully fetched from the
-  /// remote. Falling back to cache (offline, or a failed remote fetch while
-  /// cache exists) returns `false`, so callers don't advance the "last synced"
-  /// timer on a stale result.
   Future<bool> fetchWeekendOutingReports({bool silentRefresh = false}) async {
+    // Demo mode: serve bundled sample weekend outing reports. Reported as a
+    // successful sync — the bundled data is always current for the demo, never
+    // a stale cache fallback — so pull-to-refresh stamps "last synced".
+    if (DemoService.isDemoMode) {
+      state = AsyncValue.data(
+        await DemoService.instance.weekendOutingReports(),
+      );
+      return true;
+    }
+
     // Check internet connectivity
     final isConnected = await InternetConnection().hasInternetAccess;
 

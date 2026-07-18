@@ -88,6 +88,7 @@ flutter:
     - assets/images/logo/
     - assets/images/icons/
     - assets/weather_icons/
+    - assets/demo/
 
   fonts:
     - family: Poppins

@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/course_page/model/courses_response.dart';
 import 'package:vit_ap_student_app/features/course_page/repository/course_page_remote_repository.dart';
 
@@ -19,6 +20,13 @@ class CoursesViewmodel extends _$CoursesViewmodel {
 
   Future<void> fetchCourses() async {
     state = const AsyncValue.loading();
+
+    // Demo mode: serve bundled sample course list.
+    if (DemoService.isDemoMode) {
+      state = AsyncValue.data(await DemoService.instance.courses());
+      return;
+    }
+
     final userNotifier = ref.read(currentUserProvider.notifier);
     final Credentials? credentials = await userNotifier.getSavedCredentials();
 

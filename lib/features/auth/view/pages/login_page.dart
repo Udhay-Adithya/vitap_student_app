@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:vit_ap_student_app/core/common/widget/auth_field.dart';
+import 'package:vit_ap_student_app/core/common/widget/bottom_navigation_bar.dart';
 import 'package:vit_ap_student_app/core/common/widget/loader.dart';
 import 'package:vit_ap_student_app/core/network/connection_checker.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/utils/launch_web.dart';
 import 'package:vit_ap_student_app/core/utils/show_snackbar.dart';
 import 'package:vit_ap_student_app/core/utils/theme_switch_button.dart';
 import 'package:vit_ap_student_app/features/auth/view/pages/semester_selection_page.dart';
+import 'package:vit_ap_student_app/features/auth/viewmodel/auth_viewmodel.dart';
 import 'package:vit_ap_student_app/features/auth/viewmodel/semester_viewmodel.dart';
 import 'package:wiredash/wiredash.dart';
 
@@ -44,7 +47,39 @@ class LoginPageState extends ConsumerState<LoginPage> {
     super.dispose();
   }
 
+  Future<void> _loginDemo() async {
+    await AnalyticsService.logButtonTap('demo_login', 'login_page');
+    await ref.read(authViewModelProvider.notifier).loginDemoUser();
+    if (!mounted) return;
+
+    ref.read(authViewModelProvider)?.when(
+          data: (_) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute<void>(
+                builder: (context) => const BottomNavBar(),
+              ),
+              (_) => false,
+            );
+          },
+          error: (error, _) {
+            showSnackBar(context, error.toString(), SnackBarType.error);
+          },
+          loading: () {},
+        );
+  }
+
   Future<void> _fetchSemestersAndNavigate() async {
+    // Demo account: bypass VTOP entirely (no network, no OTP, no semester
+    // selection) and seed the app from the bundled sample dataset.
+    if (DemoService.instance.isDemoCredentials(
+      usernameController.text,
+      passwordController.text,
+    )) {
+      await _loginDemo();
+      return;
+    }
+
     final connectivityResult = await ConnectionCheckerImpl(
       InternetConnection(),
     ).isConnected;
@@ -86,8 +121,11 @@ class LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(
-      semesterViewModelProvider.select((val) => val?.isLoading == true),
-    );
+          semesterViewModelProvider.select((val) => val?.isLoading == true),
+        ) ||
+        ref.watch(
+          authViewModelProvider.select((val) => val?.isLoading == true),
+        );
 
     ref.listen(semesterViewModelProvider, (previous, next) {
       // Only navigate if this is the initial fetch (previous was null or loading)

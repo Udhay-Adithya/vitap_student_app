@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/home/model/faculty.dart';
 import 'package:vit_ap_student_app/features/home/repository/faculty_repository.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/types/faculty.dart';
@@ -51,6 +52,12 @@ class FacultyDetailsViewModel extends _$FacultyDetailsViewModel {
 
   Future<void> fetchDetails(String empId) async {
     state = const AsyncValue.loading();
+
+    // Demo mode: serve bundled sample faculty details.
+    if (DemoService.isDemoMode) {
+      state = AsyncValue.data(await DemoService.instance.facultyDetails());
+      return;
+    }
 
     final credentials = await ref
         .read(currentUserProvider.notifier)

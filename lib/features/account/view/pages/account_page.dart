@@ -5,6 +5,7 @@ import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
 import 'package:vit_ap_student_app/core/providers/user_preferences_notifier.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/utils/launch_web.dart';
 import 'package:vit_ap_student_app/core/utils/share_utils.dart';
 import 'package:vit_ap_student_app/core/utils/show_snackbar.dart';
@@ -179,37 +180,43 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                       ),
                       onTap: () => _navigateToProfile(user),
                     ),
-                    SettingTile(
-                      isFirst: false,
-                      isLast: false,
-                      title: 'Manage Credentials',
-                      leadingIcon: const Icon(Iconsax.lock_1_copy),
-                      trailingIcon: Icon(
-                        Icons.arrow_forward_rounded,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      onTap: () async {
-                        await AnalyticsService.logEvent(
-                          'manage_credentials_navigation',
-                          {
-                            'from': 'AccountPage',
-                            'timestamp': DateTime.now().toIso8601String(),
-                          },
-                        );
-                        final result = await Navigator.push<bool>(
-                          context,
-                          MaterialPageRoute<bool>(
-                            builder: (builder) => const ManageCredentialsPage(),
-                          ),
-                        );
-                        if (result == true) {
+                    // Managing VTOP credentials is meaningless for the demo
+                    // account, so the entry point is hidden in demo mode.
+                    if (!DemoService.isDemoMode)
+                      SettingTile(
+                        isFirst: false,
+                        isLast: false,
+                        title: 'Manage Credentials',
+                        leadingIcon: const Icon(Iconsax.lock_1_copy),
+                        trailingIcon: Icon(
+                          Icons.arrow_forward_rounded,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        onTap: () async {
                           await AnalyticsService.logEvent(
-                            'credentials_updated_sync_triggered',
+                            'manage_credentials_navigation',
+                            {
+                              'from': 'AccountPage',
+                              'timestamp': DateTime.now().toIso8601String(),
+                            },
                           );
-                          await ref.read(accountViewModelProvider.notifier).sync();
-                        }
-                      },
-                    ),
+                          final result = await Navigator.push<bool>(
+                            context,
+                            MaterialPageRoute<bool>(
+                              builder: (builder) =>
+                                  const ManageCredentialsPage(),
+                            ),
+                          );
+                          if (result == true) {
+                            await AnalyticsService.logEvent(
+                              'credentials_updated_sync_triggered',
+                            );
+                            await ref
+                                .read(accountViewModelProvider.notifier)
+                                .sync();
+                          }
+                        },
+                      ),
                     SettingTile(
                       isFirst: false,
                       isLast: false,

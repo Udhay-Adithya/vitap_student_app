@@ -5,6 +5,7 @@ import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/mark.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/home/repository/home_remote_repository.dart';
 
 part 'marks_viewmodel.g.dart';
@@ -21,6 +22,13 @@ class MarksViewModel extends _$MarksViewModel {
   }
 
   Future<void> refreshMarks() async {
+    // Demo mode: serve the marks seeded into the user at login.
+    if (DemoService.isDemoMode) {
+      final demoUser = ref.read(currentUserProvider);
+      state = AsyncValue.data(demoUser?.marks.toList() ?? []);
+      return;
+    }
+
     state = const AsyncValue.loading();
     final User? user = ref.read(currentUserProvider);
     final userNotifier = ref.read(currentUserProvider.notifier);

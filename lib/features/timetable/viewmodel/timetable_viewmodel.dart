@@ -5,6 +5,7 @@ import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/timetable.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/timetable/repository/timetable_remote_repository.dart';
 
 part 'timetable_viewmodel.g.dart';
@@ -21,6 +22,15 @@ class TimetableViewModel extends _$TimetableViewModel {
   }
 
   Future<void> refreshTimetable() async {
+    // Demo mode: serve the timetable seeded into the user at login.
+    if (DemoService.isDemoMode) {
+      final demoTimetable = ref.read(currentUserProvider)?.timetable.target;
+      if (demoTimetable != null) {
+        state = AsyncValue.data(demoTimetable);
+      }
+      return;
+    }
+
     state = const AsyncValue.loading();
     final User? user = ref.read(currentUserProvider);
     final userNotifier = ref.read(currentUserProvider.notifier);

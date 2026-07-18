@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/digital_assignment/model/digital_assignment_model.dart';
 import 'package:vit_ap_student_app/features/digital_assignment/repository/digital_assignment_remote_repository.dart';
 
@@ -21,6 +22,13 @@ class DigitalAssignmentViewModel extends _$DigitalAssignmentViewModel {
     if (!silentRefresh) {
       state = const AsyncValue.loading();
     }
+
+    // Demo mode: serve bundled sample digital assignments.
+    if (DemoService.isDemoMode) {
+      state = AsyncValue.data(await DemoService.instance.digitalAssignments());
+      return;
+    }
+
     final userNotifier = ref.read(currentUserProvider.notifier);
     final Credentials? credentials = await userNotifier.getSavedCredentials();
     if (credentials == null) {

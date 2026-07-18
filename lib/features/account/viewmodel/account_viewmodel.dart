@@ -5,6 +5,7 @@ import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/account/repository/account_remote_repository.dart';
 
 part 'account_viewmodel.g.dart';
@@ -21,6 +22,16 @@ class AccountViewModel extends _$AccountViewModel {
 
   Future<void> sync() async {
     state = const AsyncValue.loading();
+
+    // Demo mode: re-affirm the seeded demo user without contacting VTOP.
+    if (DemoService.isDemoMode) {
+      final demoUser = ref.read(currentUserProvider);
+      state = demoUser != null
+          ? AsyncValue.data(demoUser)
+          : AsyncValue.data(await DemoService.instance.loadDemoUser());
+      return;
+    }
+
     final User? user = ref.read(currentUserProvider);
     final userNotifier = ref.read(currentUserProvider.notifier);
     final Credentials? credentials = await userNotifier.getSavedCredentials();

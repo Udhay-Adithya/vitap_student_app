@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:vit_ap_student_app/core/constants/app_constants.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/notification_service.dart';
 import 'package:vit_ap_student_app/core/utils/file_saver.dart';
 import 'package:vit_ap_student_app/core/utils/file_type_detector.dart';
@@ -139,14 +140,18 @@ class _AssignmentTileState extends ConsumerState<AssignmentTile> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              // Upload / Update button
-              if (_status == SubmissionState.pending)
+              // Upload / Update button. Uploading is a write action to VTOP,
+              // hidden for the demo account.
+              if (_status == SubmissionState.pending &&
+                  !DemoService.isDemoMode)
                 AssignmentActionButton(
                   icon: Iconsax.document_upload,
                   label: 'Upload',
                   onPressed: () => _pickAndUpload(context, widget.detail.mcode),
                 ),
-              if (_status == SubmissionState.submitted && detail.canUpdate)
+              if (_status == SubmissionState.submitted &&
+                  detail.canUpdate &&
+                  !DemoService.isDemoMode)
                 AssignmentActionButton(
                   icon: Iconsax.refresh_circle,
                   label: 'Update',

@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:vit_ap_student_app/core/error/exceptions.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/vtop_client.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/vtop_errors.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart';
@@ -68,6 +70,14 @@ class VtopClientService {
     required String username,
     required String password,
   }) async {
+    // Safety net: the demo account must never contact VTOP. Feature view models
+    // short-circuit to bundled sample data before reaching this point; if any
+    // path slips through, fail fast with a friendly message instead of trying
+    // to authenticate with placeholder demo credentials.
+    if (DemoService.isDemoMode) {
+      throw const DemoModeException();
+    }
+
     // If OTP is pending, wait for resolution instead of returning partial client
     if (_otpPending && _otpCompleter != null) {
       await _otpCompleter!.future;

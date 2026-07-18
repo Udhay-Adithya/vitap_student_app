@@ -203,6 +203,20 @@ class VtopException implements Exception {
       isResponseReadError;
 }
 
+/// Exception thrown when a live VTOP operation is attempted while the app is
+/// running in demo mode. Demo sessions never contact VTOP; this acts as a
+/// safety net so any un-gated code path fails fast with a friendly message
+/// instead of trying to authenticate with placeholder demo credentials.
+class DemoModeException implements Exception {
+  final String message;
+  const DemoModeException([
+    this.message = 'This feature is not available in the demo account.',
+  ]);
+
+  @override
+  String toString() => 'DemoModeException: $message';
+}
+
 /// Exception for general app errors
 class AppException implements Exception {
   final String message;
