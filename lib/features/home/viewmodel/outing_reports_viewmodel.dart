@@ -27,13 +27,16 @@ class GeneralOutingReportsViewModel extends _$GeneralOutingReportsViewModel {
   /// cache exists) returns `false`, so callers don't advance the "last synced"
   /// timer on a stale result.
   Future<bool> fetchGeneralOutingReports({bool silentRefresh = false}) async {
-        // Demo mode: serve bundled sample general outing reports.
+    // Demo mode: serve bundled sample general outing reports. Reported as a
+    // successful sync — the bundled data is always current for the demo, never
+    // a stale cache fallback — so pull-to-refresh stamps "last synced".
     if (DemoService.isDemoMode) {
       state = AsyncValue.data(
         await DemoService.instance.generalOutingReports(),
       );
-      return;
+      return true;
     }
+
     // Check internet connectivity
     final isConnected = await InternetConnection().hasInternetAccess;
 
@@ -107,13 +110,16 @@ class WeekendOutingReportsViewModel extends _$WeekendOutingReportsViewModel {
   }
 
   Future<bool> fetchWeekendOutingReports({bool silentRefresh = false}) async {
-    // Demo mode: serve bundled sample weekend outing reports.
+    // Demo mode: serve bundled sample weekend outing reports. Reported as a
+    // successful sync — the bundled data is always current for the demo, never
+    // a stale cache fallback — so pull-to-refresh stamps "last synced".
     if (DemoService.isDemoMode) {
       state = AsyncValue.data(
         await DemoService.instance.weekendOutingReports(),
       );
-      return;
+      return true;
     }
+
     // Check internet connectivity
     final isConnected = await InternetConnection().hasInternetAccess;
 
