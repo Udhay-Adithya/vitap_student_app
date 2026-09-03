@@ -43,10 +43,11 @@ class AccountViewModel extends _$AccountViewModel {
         'sync_credentials_missing',
         'User credentials not found during sync',
       );
-      AsyncValue<User>.error(
+      state = AsyncValue.error(
         'User not found. Please Logout and Login.',
         StackTrace.current,
       );
+      return;
     }
 
     // No student identifier here: the cohort is already carried by the
@@ -55,7 +56,7 @@ class AccountViewModel extends _$AccountViewModel {
 
     state = const AsyncValue.loading();
     final res = await _accountRemoteRepository.syncUser(
-      registrationNumber: credentials!.registrationNumber,
+      registrationNumber: credentials.registrationNumber,
       password: credentials.password,
       semSubId: credentials.semSubId,
     );

@@ -7,6 +7,7 @@ import 'package:vit_ap_student_app/features/home/view/pages/for_you_view_all_pag
 import 'package:vit_ap_student_app/features/home/view/widgets/announcement_container.dart';
 import 'package:vit_ap_student_app/features/home/view/widgets/for_you_carousel.dart';
 import 'package:vit_ap_student_app/features/home/view/widgets/home_app_bar.dart';
+import 'package:vit_ap_student_app/features/home/view/widgets/mess_menu/mess_menu_card.dart';
 import 'package:vit_ap_student_app/features/home/view/widgets/quick_access/quick_access.dart';
 import 'package:vit_ap_student_app/features/home/view/widgets/support_prompt_card.dart';
 import 'package:vit_ap_student_app/features/home/view/widgets/upcoming_classes/today_class_count_badge.dart';
@@ -64,6 +65,8 @@ class _HomePageState extends ConsumerState<HomePage> {
               child: QuickAccess(),
             ),
           ),
+          const SliverToBoxAdapter(child: MessMenuCard()),
+
           SliverToBoxAdapter(
             child: SectionHeader(
               label: 'For You',

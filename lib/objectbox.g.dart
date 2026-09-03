@@ -764,7 +764,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(12, 8803805611900482677),
     name: 'UserPreferences',
-    lastPropertyId: const obx_int.IdUid(18, 7577332749877002715),
+    lastPropertyId: const obx_int.IdUid(19, 1524928126302002753),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -873,6 +873,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(18, 7577332749877002715),
         name: 'isAnalyticsEnabled',
         type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(19, 1524928126302002753),
+        name: 'messMenuHostelType',
+        type: 9,
         flags: 0,
       ),
     ],
@@ -2433,7 +2439,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final appThemeOffset = object.appTheme == null
             ? null
             : fbb.writeString(object.appTheme!);
-        fbb.startTable(19);
+        final messMenuHostelTypeOffset = fbb.writeString(
+          object.messMenuHostelType,
+        );
+        fbb.startTable(20);
         fbb.addInt64(0, object.id ?? 0);
         fbb.addOffset(1, pfpPathOffset);
         fbb.addBool(2, object.isTimetableNotificationsEnabled);
@@ -2452,6 +2461,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addFloat64(15, object.fontScale);
         fbb.addBool(16, object.isAmoledEnabled);
         fbb.addBool(17, object.isAnalyticsEnabled);
+        fbb.addOffset(18, messMenuHostelTypeOffset);
         fbb.finish(fbb.endTable());
         return object.id ?? 0;
       },
@@ -2521,6 +2531,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
           rootOffset,
           34,
         );
+        final messMenuHostelTypeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 40, '');
         final lastSyncParam = lastSyncValue == null
             ? null
             : DateTime.fromMillisecondsSinceEpoch(lastSyncValue);
@@ -2554,6 +2567,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           isAnalyticsEnabled: isAnalyticsEnabledParam,
           appTheme: appThemeParam,
           fontScale: fontScaleParam,
+          messMenuHostelType: messMenuHostelTypeParam,
           lastSync: lastSyncParam,
           attendanceLastSync: attendanceLastSyncParam,
           marksLastSync: marksLastSyncParam,
@@ -3881,6 +3895,11 @@ class UserPreferences_ {
   /// See [UserPreferences.isAnalyticsEnabled].
   static final isAnalyticsEnabled = obx.QueryBooleanProperty<UserPreferences>(
     _entities[11].properties[17],
+  );
+
+  /// See [UserPreferences.messMenuHostelType].
+  static final messMenuHostelType = obx.QueryStringProperty<UserPreferences>(
+    _entities[11].properties[18],
   );
 }
 

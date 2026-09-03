@@ -634,7 +634,7 @@
     },
     {
       "id": "12:8803805611900482677",
-      "lastPropertyId": "18:7577332749877002715",
+      "lastPropertyId": "19:1524928126302002753",
       "name": "UserPreferences",
       "properties": [
         {
@@ -727,6 +727,11 @@
           "id": "18:7577332749877002715",
           "name": "isAnalyticsEnabled",
           "type": 1
+        },
+        {
+          "id": "19:1524928126302002753",
+          "name": "messMenuHostelType",
+          "type": 9
         }
       ],
       "relations": []

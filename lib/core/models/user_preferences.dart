@@ -29,6 +29,7 @@ class UserPreferences {
 
   String? appTheme; // Store theme as string: 'blue', 'sakura', etc.
   double? fontScale;
+  String messMenuHostelType;
 
   @Property(type: PropertyType.date)
   DateTime? lastSync;
@@ -57,6 +58,7 @@ class UserPreferences {
     this.isAnalyticsEnabled,
     this.appTheme = 'blue',
     this.fontScale = 1.0,
+    this.messMenuHostelType = 'mh',
     this.lastSync,
     this.attendanceLastSync,
     this.marksLastSync,
@@ -109,6 +111,7 @@ class UserPreferences {
     bool? isAnalyticsEnabled,
     String? appTheme,
     double? fontScale,
+    String? messMenuHostelType,
     DateTime? lastSync,
     DateTime? attendanceLastSync,
     DateTime? marksLastSync,
@@ -136,6 +139,7 @@ class UserPreferences {
       isAnalyticsEnabled: isAnalyticsEnabled ?? this.isAnalyticsEnabled,
       appTheme: appTheme ?? this.appTheme,
       fontScale: fontScale ?? this.fontScale,
+      messMenuHostelType: messMenuHostelType ?? this.messMenuHostelType,
       lastSync: lastSync ?? this.lastSync,
       attendanceLastSync: attendanceLastSync ?? this.attendanceLastSync,
       marksLastSync: marksLastSync ?? this.marksLastSync,

@@ -13,6 +13,9 @@ import 'package:vit_ap_student_app/features/account/view/widgets/circular_theme_
 import 'package:vit_ap_student_app/features/account/view/widgets/developer_mode_tiles.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/menu_section.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/menu_tile.dart';
+import 'package:vit_ap_student_app/features/home/model/mess_menu_hostel.dart';
+import 'package:vit_ap_student_app/features/home/repository/mess_menu_repository.dart';
+import 'package:vit_ap_student_app/features/home/viewmodel/mess_menu_viewmodel.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   final bool isDeveloperModeEnabled;
@@ -24,6 +27,62 @@ class SettingsPage extends ConsumerStatefulWidget {
 }
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
+  bool _isMenuSyncing = false;
+  bool _isMenuCacheClearing = false;
+
+  Future<void> _changeMessHostel() async {
+    final MessMenuHostel currentHostel = messMenuHostelFromCode(
+      ref.read(userPreferencesProvider).messMenuHostelType,
+    );
+
+    final MessMenuHostel? selected = await showDialog<MessMenuHostel>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Mess hostel'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: MessMenuHostel.values
+                .map((MessMenuHostel hostel) {
+                  final bool isSelected = hostel == currentHostel;
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(
+                      isSelected ? Icons.check_rounded : Icons.circle_outlined,
+                    ),
+                    title: Text(hostel.label),
+                    onTap: () => Navigator.of(dialogContext).pop(hostel),
+                  );
+                })
+                .toList(growable: false),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (selected == null || selected == currentHostel) {
+      return;
+    }
+
+    final userPreferences = ref.read(userPreferencesProvider);
+    final userPreferencesNotifier = ref.read(userPreferencesProvider.notifier);
+    await userPreferencesNotifier.updatePreferences(
+      userPreferences.copyWith(messMenuHostelType: selected.apiType),
+    );
+    ref.read(messMenuCacheRevisionProvider.notifier).state =
+        DateTime.now().millisecondsSinceEpoch;
+
+    if (mounted) {
+      showToast(context, 'Mess hostel set to ${selected.label}');
+    }
+  }
+
   Future<void> _resetNotifications() async {
     try {
       final user = ref.read(currentUserProvider);
@@ -58,6 +117,106 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     } catch (e) {
       if (mounted) showToast(context, 'Failed to reset notifications');
       debugPrint('Notification reset failed: $e');
+    }
+  }
+
+  Future<void> _syncMessMenu() async {
+    if (_isMenuSyncing) return;
+    setState(() => _isMenuSyncing = true);
+
+    try {
+      ref.read(analyticsServiceProvider).logEvent(
+        AnalyticsEvents.manualSyncInitiated,
+        {AnalyticsParams.source: 'SettingsPage'},
+      );
+
+      final MessMenuRepository repository = ref.read(
+        messMenuRepositoryProvider,
+      );
+      final MessMenuHostel hostel = messMenuHostelFromCode(
+        ref.read(userPreferencesProvider).messMenuHostelType,
+      );
+      final result = await repository.syncMenu(hostel: hostel);
+      if (!mounted) return;
+
+      result.fold(
+        (failure) {
+          showToast(context, failure.message);
+        },
+        (_) {
+          ref.read(messMenuCacheRevisionProvider.notifier).state =
+              DateTime.now().millisecondsSinceEpoch;
+          showToast(context, 'Mess menu synced for offline use');
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        showToast(context, 'Failed to sync mess menu');
+      }
+      debugPrint('Menu sync failed: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isMenuSyncing = false);
+      }
+    }
+  }
+
+  Future<void> _clearMessMenuCache() async {
+    if (_isMenuCacheClearing) return;
+
+    final bool shouldClear =
+        await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Clear menu cache?'),
+              content: const Text(
+                'This removes all saved mess menu data, so the Home card will show the empty offline state until you sync again.',
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Cancel'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Clear'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (!shouldClear) return;
+
+    setState(() => _isMenuCacheClearing = true);
+    try {
+      final MessMenuRepository repository = ref.read(
+        messMenuRepositoryProvider,
+      );
+      final result = await repository.clearMenuCache();
+      if (!mounted) return;
+
+      result.fold(
+        (failure) {
+          showToast(context, failure.message);
+        },
+        (_) {
+          ref.read(messMenuCacheRevisionProvider.notifier).state =
+              DateTime.now().millisecondsSinceEpoch;
+          showToast(context, 'Mess menu cache cleared');
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        showToast(context, 'Failed to clear menu cache');
+      }
+      debugPrint('Menu cache clear failed: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isMenuCacheClearing = false);
+      }
     }
   }
 
@@ -230,6 +389,54 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     title: 'Reset Notifications',
                     onTap: _resetNotifications,
                   ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              MenuSection(
+                label: 'Mess Menu',
+                children: [
+                  MenuTile(
+                    icon: Icons.apartment_rounded,
+                    title: 'Mess Hostel',
+                    subtitle: messMenuHostelFromCode(
+                      userPreferences.messMenuHostelType,
+                    ).label,
+                    infoText:
+                        'Select the hostel before syncing so the app loads the matching menu.',
+                    onTap: _changeMessHostel,
+                  ),
+                  MenuTile(
+                    icon: Iconsax.refresh,
+                    title: 'Sync Mess Menu',
+                    subtitle: 'Download the current month for offline use',
+                    infoText:
+                        'The home card reads from cached menu data for the selected hostel. Sync only updates it when you tap this button.',
+                    trailing: _isMenuSyncing
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : null,
+                    onTap: _syncMessMenu,
+                  ),
+                  if (widget.isDeveloperModeEnabled)
+                    MenuTile(
+                      icon: Iconsax.trash_copy,
+                      title: 'Clear Mess Menu Cache',
+                      subtitle: 'Remove the saved offline copy',
+                      infoText:
+                          'Useful for testing empty-state behavior or forcing the next sync to repopulate data.',
+                      trailing: _isMenuCacheClearing
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : null,
+                      onTap: _clearMessMenuCache,
+                    ),
                 ],
               ),
 

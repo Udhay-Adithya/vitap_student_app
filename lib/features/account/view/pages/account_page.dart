@@ -130,14 +130,14 @@ class _AccountPageState extends ConsumerState<AccountPage> {
         data: (data) {
           showSnackBar(
             context,
-            'Successfully synced with VTOP',
+            'Successfully synced with VTOP.',
             SnackBarType.success,
           );
         },
         loading: () {
           showSnackBar(
             context,
-            'Syncing with VTOP in the background...',
+            'Syncing your account data in the background...',
             SnackBarType.warning,
           );
         },

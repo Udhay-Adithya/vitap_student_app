@@ -41,7 +41,7 @@ final class AccountViewModelProvider
   }
 }
 
-String _$accountViewModelHash() => r'afeea405737ad534a0f6122544cdde9606e9f601';
+String _$accountViewModelHash() => r'd38d63d7a9ac6f9d07abe23fb14e73e2d0ceb09e';
 
 abstract class _$AccountViewModel extends $Notifier<AsyncValue<User>?> {
   AsyncValue<User>? build();
