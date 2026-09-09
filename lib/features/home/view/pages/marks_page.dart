@@ -6,7 +6,6 @@ import 'package:vit_ap_student_app/core/common/widget/empty_content_view.dart';
 import 'package:vit_ap_student_app/core/common/widget/error_content_view.dart';
 import 'package:vit_ap_student_app/core/common/widget/loader.dart';
 import 'package:vit_ap_student_app/core/constants/analytics_constants.dart';
-import 'package:vit_ap_student_app/core/models/mark.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
 import 'package:vit_ap_student_app/core/providers/user_preferences_notifier.dart';
@@ -59,30 +58,6 @@ class _MarksPageState extends ConsumerState<MarksPage> {
       lastSynced = DateTime.now();
       await saveLastSynced();
     }
-  }
-
-  /// Groups components and enforces the Theory -> Lab -> Project sort order
-  Map<String, List<Mark>> _getGroupedMarks(List<Mark> rawMarks) {
-    final Map<String, List<Mark>> groupedMarks = {};
-    for (final mark in rawMarks) {
-      groupedMarks.putIfAbsent(mark.courseCode, () => []).add(mark);
-    }
-
-    // Sort components: Theory first, then Lab, then Project
-    for (final components in groupedMarks.values) {
-      components.sort((a, b) {
-        int weight(String type) {
-          final t = type.toLowerCase();
-          if (t.contains('theory')) return 1;
-          if (t.contains('lab')) return 2;
-          if (t.contains('project')) return 3;
-          return 4;
-        }
-        return weight(a.courseType).compareTo(weight(b.courseType));
-      });
-    }
-
-    return groupedMarks;
   }
 
   @override
@@ -142,9 +117,9 @@ class _MarksPageState extends ConsumerState<MarksPage> {
       body: isLoading
           ? const Loader()
           : RefreshIndicator(
-              onRefresh: refreshMarksData,
-              child: _buildBody(user),
-            ),
+        onRefresh: refreshMarksData,
+        child: _buildBody(user),
+      ),
     );
   }
 
@@ -153,10 +128,8 @@ class _MarksPageState extends ConsumerState<MarksPage> {
       return const ErrorContentView(error: 'User not found!');
     }
 
-    final groupedMarksLists = _getGroupedMarks(user.marks).values.toList();
-
-    // NEW: Sort the grouped courses alphabetically by courseCode
-    groupedMarksLists.sort((a, b) => a.first.courseCode.compareTo(b.first.courseCode));
+    // Call the static helper method from the ViewModel
+    final groupedMarksLists = MarksViewModel.groupMarks(user.marks.toList());
 
     if (groupedMarksLists.isEmpty) {
       return const EmptyContentView(
@@ -191,14 +164,12 @@ class _MarksPageState extends ConsumerState<MarksPage> {
           }
         }
 
-        // Set default display to the calculated marks
         String displayGained = totalWeightage.toStringAsFixed(1);
         String displayMax = maxWeightage.toStringAsFixed(0);
 
-        // Override with published grades if they exist in the database
         if (primary.grade != null && primary.grandTotal != null && primary.grandTotal!.trim().isNotEmpty) {
           displayGained = primary.grandTotal!.trim();
-          displayMax = '100'; // Final grades are always out of 100
+          displayMax = '100';
         }
 
         return Padding(
@@ -252,7 +223,6 @@ class _MarksPageState extends ConsumerState<MarksPage> {
                 ),
               ],
             ),
-            // GradeView Badge mapped directly to the Marks tile
             trailing: primary.grade != null && primary.grade!.isNotEmpty
                 ? Container(
               padding: const EdgeInsets.symmetric(

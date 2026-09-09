@@ -56,7 +56,6 @@ class MarksViewModel extends _$MarksViewModel {
       state = AsyncValue.error(failure.message, StackTrace.current);
     } else if (res case Right(value: final newMarks)) {
 
-      // PRESERVE THE CACHE: Transfer saved stats from the old database objects to the new ones
       if (user != null) {
         for (final newMark in newMarks) {
           try {
@@ -64,9 +63,7 @@ class MarksViewModel extends _$MarksViewModel {
                     (m) => m.courseCode == newMark.courseCode && m.courseType == newMark.courseType
             );
             newMark.gradeStatsJson = oldMark.gradeStatsJson;
-          } catch (_) {
-            // New course added, no cache to transfer
-          }
+          } catch (_) {}
         }
       }
 
@@ -137,5 +134,34 @@ class MarksViewModel extends _$MarksViewModel {
         mark.gradeStatsJson = null;
       }
     }
+  }
+
+  /// Groups raw database rows into buckets by course code for the UI
+  static List<List<Mark>> groupMarks(List<Mark> rawMarks) {
+    final Map<String, List<Mark>> groupedMap = {};
+    for (final mark in rawMarks) {
+      groupedMap.putIfAbsent(mark.courseCode, () => []).add(mark);
+    }
+
+    final groupedLists = groupedMap.values.toList();
+
+    // Sort courses alphabetically
+    groupedLists.sort((a, b) => a.first.courseCode.compareTo(b.first.courseCode));
+
+    // Enforce internal Theory -> Lab -> Project sort order for each card
+    for (final components in groupedLists) {
+      components.sort((a, b) {
+        int weight(String type) {
+          final t = type.toLowerCase();
+          if (t.contains('theory')) return 1;
+          if (t.contains('lab')) return 2;
+          if (t.contains('project')) return 3;
+          return 4;
+        }
+        return weight(a.courseType).compareTo(weight(b.courseType));
+      });
+    }
+
+    return groupedLists;
   }
 }

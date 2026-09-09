@@ -24,7 +24,6 @@ class _MarkDetailPageState extends ConsumerState<MarkDetailPage> {
   void initState() {
     super.initState();
 
-    // Always sort components: Theory first, then Lab, then Project
     sortedComponents = List.from(widget.components);
     sortedComponents.sort((a, b) {
       int weight(String type) {
@@ -62,7 +61,6 @@ class _MarkDetailPageState extends ConsumerState<MarkDetailPage> {
           ),
           const SizedBox(height: 12),
 
-          // Render the expanding breakdown sections
           for (final comp in sortedComponents)
             _BreakdownSection(course: comp),
 
@@ -242,7 +240,6 @@ class _WeightageRow extends StatelessWidget {
     double gained = 0;
     double lost = 0;
 
-    // Check if Re-Evaluation FAT exists in the assessment list
     final hasReEval = course.details.any(
           (d) => d.markTitle.trim().toLowerCase().contains('re evaluation fat'),
     );
@@ -250,7 +247,6 @@ class _WeightageRow extends StatelessWidget {
     for (final detail in course.details) {
       final title = detail.markTitle.trim().toLowerCase();
 
-      // If Re-Eval exists, skip calculating the normal FAT
       if (hasReEval && title == 'fat') continue;
 
       gained += double.tryParse(detail.weightageMark) ?? 0;
@@ -330,7 +326,6 @@ class _BreakdownTile extends StatelessWidget {
   final Detail detail;
   const _BreakdownTile({required this.detail});
 
-  /// Strips redundant '.0' suffixes from VTOP marks while preserving true decimals
   String _formatMark(String mark) {
     final trimmed = mark.trim();
     if (trimmed.endsWith('.0')) {
@@ -373,9 +368,6 @@ class _GradesSectionState extends ConsumerState<_GradesSection> {
   @override
   void initState() {
     super.initState();
-    // Fire the fetch only when this specific section is rendered.
-    // The ViewModel's loadStats will automatically check the disk first
-    // and skip the API call if the stats are already saved.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(markDetailViewModelProvider.notifier).loadStats(widget.course);
     });
@@ -388,7 +380,6 @@ class _GradesSectionState extends ConsumerState<_GradesSection> {
     final AsyncValue<GradeStatisticsModel?>? statsState =
     ref.watch(markDetailViewModelProvider);
 
-    // Initial state or actively fetching from disk/network
     if (statsState == null || statsState.isLoading) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 24),
@@ -396,7 +387,6 @@ class _GradesSectionState extends ConsumerState<_GradesSection> {
       );
     }
 
-    // Caught an exception or VTOP error
     if (statsState.hasError) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -407,7 +397,6 @@ class _GradesSectionState extends ConsumerState<_GradesSection> {
       );
     }
 
-    // Successfully resolved, check if payload is empty
     final stats = statsState.value;
     if (stats == null) {
       return Padding(
@@ -419,7 +408,6 @@ class _GradesSectionState extends ConsumerState<_GradesSection> {
       );
     }
 
-    // Render the statistics
     return _StatsBody(course: widget.course, stats: stats);
   }
 }
