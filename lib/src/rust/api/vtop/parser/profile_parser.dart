@@ -12,18 +12,8 @@ import '../types/grade_history.dart';
 import '../types/mentor_details.dart';
 import '../types/student_profile.dart';
 
-/// Parses a student profile HTML page and returns a `StudentProfile` struct with extracted profile, mentor, and grade history details.
-///
-/// Extracts key student information, mentor (proctor) details, and the base64-encoded profile picture from the provided HTML.
-/// Fields not present in the HTML are set to empty strings or `"N/A"` as appropriate.
-///
-/// # Examples
-///
-/// ```
-/// let html = std::fs::read_to_string("student_profile.html").unwrap();
-/// let profile = parse_student_profile(html);
-/// assert!(!profile.student_name.is_empty());
-/// ```
+// These functions are ignored because they are not marked as `pub`: `normalise`
+
 Future<StudentProfile> parseStudentProfile({required String html}) => RustLib
     .instance
     .api

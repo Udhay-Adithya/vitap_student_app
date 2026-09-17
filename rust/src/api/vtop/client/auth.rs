@@ -29,7 +29,10 @@ const MENU_UNAVAILABLE_MARKER: &str = "This menu is not available at present";
 /// Two causes produce a byte-identical body and the response carries nothing to
 /// separate them: the request shape was wrong, or the portal has switched that
 /// menu off. Callers should not claim to know which.
-pub fn is_menu_unavailable(body: &str) -> bool {
+///
+/// Crate-private deliberately: `pub` made flutter_rust_bridge generate a Dart
+/// binding for it, putting an internal predicate on the app's API surface.
+pub(crate) fn is_menu_unavailable(body: &str) -> bool {
     body.contains(MENU_UNAVAILABLE_MARKER)
 }
 
@@ -928,5 +931,50 @@ mod tests {
         let two = format!("_csrf={}&nested={}", STALE, STALE);
         let out = refresh_csrf_in_body(&two, Some(STALE), FRESH);
         assert_eq!(out, format!("_csrf={}&nested={}", FRESH, FRESH));
+    }
+}
+
+#[cfg(test)]
+mod menu_unavailable_tests {
+    use super::is_menu_unavailable;
+
+    /// The real refusal, trimmed. VTOP serves this with an HTTP 200, so nothing
+    /// about the status says anything is wrong, and the fragment used to reach a
+    /// parser — which returns an empty result for markup it cannot recognise.
+    /// The screen then showed "no data" with no error and no log line.
+    const REFUSAL: &str = r#"
+        <div class="modal" tabindex="-1" id="msgBox">
+          <div class="modal-body">
+            <span class="text-danger fw-bold h6" id="msgBoxInfoText">
+              This menu is not available at present!!!
+            </span>
+          </div>
+        </div>
+    "#;
+
+    #[test]
+    fn a_real_refusal_is_recognised() {
+        assert!(is_menu_unavailable(REFUSAL));
+    }
+
+    #[test]
+    fn a_real_page_is_not() {
+        assert!(!is_menu_unavailable(
+            r#"<table id="AttendanceDetailDataTable"><tr><td>1</td></tr></table>"#
+        ));
+    }
+
+    #[test]
+    fn an_empty_body_is_not() {
+        assert!(!is_menu_unavailable(""));
+    }
+
+    /// VTOP writes "!!!" today. Matching them would make this hinge on
+    /// punctuation that is not load-bearing.
+    #[test]
+    fn the_match_does_not_depend_on_the_exclamation_marks() {
+        assert!(is_menu_unavailable(
+            "<span>This menu is not available at present</span>"
+        ));
     }
 }
