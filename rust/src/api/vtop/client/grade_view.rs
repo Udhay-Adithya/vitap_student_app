@@ -26,24 +26,11 @@ impl VtopClient {
             return Err(VtopError::SessionExpired);
         }
 
-        // Open the grade view page first, as VTOP requires before it answers
-        // the data request.
-        let init_url = format!(
-            "{}/vtop/examinations/examGradeView/StudentGradeView",
-            self.config.base_url
-        );
-        let init_body = format!(
-            "verifyMenu=true&authorizedID={}&_csrf={}&nocache=@(new Date().getTime())",
-            self.username,
-            self.session
-                .get_csrf_token()
-                .ok_or(VtopError::SessionExpired)?,
-        );
-        let init_res = self
-            .post_form_with_session_retry(init_url, init_body)
-            .await?;
-        let _ = init_res.text().await;
-
+        // No StudentGradeView page load first. The comment here used to say VTOP
+        // required it; on a session where that page has never been opened,
+        // doStudentGradeView returns the full grade table on the first request,
+        // so it was a wasted round trip on every fetch.
+        //
         // doStudentGradeView is posted as multipart, matching the page's form.
         let url = format!(
             "{}/vtop/examinations/examGradeView/doStudentGradeView",
