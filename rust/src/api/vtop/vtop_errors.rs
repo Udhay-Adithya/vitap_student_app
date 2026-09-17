@@ -40,6 +40,12 @@ pub enum VtopError {
     DigitalAssignmentFileSizeExceeded,
     DigitalAssignmentUploadOtpRequired,
     DigitalAssignmentUploadIncorrectOtp,
+    /// A semester id that is not the right shape.
+    ///
+    /// Caught before the request is sent. VTOP does not reject an unknown
+    /// semester id — it answers with a normal, empty result — so a wrong id is
+    /// otherwise indistinguishable from a semester with no data.
+    InvalidSemesterId,
     /// VTOP refused to answer the request.
     ///
     /// It serves a small "This menu is not available at present" fragment with
@@ -100,6 +106,10 @@ impl VtopError {
                 }
             },
             VtopError::CaptchaRequired => "Please complete the captcha verification.".to_string(),
+            VtopError::InvalidSemesterId => {
+                "That semester could not be recognised. Please pick one from the semester list."
+                    .to_string()
+            }
             VtopError::MenuUnavailable => {
                 "VTOP is not serving this page right now. Please try again later.".to_string()
             }
@@ -125,6 +135,7 @@ impl VtopError {
             VtopError::ParseError(_) => "ParseError".to_string(),
             VtopError::ConfigurationError(_) => "ConfigurationError".to_string(),
             VtopError::CaptchaRequired => "CaptchaRequired".to_string(),
+            VtopError::InvalidSemesterId => "InvalidSemesterId".to_string(),
             VtopError::MenuUnavailable => "MenuUnavailable".to_string(),
             VtopError::InvalidResponse => "InvalidResponse".to_string(),
             VtopError::ResponseReadError => "ResponseReadError".to_string(),
@@ -167,6 +178,7 @@ impl std::fmt::Display for VtopError {
             VtopError::ParseError(msg) => write!(f, "Parse error: {}", msg),
             VtopError::ConfigurationError(msg) => write!(f, "Configuration error: {}", msg),
             VtopError::CaptchaRequired => write!(f, "Captcha verification required"),
+            VtopError::InvalidSemesterId => write!(f, "Semester id is not the expected shape"),
             VtopError::MenuUnavailable => write!(f, "VTOP refused the request"),
             VtopError::InvalidResponse => write!(f, "Invalid response from server"),
             VtopError::ResponseReadError => write!(f, "Failed to read response body"),

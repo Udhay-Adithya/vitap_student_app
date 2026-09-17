@@ -78,6 +78,13 @@ sealed class VtopError with _$VtopError implements FrbException {
   const factory VtopError.digitalAssignmentUploadIncorrectOtp() =
       VtopError_DigitalAssignmentUploadIncorrectOtp;
 
+  /// A semester id that is not the right shape.
+  ///
+  /// Caught before the request is sent. VTOP does not reject an unknown
+  /// semester id — it answers with a normal, empty result — so a wrong id is
+  /// otherwise indistinguishable from a semester with no data.
+  const factory VtopError.invalidSemesterId() = VtopError_InvalidSemesterId;
+
   /// VTOP refused to answer the request.
   ///
   /// It serves a small "This menu is not available at present" fragment with

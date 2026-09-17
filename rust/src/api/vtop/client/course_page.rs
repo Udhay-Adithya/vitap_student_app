@@ -1,4 +1,5 @@
 use crate::api::vtop::client::auth::read_body;
+use crate::api::vtop::vtop_config::validate_semester_id;
 use crate::api::vtop::{
     parser::course_page_parser, types::course_page::*, vtop_client::VtopClient,
     vtop_errors::map_response_read_error, vtop_errors::VtopError, vtop_errors::VtopResult,
@@ -85,6 +86,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
 
         let url = format!("{}/vtop/getCourseForCoursePage", self.config.base_url);
 
@@ -147,6 +149,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
 
         let url = format!("{}/vtop/getSlotIdForCoursePage", self.config.base_url);
 
@@ -220,6 +223,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
 
         let url = format!(
             "{}/vtop/processViewStudentCourseDetail",
@@ -410,6 +414,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
 
         let url = format!(
             "{}/vtop/academics/common/CoursePlanExcelDownload?semesterSubId={}&classId={}&authorizedID={}&x={}",
