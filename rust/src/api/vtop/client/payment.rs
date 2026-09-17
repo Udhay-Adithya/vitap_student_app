@@ -1,10 +1,6 @@
 use crate::api::vtop::{
-    parser,
-    types::*,
-    vtop_client::VtopClient,
-    vtop_errors::VtopError,
-    vtop_errors::VtopResult,
-    vtop_errors::{map_reqwest_error, map_response_read_error},
+    parser, types::*, vtop_client::VtopClient, vtop_errors::map_response_read_error,
+    vtop_errors::VtopError, vtop_errors::VtopResult,
 };
 
 impl VtopClient {
@@ -83,15 +79,7 @@ impl VtopClient {
             applno // This should be replaced with the actual application number if needed
         );
 
-        let res = self
-            .client
-            .get(url)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.get_with_session_retry(url).await?;
 
         let text = res.text().await.map_err(map_response_read_error)?;
         Ok(text)
@@ -161,16 +149,7 @@ impl VtopClient {
             self.username
         );
 
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
 
         let text = res.text().await.map_err(map_response_read_error)?;
         let receipts: Vec<PaidPaymentReceipt> =
@@ -262,16 +241,7 @@ impl VtopClient {
             self.username
         );
 
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
 
         let text = res.text().await.map_err(map_response_read_error)?;
         let pending_payment = parser::pending_payments_parser::parse_pending_payments(text);

@@ -10,6 +10,20 @@ use reqwest::{cookie::CookieStore, Url};
 use scraper::{Html, Selector};
 use serde_json::Value;
 
+/// Swaps a stale CSRF token for the current one inside a form body.
+///
+/// `login` issues a fresh token, so a request replayed after a re-login would
+/// still carry the old one in `_csrf=...` and be rejected exactly as before.
+///
+/// Returns the body untouched when there is nothing to swap — no previous
+/// token, or the token did not change.
+pub(crate) fn refresh_csrf_in_body(body: &str, stale: Option<&str>, fresh: &str) -> String {
+    match stale {
+        Some(stale) if !stale.is_empty() && stale != fresh => body.replace(stale, fresh),
+        _ => body.to_string(),
+    }
+}
+
 impl VtopClient {
     /// Retrieves the current session's cookies as a byte vector.
     ///
@@ -52,6 +66,145 @@ impl VtopClient {
     /// Returns `Err(VtopError::SessionExpiredRetryNeeded)` if session expired and re-authentication
     /// succeeded, indicating the calling method should retry the request.
     /// Returns other errors if authentication failed.
+    /// Sends a form POST and, if VTOP has dropped the session, logs back in and
+    /// sends it again before the caller reads the body.
+    ///
+    /// [`Self::handle_session_check`] re-authenticates but cannot re-issue the
+    /// request, so callers went on to read the response captured *before* the
+    /// re-login — the expired-session page. The parsers return an empty result
+    /// for that rather than an error, so an expired session reached the screen
+    /// as "no data" with nothing to say anything had gone wrong.
+    ///
+    /// The retry rebuilds the body with the new CSRF token. [`Self::login`]
+    /// issues a fresh one, so replaying the original body verbatim would be
+    /// rejected just the same.
+    ///
+    /// Retries once. A second expiry means something other than an idle session
+    /// is wrong, and looping here would hammer a portal that locks accounts
+    /// after repeated failed logins.
+    pub(crate) async fn post_form_with_session_retry(
+        &mut self,
+        url: impl reqwest::IntoUrl + Clone,
+        body: String,
+    ) -> VtopResult<reqwest::Response> {
+        let response = self
+            .client
+            .post(url.clone())
+            .body(body.clone())
+            .send()
+            .await
+            .map_err(map_reqwest_error)?;
+
+        if self.session.check_session_expiration(&response).is_ok() {
+            return Ok(response);
+        }
+
+        let stale_csrf = self.session.get_csrf_token();
+        self.login().await?;
+        let fresh_csrf = self
+            .session
+            .get_csrf_token()
+            .ok_or(VtopError::SessionExpired)?;
+
+        let body = refresh_csrf_in_body(&body, stale_csrf.as_deref(), &fresh_csrf);
+
+        let retried = self
+            .client
+            .post(url)
+            .body(body)
+            .send()
+            .await
+            .map_err(map_reqwest_error)?;
+
+        self.session.check_session_expiration(&retried)?;
+        Ok(retried)
+    }
+
+    /// The multipart counterpart of [`Self::post_form_with_session_retry`].
+    ///
+    /// A `multipart::Form` cannot be cloned, and its `_csrf` part would be
+    /// stale after a re-login anyway, so the caller supplies a closure that
+    /// builds the form from whichever token is current. It is called again for
+    /// the retry.
+    ///
+    /// Deliberately not used by the upload and outing-submit paths: replaying a
+    /// write after a re-login risks submitting it twice. Those still surface
+    /// the expiry as an error, which is the safe outcome for a write.
+    pub(crate) async fn post_multipart_with_session_retry<F>(
+        &mut self,
+        url: impl reqwest::IntoUrl + Clone,
+        build_form: F,
+    ) -> VtopResult<reqwest::Response>
+    where
+        F: Fn(&str) -> reqwest::multipart::Form,
+    {
+        let csrf = self
+            .session
+            .get_csrf_token()
+            .ok_or(VtopError::SessionExpired)?;
+
+        let response = self
+            .client
+            .post(url.clone())
+            .multipart(build_form(&csrf))
+            .send()
+            .await
+            .map_err(map_reqwest_error)?;
+
+        if self.session.check_session_expiration(&response).is_ok() {
+            return Ok(response);
+        }
+
+        self.login().await?;
+        let fresh_csrf = self
+            .session
+            .get_csrf_token()
+            .ok_or(VtopError::SessionExpired)?;
+
+        let retried = self
+            .client
+            .post(url)
+            .multipart(build_form(&fresh_csrf))
+            .send()
+            .await
+            .map_err(map_reqwest_error)?;
+
+        self.session.check_session_expiration(&retried)?;
+        Ok(retried)
+    }
+
+    /// The GET counterpart of [`Self::post_form_with_session_retry`].
+    ///
+    /// Carries no body, so there is no CSRF token to refresh — the request is
+    /// simply sent again after a successful re-login.
+    pub(crate) async fn get_with_session_retry(
+        &mut self,
+        url: impl reqwest::IntoUrl + Clone,
+    ) -> VtopResult<reqwest::Response> {
+        let response = self
+            .client
+            .get(url.clone())
+            .send()
+            .await
+            .map_err(map_reqwest_error)?;
+
+        if self.session.check_session_expiration(&response).is_ok() {
+            return Ok(response);
+        }
+
+        self.login().await?;
+
+        let retried = self
+            .client
+            .get(url)
+            .send()
+            .await
+            .map_err(map_reqwest_error)?;
+
+        self.session.check_session_expiration(&retried)?;
+        Ok(retried)
+    }
+
     pub(crate) async fn handle_session_check(
         &mut self,
         response: &reqwest::Response,
@@ -681,5 +834,65 @@ impl VtopClient {
     /// ```
     pub fn is_authenticated(&mut self) -> bool {
         self.session.is_authenticated()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::refresh_csrf_in_body;
+
+    const STALE: &str = "11111111-aaaa-4444-9999-222222222222";
+    const FRESH: &str = "33333333-bbbb-4444-9999-444444444444";
+
+    fn body(token: &str) -> String {
+        format!(
+            "_csrf={}&semesterSubId=AP2026272&authorizedID=00XXX0000",
+            token
+        )
+    }
+
+    #[test]
+    fn a_stale_token_is_replaced() {
+        assert_eq!(
+            refresh_csrf_in_body(&body(STALE), Some(STALE), FRESH),
+            body(FRESH)
+        );
+    }
+
+    #[test]
+    fn the_rest_of_the_body_is_left_alone() {
+        let out = refresh_csrf_in_body(&body(STALE), Some(STALE), FRESH);
+        assert!(out.contains("semesterSubId=AP2026272"));
+        assert!(out.contains("authorizedID=00XXX0000"));
+        assert!(!out.contains(STALE));
+    }
+
+    #[test]
+    fn an_unchanged_token_is_a_no_op() {
+        assert_eq!(
+            refresh_csrf_in_body(&body(FRESH), Some(FRESH), FRESH),
+            body(FRESH)
+        );
+    }
+
+    #[test]
+    fn no_previous_token_leaves_the_body_untouched() {
+        assert_eq!(refresh_csrf_in_body(&body(STALE), None, FRESH), body(STALE));
+    }
+
+    #[test]
+    fn an_empty_previous_token_does_not_corrupt_the_body() {
+        // "".replace() would splice the fresh token between every character.
+        assert_eq!(
+            refresh_csrf_in_body(&body(STALE), Some(""), FRESH),
+            body(STALE)
+        );
+    }
+
+    #[test]
+    fn a_token_appearing_more_than_once_is_replaced_everywhere() {
+        let two = format!("_csrf={}&nested={}", STALE, STALE);
+        let out = refresh_csrf_in_body(&two, Some(STALE), FRESH);
+        assert_eq!(out, format!("_csrf={}&nested={}", FRESH, FRESH));
     }
 }

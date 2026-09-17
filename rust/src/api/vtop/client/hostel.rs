@@ -60,16 +60,7 @@ impl VtopClient {
             self.username
         );
 
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
 
         let text = res.text().await.map_err(map_response_read_error)?;
         let leave_data = parser::hostel::general_outing_parser::parse_hostel_leave(text);
@@ -136,15 +127,7 @@ impl VtopClient {
             chrono::Utc::now().to_rfc2822()
         );
 
-        let res = self
-            .client
-            .get(url)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.get_with_session_retry(url).await?;
 
         let bytes = res.bytes().await.map_err(map_response_read_error)?;
         Ok(bytes.to_vec())
@@ -203,16 +186,7 @@ impl VtopClient {
             self.username
         );
 
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
 
         let text = res.text().await.map_err(map_response_read_error)?;
         let hostel_data = parser::hostel::weekend_outing_parser::parse_weekend_outing(text);
@@ -280,15 +254,7 @@ impl VtopClient {
             chrono::Utc::now().to_rfc2822()
         );
 
-        let res = self
-            .client
-            .get(url)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.get_with_session_retry(url).await?;
 
         let bytes = res.bytes().await.map_err(map_response_read_error)?;
         Ok(bytes.to_vec())

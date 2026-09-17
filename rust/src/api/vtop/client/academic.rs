@@ -94,15 +94,7 @@ impl VtopClient {
                 .get_csrf_token()
                 .ok_or(VtopError::SessionExpired)?,
         );
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
 
         let text = res.text().await.map_err(map_response_read_error)?;
         Ok(parser::semested_id_parser::parse_semid_from_timetable(text))
@@ -160,15 +152,7 @@ impl VtopClient {
             semester_id,
             self.username
         );
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
         let text = res.text().await.map_err(map_response_read_error)?;
         Ok(parser::timetable_parser::parse_timetable(text))
     }
@@ -232,15 +216,7 @@ impl VtopClient {
             semester_id,
             self.username
         );
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
         let text = res.text().await.map_err(map_response_read_error)?;
         Ok(parser::attendance_parser::parse_attendance(text))
     }
@@ -320,15 +296,7 @@ impl VtopClient {
             self.username,
             timestamp
         );
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
         let text = res.text().await.map_err(map_response_read_error)?;
         Ok(parser::attendance_parser::parse_full_attendance(text))
     }
@@ -374,15 +342,7 @@ impl VtopClient {
             self.username,
             timestamp
         );
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
         let text = res.text().await.map_err(map_response_read_error)?;
         Ok(parser::capstone_attendance_parser::parse_capstone_attendance(text))
     }
@@ -425,15 +385,7 @@ impl VtopClient {
             semester_id,
             self.username
         );
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
         let text = res.text().await.map_err(map_response_read_error)?;
 
         let has_capstone = parser::attendance_parser::has_capstone_attendance(&text);
@@ -506,25 +458,16 @@ impl VtopClient {
             "{}/vtop/examinations/doStudentMarkView",
             self.config.base_url
         );
-        let form = Form::new()
-            .text("authorizedID", self.username.clone())
-            .text("semesterSubId", semester_id.to_string())
-            .text(
-                "_csrf",
-                self.session
-                    .get_csrf_token()
-                    .ok_or(VtopError::SessionExpired)?,
-            );
-
+        let authorizedid_v = self.username.clone();
+        let semestersubid_v = semester_id.to_string();
         let res = self
-            .client
-            .post(url)
-            .multipart(form)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+            .post_multipart_with_session_retry(url, |csrf| {
+                Form::new()
+                    .text("authorizedID", authorizedid_v.clone())
+                    .text("semesterSubId", semestersubid_v.clone())
+                    .text("_csrf", csrf.to_string())
+            })
+            .await?;
 
         let text = res.text().await.map_err(map_response_read_error)?;
 
@@ -591,24 +534,16 @@ impl VtopClient {
             "{}/vtop/examinations/doSearchExamScheduleForStudent",
             self.config.base_url
         );
-        let form = Form::new()
-            .text("authorizedID", self.username.clone())
-            .text("semesterSubId", semester_id.to_string())
-            .text(
-                "_csrf",
-                self.session
-                    .get_csrf_token()
-                    .ok_or(VtopError::SessionExpired)?,
-            );
+        let authorizedid_v = self.username.clone();
+        let semestersubid_v = semester_id.to_string();
         let res = self
-            .client
-            .post(url)
-            .multipart(form)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+            .post_multipart_with_session_retry(url, |csrf| {
+                Form::new()
+                    .text("authorizedID", authorizedid_v.clone())
+                    .text("semesterSubId", semestersubid_v.clone())
+                    .text("_csrf", csrf.to_string())
+            })
+            .await?;
         let text = res.text().await.map_err(map_response_read_error)?;
         Ok(parser::exam_schedule_parser::parse_schedule(text))
     }
@@ -636,24 +571,16 @@ impl VtopClient {
             "{}/vtop/examinations/doDigitalAssignment",
             self.config.base_url
         );
-        let form = Form::new()
-            .text("authorizedID", self.username.clone())
-            .text("semesterSubId", semester_id.to_string())
-            .text(
-                "_csrf",
-                self.session
-                    .get_csrf_token()
-                    .ok_or(VtopError::SessionExpired)?,
-            );
+        let authorizedid_v = self.username.clone();
+        let semestersubid_v = semester_id.to_string();
         let res = self
-            .client
-            .post(url)
-            .multipart(form)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+            .post_multipart_with_session_retry(url, |csrf| {
+                Form::new()
+                    .text("authorizedID", authorizedid_v.clone())
+                    .text("semesterSubId", semestersubid_v.clone())
+                    .text("_csrf", csrf.to_string())
+            })
+            .await?;
         let text = res.text().await.map_err(map_response_read_error)?;
         let mut assignments = parser::digital_assignment_parser::parse_all_assignments(text);
         for assignment in &mut assignments {
@@ -696,15 +623,7 @@ impl VtopClient {
                 .get_csrf_token()
                 .ok_or(VtopError::SessionExpired)?,
         );
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
         let text = res.text().await.map_err(map_response_read_error)?;
         Ok(parser::digital_assignment_parser::parse_per_course_dassignments(text))
     }
@@ -748,15 +667,7 @@ impl VtopClient {
             urlencoding::encode(&chrono::Utc::now().to_rfc2822())
         );
 
-        let res = self
-            .client
-            .get(url)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.get_with_session_retry(url).await?;
 
         let bytes = res.bytes().await.map_err(map_response_read_error)?;
         Ok(bytes.to_vec())
@@ -812,15 +723,7 @@ impl VtopClient {
                 .get_csrf_token()
                 .ok_or(VtopError::SessionExpired)?,
         );
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
         let text = res.text().await.map_err(map_response_read_error)?;
         Ok(parser::digital_assignment_parser::parse_process_upload_assignment_response(text))
     }
@@ -921,6 +824,9 @@ impl VtopClient {
             "{}/vtop/examinations/doDAssignmentOtpUpload",
             self.config.base_url
         );
+        // Deliberately not retried after a re-login: this submits an OTP, and
+        // replaying a write risks sending it twice. An expired session stays an
+        // error here, which is the safe outcome.
         let form = Form::new()
             .text("authorizedID", self.username.clone())
             .text("otpEmail", otp_email.to_string())
@@ -930,6 +836,7 @@ impl VtopClient {
                     .get_csrf_token()
                     .ok_or(VtopError::SessionExpired)?,
             );
+
         let res = self
             .client
             .post(url)
@@ -937,8 +844,8 @@ impl VtopClient {
             .send()
             .await
             .map_err(map_reqwest_error)?;
-        // Check for session expiration and auto re-authenticate if needed
         self.handle_session_check(&res).await?;
+
         let text = res.text().await.map_err(map_response_read_error)?;
         let result = parser::digital_assignment_parser::parse_upload_assignment_response(text);
         if result == "Invalid OTP. Please try again.".to_string() {

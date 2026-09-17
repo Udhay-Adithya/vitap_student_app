@@ -1,10 +1,6 @@
 use crate::api::vtop::{
-    parser,
-    types::*,
-    vtop_client::VtopClient,
-    vtop_errors::VtopError,
-    vtop_errors::VtopResult,
-    vtop_errors::{map_reqwest_error, map_response_read_error},
+    parser, types::*, vtop_client::VtopClient, vtop_errors::map_response_read_error,
+    vtop_errors::VtopError, vtop_errors::VtopResult,
 };
 use chrono::Utc;
 
@@ -31,15 +27,7 @@ impl VtopClient {
             timestamp,
             extra
         );
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        // Check for session expiration and auto re-authenticate if needed
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
         res.text().await.map_err(map_response_read_error)
     }
 
