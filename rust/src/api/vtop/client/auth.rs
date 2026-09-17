@@ -1,3 +1,4 @@
+use crate::api::vtop::vtop_config::MAX_CAPTCHA_RELOAD_ATTEMPTS;
 use crate::api::vtop::{
     captcha_solver as captcha_parser,
     vtop_client::VtopClient,
@@ -618,15 +619,13 @@ impl VtopClient {
             self.load_initial_page().await?;
             self.extract_csrf_token()?;
         }
-        #[allow(non_snake_case)]
-        let Max_RELOAD_ATTEMPTS = 8;
         let csrf = self
             .session
             .get_csrf_token()
             .ok_or(VtopError::SessionExpired)?;
         let url = format!("{}/vtop/prelogin/setup", self.config.base_url);
         let body = format!("_csrf={}&flag=VTOP", csrf);
-        for _ in 0..Max_RELOAD_ATTEMPTS {
+        for _ in 0..MAX_CAPTCHA_RELOAD_ATTEMPTS {
             let response = self
                 .client
                 .post(&url)
@@ -641,11 +640,16 @@ impl VtopClient {
             if text.contains("base64,") {
                 self.current_page = Some(text);
                 self.extract_captcha_data()?;
-                break;
+                return Ok(());
             }
             println!("No captcha found Reloading the page ");
         }
-        Ok(())
+
+        // Falling out of the loop means the captcha never arrived. Returning
+        // Ok here told the caller the login page had loaded, and the login went
+        // on with `current_page` unset -- failing later for a reason that had
+        // nothing to do with the real cause.
+        Err(VtopError::CaptchaRequired)
     }
 
     /// Extracts the base64-encoded CAPTCHA image data from the login page HTML.

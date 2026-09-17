@@ -21,6 +21,13 @@ pub struct VtopConfig {
 ///
 /// Callers that know the real device should pass its User-Agent instead; this
 /// is the fallback for tools and tests.
+/// How many times to reload the login page waiting for its captcha image.
+///
+/// VTOP serves the login page without the captcha fairly often, especially
+/// under load, so a retry is normal rather than exceptional. Exhausting these
+/// is a real failure and returns `VtopError::CaptchaRequired`.
+pub const MAX_CAPTCHA_RELOAD_ATTEMPTS: usize = 8;
+
 pub const DEFAULT_USER_AGENT: &str = "Mozilla/5.0 (Linux; Android 14; Pixel 7) \
 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36";
 
