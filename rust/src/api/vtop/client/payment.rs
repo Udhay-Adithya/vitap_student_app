@@ -1,6 +1,6 @@
+use crate::api::vtop::client::auth::read_body;
 use crate::api::vtop::{
-    parser, types::*, vtop_client::VtopClient, vtop_errors::map_response_read_error,
-    vtop_errors::VtopError, vtop_errors::VtopResult,
+    parser, types::*, vtop_client::VtopClient, vtop_errors::VtopError, vtop_errors::VtopResult,
 };
 
 impl VtopClient {
@@ -81,7 +81,7 @@ impl VtopClient {
 
         let res = self.get_with_session_retry(url).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(text)
     }
 
@@ -151,7 +151,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         let receipts: Vec<PaidPaymentReceipt> =
             parser::payment_receipts_parser::parse_payment_receipts(text);
         Ok(receipts)
@@ -243,7 +243,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         let pending_payment = parser::pending_payments_parser::parse_pending_payments(text);
         Ok(pending_payment)
     }

@@ -78,6 +78,15 @@ sealed class VtopError with _$VtopError implements FrbException {
   const factory VtopError.digitalAssignmentUploadIncorrectOtp() =
       VtopError_DigitalAssignmentUploadIncorrectOtp;
 
+  /// VTOP refused to answer the request.
+  ///
+  /// It serves a small "This menu is not available at present" fragment with
+  /// an HTTP 200 — which the parsers would otherwise read as data and turn
+  /// into an empty result on screen. The same body comes back whether the
+  /// request shape was wrong or the portal has switched that menu off, and
+  /// the response carries nothing to tell them apart.
+  const factory VtopError.menuUnavailable() = VtopError_MenuUnavailable;
+
   /// Login otp verification required
   const factory VtopError.loginOtpRequired() = VtopError_LoginOtpRequired;
 

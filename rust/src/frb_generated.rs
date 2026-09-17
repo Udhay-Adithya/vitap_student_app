@@ -10710,12 +10710,15 @@ impl SseDecode for crate::api::vtop::vtop_errors::VtopError {
                 return crate::api::vtop::vtop_errors::VtopError::DigitalAssignmentUploadIncorrectOtp;
             }
             20 => {
-                return crate::api::vtop::vtop_errors::VtopError::LoginOtpRequired;
+                return crate::api::vtop::vtop_errors::VtopError::MenuUnavailable;
             }
             21 => {
-                return crate::api::vtop::vtop_errors::VtopError::LoginOtpIncorrect;
+                return crate::api::vtop::vtop_errors::VtopError::LoginOtpRequired;
             }
             22 => {
+                return crate::api::vtop::vtop_errors::VtopError::LoginOtpIncorrect;
+            }
+            23 => {
                 return crate::api::vtop::vtop_errors::VtopError::LoginOtpExpired;
             }
             _ => {
@@ -12935,14 +12938,17 @@ impl flutter_rust_bridge::IntoDart for crate::api::vtop::vtop_errors::VtopError 
             crate::api::vtop::vtop_errors::VtopError::DigitalAssignmentUploadIncorrectOtp => {
                 [19.into_dart()].into_dart()
             }
-            crate::api::vtop::vtop_errors::VtopError::LoginOtpRequired => {
+            crate::api::vtop::vtop_errors::VtopError::MenuUnavailable => {
                 [20.into_dart()].into_dart()
             }
-            crate::api::vtop::vtop_errors::VtopError::LoginOtpIncorrect => {
+            crate::api::vtop::vtop_errors::VtopError::LoginOtpRequired => {
                 [21.into_dart()].into_dart()
             }
-            crate::api::vtop::vtop_errors::VtopError::LoginOtpExpired => {
+            crate::api::vtop::vtop_errors::VtopError::LoginOtpIncorrect => {
                 [22.into_dart()].into_dart()
+            }
+            crate::api::vtop::vtop_errors::VtopError::LoginOtpExpired => {
+                [23.into_dart()].into_dart()
             }
             _ => {
                 unimplemented!("");
@@ -15087,14 +15093,17 @@ impl SseEncode for crate::api::vtop::vtop_errors::VtopError {
             crate::api::vtop::vtop_errors::VtopError::DigitalAssignmentUploadIncorrectOtp => {
                 <i32>::sse_encode(19, serializer);
             }
-            crate::api::vtop::vtop_errors::VtopError::LoginOtpRequired => {
+            crate::api::vtop::vtop_errors::VtopError::MenuUnavailable => {
                 <i32>::sse_encode(20, serializer);
             }
-            crate::api::vtop::vtop_errors::VtopError::LoginOtpIncorrect => {
+            crate::api::vtop::vtop_errors::VtopError::LoginOtpRequired => {
                 <i32>::sse_encode(21, serializer);
             }
-            crate::api::vtop::vtop_errors::VtopError::LoginOtpExpired => {
+            crate::api::vtop::vtop_errors::VtopError::LoginOtpIncorrect => {
                 <i32>::sse_encode(22, serializer);
+            }
+            crate::api::vtop::vtop_errors::VtopError::LoginOtpExpired => {
+                <i32>::sse_encode(23, serializer);
             }
             _ => {
                 unimplemented!("");

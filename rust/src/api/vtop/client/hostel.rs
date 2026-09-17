@@ -1,3 +1,4 @@
+use crate::api::vtop::client::auth::read_body;
 use crate::api::vtop::{
     parser,
     types::*,
@@ -62,7 +63,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         let leave_data = parser::hostel::general_outing_parser::parse_hostel_leave(text);
         Ok(leave_data)
     }
@@ -188,7 +189,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         let hostel_data = parser::hostel::weekend_outing_parser::parse_weekend_outing(text);
         Ok(hostel_data)
     }
@@ -370,7 +371,7 @@ impl VtopClient {
             .map_err(map_reqwest_error)?;
 
         self.handle_session_check(&init_res).await?;
-        let init_text = init_res.text().await.map_err(map_response_read_error)?;
+        let init_text = read_body(init_res).await?;
 
         // Parse the form to get student info
         let form_info = parser::outing_form_parser::parse_outing_form(init_text)?;
@@ -421,7 +422,7 @@ impl VtopClient {
             .map_err(map_reqwest_error)?;
 
         self.handle_session_check(&submit_res).await?;
-        let response_text = submit_res.text().await.map_err(map_response_read_error)?;
+        let response_text = read_body(submit_res).await?;
 
         // Parse the HTML response to extract the success/error message
         let parsed_message = parser::outing_response_parser::parse_outing_response(
@@ -536,7 +537,7 @@ impl VtopClient {
             .map_err(map_reqwest_error)?;
 
         self.handle_session_check(&init_res).await?;
-        let init_text = init_res.text().await.map_err(map_response_read_error)?;
+        let init_text = read_body(init_res).await?;
 
         // Parse the form to get student info
         let form_info = parser::outing_form_parser::parse_outing_form(init_text)?;
@@ -574,7 +575,7 @@ impl VtopClient {
             .map_err(map_reqwest_error)?;
 
         self.handle_session_check(&submit_res).await?;
-        let response_text = submit_res.text().await.map_err(map_response_read_error)?;
+        let response_text = read_body(submit_res).await?;
 
         // Parse the HTML response to extract the success/error message
         let parsed_message = parser::outing_response_parser::parse_outing_response(
@@ -674,7 +675,7 @@ impl VtopClient {
             .map_err(map_reqwest_error)?;
 
         self.handle_session_check(&res).await?;
-        let response_text = res.text().await.map_err(map_response_read_error)?;
+        let response_text = read_body(res).await?;
 
         // Parse the HTML response to extract the success/error message
         let parsed_message = parser::outing_response_parser::parse_outing_response(
@@ -753,7 +754,7 @@ impl VtopClient {
             .map_err(map_reqwest_error)?;
 
         self.handle_session_check(&res).await?;
-        let response_text = res.text().await.map_err(map_response_read_error)?;
+        let response_text = read_body(res).await?;
 
         // Parse the HTML response to extract the success/error message
         let parsed_message = parser::outing_response_parser::parse_outing_response(

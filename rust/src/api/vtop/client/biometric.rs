@@ -1,6 +1,6 @@
+use crate::api::vtop::client::auth::read_body;
 use crate::api::vtop::{
-    parser, types::*, vtop_client::VtopClient, vtop_errors::map_response_read_error,
-    vtop_errors::VtopError, vtop_errors::VtopResult,
+    parser, types::*, vtop_client::VtopClient, vtop_errors::VtopError, vtop_errors::VtopResult,
 };
 
 impl VtopClient {
@@ -64,7 +64,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         // Using println! instead of print! for better formatting
 
         Ok(parser::parse_biometric::parse_biometric_data(text))

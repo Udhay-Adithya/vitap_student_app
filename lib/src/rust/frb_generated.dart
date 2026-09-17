@@ -9383,10 +9383,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 19:
         return const VtopError_DigitalAssignmentUploadIncorrectOtp();
       case 20:
-        return const VtopError_LoginOtpRequired();
+        return const VtopError_MenuUnavailable();
       case 21:
-        return const VtopError_LoginOtpIncorrect();
+        return const VtopError_LoginOtpRequired();
       case 22:
+        return const VtopError_LoginOtpIncorrect();
+      case 23:
         return const VtopError_LoginOtpExpired();
       default:
         throw Exception('unreachable');
@@ -11850,10 +11852,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 19:
         return const VtopError_DigitalAssignmentUploadIncorrectOtp();
       case 20:
-        return const VtopError_LoginOtpRequired();
+        return const VtopError_MenuUnavailable();
       case 21:
-        return const VtopError_LoginOtpIncorrect();
+        return const VtopError_LoginOtpRequired();
       case 22:
+        return const VtopError_LoginOtpIncorrect();
+      case 23:
         return const VtopError_LoginOtpExpired();
       default:
         throw UnimplementedError('');
@@ -14135,12 +14139,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(18, serializer);
       case VtopError_DigitalAssignmentUploadIncorrectOtp():
         sse_encode_i_32(19, serializer);
-      case VtopError_LoginOtpRequired():
+      case VtopError_MenuUnavailable():
         sse_encode_i_32(20, serializer);
-      case VtopError_LoginOtpIncorrect():
+      case VtopError_LoginOtpRequired():
         sse_encode_i_32(21, serializer);
-      case VtopError_LoginOtpExpired():
+      case VtopError_LoginOtpIncorrect():
         sse_encode_i_32(22, serializer);
+      case VtopError_LoginOtpExpired():
+        sse_encode_i_32(23, serializer);
     }
   }
 
