@@ -1,10 +1,6 @@
 use crate::api::vtop::{
-    parser,
-    types::*,
-    vtop_client::VtopClient,
-    vtop_errors::VtopError,
-    vtop_errors::VtopResult,
-    vtop_errors::{map_reqwest_error, map_response_read_error},
+    parser, types::*, vtop_client::VtopClient, vtop_errors::map_response_read_error,
+    vtop_errors::VtopError, vtop_errors::VtopResult,
 };
 use chrono::Utc;
 use reqwest::multipart::Form;
@@ -44,13 +40,8 @@ impl VtopClient {
                 .ok_or(VtopError::SessionExpired)?,
         );
         let init_res = self
-            .client
-            .post(init_url)
-            .body(init_body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        self.handle_session_check(&init_res).await?;
+            .post_form_with_session_retry(init_url, init_body)
+            .await?;
         let _ = init_res.text().await;
 
         // doStudentGradeView is posted as multipart, matching the page's form.
@@ -58,24 +49,16 @@ impl VtopClient {
             "{}/vtop/examinations/examGradeView/doStudentGradeView",
             self.config.base_url
         );
-        let form = Form::new()
-            .text("authorizedID", self.username.clone())
-            .text("semesterSubId", semester_id.to_string())
-            .text(
-                "_csrf",
-                self.session
-                    .get_csrf_token()
-                    .ok_or(VtopError::SessionExpired)?,
-            );
-
+        let authorizedid_v = self.username.clone();
+        let semestersubid_v = semester_id.to_string();
         let res = self
-            .client
-            .post(url)
-            .multipart(form)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        self.handle_session_check(&res).await?;
+            .post_multipart_with_session_retry(url, |csrf| {
+                Form::new()
+                    .text("authorizedID", authorizedid_v.clone())
+                    .text("semesterSubId", semestersubid_v.clone())
+                    .text("_csrf", csrf.to_string())
+            })
+            .await?;
 
         let text = res.text().await.map_err(map_response_read_error)?;
         Ok(parser::grade_view_parser::parse_grade_view(text))
@@ -121,14 +104,7 @@ impl VtopClient {
                 .ok_or(VtopError::SessionExpired)?,
         );
 
-        let res = self
-            .client
-            .post(url)
-            .body(body)
-            .send()
-            .await
-            .map_err(map_reqwest_error)?;
-        self.handle_session_check(&res).await?;
+        let res = self.post_form_with_session_retry(url, body).await?;
 
         let text = res.text().await.map_err(map_response_read_error)?;
         Ok(parser::grade_view_parser::parse_grade_view_detail(text))
