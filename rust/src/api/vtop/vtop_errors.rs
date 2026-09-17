@@ -40,6 +40,14 @@ pub enum VtopError {
     DigitalAssignmentFileSizeExceeded,
     DigitalAssignmentUploadOtpRequired,
     DigitalAssignmentUploadIncorrectOtp,
+    /// VTOP refused to answer the request.
+    ///
+    /// It serves a small "This menu is not available at present" fragment with
+    /// an HTTP 200 — which the parsers would otherwise read as data and turn
+    /// into an empty result on screen. The same body comes back whether the
+    /// request shape was wrong or the portal has switched that menu off, and
+    /// the response carries nothing to tell them apart.
+    MenuUnavailable,
     /// Login otp verification required
     LoginOtpRequired,
     /// Login otp is incorrect
@@ -92,6 +100,9 @@ impl VtopError {
                 }
             },
             VtopError::CaptchaRequired => "Please complete the captcha verification.".to_string(),
+            VtopError::MenuUnavailable => {
+                "VTOP is not serving this page right now. Please try again later.".to_string()
+            }
             VtopError::InvalidResponse => "Received unexpected response from server. Please try again.".to_string(),
             VtopError::ResponseReadError => "Failed to read server response. Please try again.".to_string(),
         }
@@ -114,6 +125,7 @@ impl VtopError {
             VtopError::ParseError(_) => "ParseError".to_string(),
             VtopError::ConfigurationError(_) => "ConfigurationError".to_string(),
             VtopError::CaptchaRequired => "CaptchaRequired".to_string(),
+            VtopError::MenuUnavailable => "MenuUnavailable".to_string(),
             VtopError::InvalidResponse => "InvalidResponse".to_string(),
             VtopError::ResponseReadError => "ResponseReadError".to_string(),
             VtopError::DigitalAssignmentFileNotFound => "FileNotFound".to_string(),
@@ -155,6 +167,7 @@ impl std::fmt::Display for VtopError {
             VtopError::ParseError(msg) => write!(f, "Parse error: {}", msg),
             VtopError::ConfigurationError(msg) => write!(f, "Configuration error: {}", msg),
             VtopError::CaptchaRequired => write!(f, "Captcha verification required"),
+            VtopError::MenuUnavailable => write!(f, "VTOP refused the request"),
             VtopError::InvalidResponse => write!(f, "Invalid response from server"),
             VtopError::ResponseReadError => write!(f, "Failed to read response body"),
             VtopError::DigitalAssignmentFileNotFound => write!(f, "File Selection Error"),

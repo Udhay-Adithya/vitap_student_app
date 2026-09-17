@@ -1,3 +1,4 @@
+use crate::api::vtop::client::auth::read_body;
 use crate::api::vtop::{
     parser::course_page_parser, types::course_page::*, vtop_client::VtopClient,
     vtop_errors::map_response_read_error, vtop_errors::VtopError, vtop_errors::VtopResult,
@@ -40,7 +41,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(text)
     }
 
@@ -99,7 +100,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(course_page_parser::parse_courses_for_course_page(text))
     }
 
@@ -162,7 +163,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(course_page_parser::parse_slots_for_course_page(
             text,
             semester_id,
@@ -239,7 +240,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(course_page_parser::parse_course_detail_page(text))
     }
 

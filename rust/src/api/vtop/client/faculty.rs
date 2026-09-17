@@ -1,6 +1,6 @@
+use crate::api::vtop::client::auth::read_body;
 use crate::api::vtop::{
-    parser, types::*, vtop_client::VtopClient, vtop_errors::map_response_read_error,
-    vtop_errors::VtopError, vtop_errors::VtopResult,
+    parser, types::*, vtop_client::VtopClient, vtop_errors::VtopError, vtop_errors::VtopResult,
 };
 
 impl VtopClient {
@@ -68,7 +68,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         // print!("Fetched faculty search data: {}", text);
         Ok(parser::faculty::parsesearch::parse_faculty_search(text))
     }
@@ -143,7 +143,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         let faculty_details = parser::faculty::parseabout::parse_faculty_data(text);
         Ok(faculty_details)
     }
@@ -172,7 +172,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(parser::faculty::parsesearch::parse_all_faculty_search(text))
     }
 }

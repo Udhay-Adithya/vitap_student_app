@@ -1,3 +1,4 @@
+use crate::api::vtop::client::auth::read_body;
 use crate::api::vtop::{
     parser,
     types::*,
@@ -96,7 +97,7 @@ impl VtopClient {
         );
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(parser::semested_id_parser::parse_semid_from_timetable(text))
     }
 
@@ -153,7 +154,7 @@ impl VtopClient {
             self.username
         );
         let res = self.post_form_with_session_retry(url, body).await?;
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(parser::timetable_parser::parse_timetable(text))
     }
 
@@ -217,7 +218,7 @@ impl VtopClient {
             self.username
         );
         let res = self.post_form_with_session_retry(url, body).await?;
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(parser::attendance_parser::parse_attendance(text))
     }
 
@@ -297,7 +298,7 @@ impl VtopClient {
             timestamp
         );
         let res = self.post_form_with_session_retry(url, body).await?;
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(parser::attendance_parser::parse_full_attendance(text))
     }
     /// Retrieves the capstone/SDP attendance for a semester.
@@ -343,7 +344,7 @@ impl VtopClient {
             timestamp
         );
         let res = self.post_form_with_session_retry(url, body).await?;
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(parser::capstone_attendance_parser::parse_capstone_attendance(text))
     }
 
@@ -386,7 +387,7 @@ impl VtopClient {
             self.username
         );
         let res = self.post_form_with_session_retry(url, body).await?;
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
 
         let has_capstone = parser::attendance_parser::has_capstone_attendance(&text);
         let records = parser::attendance_parser::parse_attendance(text);
@@ -469,7 +470,7 @@ impl VtopClient {
             })
             .await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
 
         Ok(parser::marks_parser::parse_marks(text))
     }
@@ -544,7 +545,7 @@ impl VtopClient {
                     .text("_csrf", csrf.to_string())
             })
             .await?;
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(parser::exam_schedule_parser::parse_schedule(text))
     }
 
@@ -581,7 +582,7 @@ impl VtopClient {
                     .text("_csrf", csrf.to_string())
             })
             .await?;
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         let mut assignments = parser::digital_assignment_parser::parse_all_assignments(text);
         for assignment in &mut assignments {
             assignment.details = self
@@ -624,7 +625,7 @@ impl VtopClient {
                 .ok_or(VtopError::SessionExpired)?,
         );
         let res = self.post_form_with_session_retry(url, body).await?;
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(parser::digital_assignment_parser::parse_per_course_dassignments(text))
     }
 
@@ -724,7 +725,7 @@ impl VtopClient {
                 .ok_or(VtopError::SessionExpired)?,
         );
         let res = self.post_form_with_session_retry(url, body).await?;
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         Ok(parser::digital_assignment_parser::parse_process_upload_assignment_response(text))
     }
 
@@ -801,7 +802,7 @@ impl VtopClient {
             .map_err(map_reqwest_error)?;
         // Check for session expiration and auto re-authenticate if needed
         self.handle_session_check(&res).await?;
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         let result = parser::digital_assignment_parser::parse_upload_assignment_response(text);
         if result == "OTP Required".to_string() {
             // Callback for OTP verification
@@ -846,7 +847,7 @@ impl VtopClient {
             .map_err(map_reqwest_error)?;
         self.handle_session_check(&res).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         let result = parser::digital_assignment_parser::parse_upload_assignment_response(text);
         if result == "Invalid OTP. Please try again.".to_string() {
             // OTP was incorrect.

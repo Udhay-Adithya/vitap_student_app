@@ -1,6 +1,6 @@
+use crate::api::vtop::client::auth::read_body;
 use crate::api::vtop::{
-    parser, types::*, vtop_client::VtopClient, vtop_errors::map_response_read_error,
-    vtop_errors::VtopError, vtop_errors::VtopResult,
+    parser, types::*, vtop_client::VtopClient, vtop_errors::VtopError, vtop_errors::VtopResult,
 };
 
 impl VtopClient {
@@ -100,7 +100,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         let grade_history = parser::grade_history_parser::parse_grade_history(text);
         Ok(grade_history)
     }
@@ -217,7 +217,7 @@ impl VtopClient {
 
         let res = self.post_form_with_session_retry(url, body).await?;
 
-        let text = res.text().await.map_err(map_response_read_error)?;
+        let text = read_body(res).await?;
         let mut profile = crate::api::vtop::parser::profile_parser::parse_student_profile(text);
 
         // The profile page does not expose the registration number, but `get_regno`
