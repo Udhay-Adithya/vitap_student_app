@@ -13,6 +13,19 @@ use scraper::{Html, Selector};
 /// let profile = parse_student_profile(html);
 /// assert!(!profile.student_name.is_empty());
 /// ```
+/// Collapses every run of whitespace to a single space and upper-cases the result.
+///
+/// VTOP renders multi-word text with a newline and a run of tabs between the
+/// words, so a cell reads `"APPLICATION\r\n\t\t\t\tNUMBER"` rather than
+/// `"APPLICATION NUMBER"`. It does not do this consistently -- the same page has
+/// been served both ways -- so every comparison here has to tolerate both.
+fn normalise(text: &str) -> String {
+    text.split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+        .to_uppercase()
+}
+
 pub fn parse_student_profile(html: String) -> StudentProfile {
     let doc = Html::parse_document(&html);
 
@@ -40,8 +53,10 @@ pub fn parse_student_profile(html: String) -> StudentProfile {
         for row in doc.select(&selector) {
             let mut tds = row.select(&td_selector);
             if let Some(label_td) = tds.next() {
-                let label_text = label_td.text().collect::<String>().trim().to_uppercase();
-                if label_text.contains(&label.to_uppercase()) {
+                // Whole-label match, not `contains`: a search for EMAIL would
+                // otherwise also match a FACULTY EMAIL cell, and which one won
+                // depended on document order.
+                if normalise(&label_td.text().collect::<String>()) == normalise(label) {
                     if let Some(val_td) = tds.next() {
                         return val_td.text().collect::<String>().trim().to_string();
                     }
@@ -73,11 +88,8 @@ pub fn parse_student_profile(html: String) -> StudentProfile {
         let selector = Selector::parse("tr").unwrap();
         for row in doc.select(&selector) {
             let tds: Vec<_> = row.select(&Selector::parse("td").unwrap()).collect();
-            if tds.len() >= 2 {
-                let label_text = tds[0].text().collect::<String>().trim().to_uppercase();
-                if label_text.contains(&label.to_uppercase()) {
-                    return tds[1].text().collect::<String>().trim().to_string();
-                }
+            if tds.len() >= 2 && normalise(&tds[0].text().collect::<String>()) == normalise(label) {
+                return tds[1].text().collect::<String>().trim().to_string();
             }
         }
         "".to_string()
@@ -109,11 +121,10 @@ pub fn parse_student_profile(html: String) -> StudentProfile {
     let mentor_section_selector = Selector::parse("div.accordion-item").unwrap();
     let mut mentor_html = None;
     for section in doc.select(&mentor_section_selector) {
-        if section
-            .html()
-            .to_uppercase()
-            .contains("PROCTOR INFORMATION")
-        {
+        // The heading is split the same way ("PROCTOR\n\t\t...INFORMATION"), so
+        // matching the raw html found nothing and every mentor field came back
+        // empty. Match the normalised text instead.
+        if normalise(&section.text().collect::<String>()).contains("PROCTOR INFORMATION") {
             mentor_html = Some(Html::parse_fragment(&section.html()));
             break;
         }
