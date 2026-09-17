@@ -1,3 +1,4 @@
+use crate::api::vtop::vtop_config::validate_semester_id;
 use crate::api::vtop::{
     parser, types::*, vtop_client::VtopClient, vtop_errors::map_response_read_error,
     vtop_errors::VtopError, vtop_errors::VtopResult,
@@ -50,6 +51,7 @@ impl VtopClient {
         &mut self,
         semester_id: &str,
     ) -> VtopResult<Vec<ClassGroup>> {
+        validate_semester_id(semester_id)?;
         let text = self
             .post_calendar(
                 "/vtop/getDateForSemesterPreview",
@@ -75,6 +77,7 @@ impl VtopClient {
         semester_id: &str,
         class_group_id: &str,
     ) -> VtopResult<Vec<CalendarMonthRef>> {
+        validate_semester_id(semester_id)?;
         let text = self
             .post_calendar(
                 "/vtop/getListForSemester",
@@ -104,6 +107,7 @@ impl VtopClient {
         cal_date: &str,
         class_group_id: &str,
     ) -> VtopResult<Vec<CalendarDay>> {
+        validate_semester_id(semester_id)?;
         let text = self
             .post_calendar(
                 "/vtop/processViewCalendar",
@@ -135,6 +139,7 @@ impl VtopClient {
         semester_id: &str,
         class_group_id: &str,
     ) -> VtopResult<AcademicCalendar> {
+        validate_semester_id(semester_id)?;
         let months = self
             .get_calendar_months(semester_id, class_group_id)
             .await?;

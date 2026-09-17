@@ -1,4 +1,5 @@
 use crate::api::vtop::client::auth::read_body;
+use crate::api::vtop::vtop_config::validate_semester_id;
 use crate::api::vtop::{
     parser,
     types::*,
@@ -144,6 +145,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
         let url = format!("{}/vtop/processViewTimeTable", self.config.base_url);
         let body = format!(
             "_csrf={}&semesterSubId={}&authorizedID={}",
@@ -208,6 +210,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
         let url = format!("{}/vtop/processViewStudentAttendance", self.config.base_url);
         let body = format!(
             "_csrf={}&semesterSubId={}&authorizedID={}",
@@ -283,6 +286,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
         let url = format!("{}/vtop/processViewAttendanceDetail", self.config.base_url);
         let timestamp = Utc::now().format("%a, %d %b %Y %H:%M:%S GMT").to_string();
         let body = format!(
@@ -331,6 +335,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
         let url = format!("{}/vtop/processSdpAttendance", self.config.base_url);
         let timestamp = Utc::now().format("%a, %d %b %Y %H:%M:%S GMT").to_string();
         let body = format!(
@@ -377,6 +382,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
         let url = format!("{}/vtop/processViewStudentAttendance", self.config.base_url);
         let body = format!(
             "_csrf={}&semesterSubId={}&authorizedID={}",
@@ -455,6 +461,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
         let url = format!(
             "{}/vtop/examinations/doStudentMarkView",
             self.config.base_url
@@ -531,6 +538,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
         let url = format!(
             "{}/vtop/examinations/doSearchExamScheduleForStudent",
             self.config.base_url
@@ -568,6 +576,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
         let url = format!(
             "{}/vtop/examinations/doDigitalAssignment",
             self.config.base_url

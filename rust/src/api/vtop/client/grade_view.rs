@@ -1,4 +1,5 @@
 use crate::api::vtop::client::auth::read_body;
+use crate::api::vtop::vtop_config::validate_semester_id;
 use crate::api::vtop::{
     parser, types::*, vtop_client::VtopClient, vtop_errors::VtopError, vtop_errors::VtopResult,
 };
@@ -25,6 +26,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
 
         // No StudentGradeView page load first. The comment here used to say VTOP
         // required it; on a session where that page has never been opened,
@@ -74,6 +76,7 @@ impl VtopClient {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
         }
+        validate_semester_id(semester_id)?;
 
         let url = format!(
             "{}/vtop/examinations/examGradeView/getGradeViewDetails",
