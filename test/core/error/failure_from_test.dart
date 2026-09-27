@@ -63,6 +63,51 @@ void main() {
       );
     });
 
+    // Seven variants had no case in the old mapping and fell through to
+    // Rust's debug text, so a refused menu reached the student as "VTOP
+    // refused the request" and a bad semester id as "Semester id is not the
+    // expected shape". Debug text has no full stop; every real message does.
+    test('gives every variant a message written for a student', () {
+      const variants = <VtopError>[
+        VtopError.networkError(),
+        VtopError.timeoutError(),
+        VtopError.sslError(),
+        VtopError.dnsError(),
+        VtopError.connectionRefused(),
+        VtopError.vtopServerError(),
+        VtopError.authenticationFailed(''),
+        VtopError.registrationParsingError(),
+        VtopError.invalidCredentials(),
+        VtopError.sessionExpired(),
+        VtopError.parseError(''),
+        VtopError.configurationError(''),
+        VtopError.captchaRequired(),
+        VtopError.invalidResponse(),
+        VtopError.responseReadError(),
+        VtopError.digitalAssignmentFileNotFound(),
+        VtopError.digitalAssignmentFileTypeNotSupported(),
+        VtopError.digitalAssignmentFileSizeExceeded(),
+        VtopError.digitalAssignmentUploadOtpRequired(),
+        VtopError.digitalAssignmentUploadIncorrectOtp(),
+        VtopError.invalidSemesterId(),
+        VtopError.menuUnavailable(),
+        VtopError.loginOtpRequired(),
+        VtopError.loginOtpIncorrect(),
+        VtopError.loginOtpExpired(),
+      ];
+
+      for (final error in variants) {
+        expect(vtopErrorMessage(error), endsWith('.'), reason: '$error');
+      }
+    });
+
+    test('tells the student to retry later when VTOP refuses a menu', () {
+      expect(
+        vtopErrorMessage(const VtopError.menuUnavailable()),
+        'VTOP is not serving this page right now. Please try again later.',
+      );
+    });
+
     test('does not treat an ordinary parse error as a lockout', () {
       expect(
         vtopErrorMessage(const VtopError.parseError('missing table')),

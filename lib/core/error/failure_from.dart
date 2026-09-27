@@ -89,13 +89,19 @@ String vtopErrorMessage(VtopError error) => switch (error) {
     'Incorrect OTP entered for login. Please try again.',
   VtopError_LoginOtpExpired() =>
     'OTP for login has expired. Please request a new OTP and try again.',
-  VtopError_InvalidSemesterId() => 'Semester id is not the expected shape',
-  VtopError_MenuUnavailable() => 'VTOP refused the request',
-  VtopError_DigitalAssignmentFileNotFound() ||
-  VtopError_DigitalAssignmentFileTypeNotSupported() ||
-  VtopError_DigitalAssignmentFileSizeExceeded() => 'File Selection Error',
+  VtopError_InvalidSemesterId() =>
+    'That semester could not be recognised. Please pick one from the '
+        'semester list.',
+  VtopError_MenuUnavailable() =>
+    'VTOP is not serving this page right now. Please try again later.',
+  VtopError_DigitalAssignmentFileNotFound() =>
+    'Selected file is inaccessible or does not exist.',
+  VtopError_DigitalAssignmentFileTypeNotSupported() =>
+    'File type should be pdf, xls, xlsx, doc or docx.',
+  VtopError_DigitalAssignmentFileSizeExceeded() =>
+    'File size should not exceed 4 MB.',
   VtopError_DigitalAssignmentUploadOtpRequired() =>
-    'Digital Assignment Upload OTP Required',
+    'OTP verification is required to upload this assignment.',
   VtopError_DigitalAssignmentUploadIncorrectOtp() =>
-    'Digital Assignment Upload Incorrect OTP',
+    'Incorrect OTP entered. Please try again.',
 };
