@@ -166,7 +166,7 @@ fn test_parse_all_assignments() {
   </body>
 </html>"#;
     let result = parse_all_assignments(html.to_string());
-    assert_eq!(result.is_empty(), true);
+    assert!(result.is_empty());
 }
 
 #[test]
@@ -668,13 +668,13 @@ fn test_parse_per_course_dassignments() {
     assert_eq!(result[0].max_assignment_mark, "10");
     assert_eq!(result[0].assignment_weightage_mark, "10");
     assert_eq!(result[0].due_date, "02-May-2026");
-    assert_eq!(result[0].can_qp_download, false);
+    assert!(!result[0].can_qp_download);
     assert_eq!(
         result[0].da_download_url,
         "examinations/downloadSTudentDA/DA01/AP2025264000667"
     );
     assert_eq!(result[0].qp_download_url, "");
-    assert_eq!(result[0].can_update, true);
+    assert!(result[0].can_update);
     assert_eq!(result[0].mcode, "DA01");
     assert_eq!(result[1].mcode, "DA02");
     assert_eq!(result[0].submission_status, "20 Jan 2026 03:09 PM");
