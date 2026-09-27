@@ -1,17 +1,15 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:vit_ap_student_app/core/error/exceptions.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
+import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/course_page/model/course_page_detail.dart';
 import 'package:vit_ap_student_app/features/course_page/model/courses_response.dart';
 import 'package:vit_ap_student_app/features/course_page/model/slots_response.dart';
 import 'package:vit_ap_student_app/init_dependencies.dart';
-import 'package:vit_ap_student_app/src/rust/api/vtop/vtop_errors.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'course_page_remote_repository.g.dart';
@@ -49,17 +47,13 @@ class CoursePageRemoteRepository {
       );
 
       return Right(coursesResponseFromJson(coursesJson));
-    } on SocketException {
-      return Left(Failure('No internet connection'));
-    } on VtopError catch (rustError) {
-      final failureMessage = await VtopException.getFailureMessage(rustError);
-      return Left(Failure(failureMessage));
-    } on FormatException catch (e) {
-      debugPrint('JSON parsing failed: ${e.toString()}');
-      return Left(Failure('Invalid response format from server'));
     } catch (e) {
-      debugPrint('Error fetching courses for course page: ${e.toString()}');
-      return Left(Failure('Failed to fetch courses: ${e.toString()}'));
+      return Left(
+        failureFrom(
+          e,
+          unexpected: (error) => 'Failed to fetch courses: $error',
+        ),
+      );
     }
   }
 
@@ -87,17 +81,10 @@ class CoursePageRemoteRepository {
       );
 
       return Right(slotsResponseFromJson(slotsJson));
-    } on SocketException {
-      return Left(Failure('No internet connection'));
-    } on VtopError catch (rustError) {
-      final failureMessage = await VtopException.getFailureMessage(rustError);
-      return Left(Failure(failureMessage));
-    } on FormatException catch (e) {
-      debugPrint('JSON parsing failed: ${e.toString()}');
-      return Left(Failure('Invalid response format from server'));
     } catch (e) {
-      debugPrint('Error fetching slots for course page: ${e.toString()}');
-      return Left(Failure('Failed to fetch slots: ${e.toString()}'));
+      return Left(
+        failureFrom(e, unexpected: (error) => 'Failed to fetch slots: $error'),
+      );
     }
   }
 
@@ -127,17 +114,13 @@ class CoursePageRemoteRepository {
       );
 
       return Right(coursePageDetailFromJson(detailJson));
-    } on SocketException {
-      return Left(Failure('No internet connection'));
-    } on VtopError catch (rustError) {
-      final failureMessage = await VtopException.getFailureMessage(rustError);
-      return Left(Failure(failureMessage));
-    } on FormatException catch (e) {
-      debugPrint('JSON parsing failed: ${e.toString()}');
-      return Left(Failure('Invalid response format from server'));
     } catch (e) {
-      debugPrint('Error fetching course detail: ${e.toString()}');
-      return Left(Failure('Failed to fetch course detail: ${e.toString()}'));
+      return Left(
+        failureFrom(
+          e,
+          unexpected: (error) => 'Failed to fetch course detail: $error',
+        ),
+      );
     }
   }
 
@@ -164,14 +147,13 @@ class CoursePageRemoteRepository {
       );
 
       return Right(bytes);
-    } on SocketException {
-      return Left(Failure('No internet connection'));
-    } on VtopError catch (rustError) {
-      final failureMessage = await VtopException.getFailureMessage(rustError);
-      return Left(Failure(failureMessage));
     } catch (e) {
-      debugPrint('Error downloading course material: ${e.toString()}');
-      return Left(Failure('Failed to download material: ${e.toString()}'));
+      return Left(
+        failureFrom(
+          e,
+          unexpected: (error) => 'Failed to download material: $error',
+        ),
+      );
     }
   }
 
@@ -198,14 +180,13 @@ class CoursePageRemoteRepository {
       );
 
       return Right(bytes);
-    } on SocketException {
-      return Left(Failure('No internet connection'));
-    } on VtopError catch (rustError) {
-      final failureMessage = await VtopException.getFailureMessage(rustError);
-      return Left(Failure(failureMessage));
     } catch (e) {
-      debugPrint('Error downloading all materials: ${e.toString()}');
-      return Left(Failure('Failed to download materials: ${e.toString()}'));
+      return Left(
+        failureFrom(
+          e,
+          unexpected: (error) => 'Failed to download materials: $error',
+        ),
+      );
     }
   }
 
@@ -234,14 +215,13 @@ class CoursePageRemoteRepository {
       );
 
       return Right(bytes);
-    } on SocketException {
-      return Left(Failure('No internet connection'));
-    } on VtopError catch (rustError) {
-      final failureMessage = await VtopException.getFailureMessage(rustError);
-      return Left(Failure(failureMessage));
     } catch (e) {
-      debugPrint('Error downloading syllabus: ${e.toString()}');
-      return Left(Failure('Failed to download syllabus: ${e.toString()}'));
+      return Left(
+        failureFrom(
+          e,
+          unexpected: (error) => 'Failed to download syllabus: $error',
+        ),
+      );
     }
   }
 }
