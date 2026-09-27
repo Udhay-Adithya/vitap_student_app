@@ -633,7 +633,7 @@ impl VtopClient {
     /// # Arguments
     ///
     /// * `k` - If `true`, loads the initial VTOP page first to establish session cookies
-    ///         and extract initial CSRF tokens. If `false`, skips initial page load.
+    ///   and extract initial CSRF tokens. If `false`, skips initial page load.
     ///
     /// # Returns
     ///
