@@ -9,6 +9,7 @@ import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/services/notification_service.dart';
 import 'package:vit_ap_student_app/core/theme/app_theme_enum.dart';
 import 'package:vit_ap_student_app/core/utils/show_toast.dart';
+import 'package:vit_ap_student_app/features/academic_calendar/viewmodel/non_instructional_days_provider.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/circular_theme_indicator.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/developer_mode_tiles.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/menu_section.dart';
@@ -41,6 +42,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         await NotificationService.scheduleTimetableNotifications(
           user: user,
           prefs: prefs,
+          nonInstructionalDays: await ref.read(
+            nonInstructionalDaysProvider.future,
+          ),
         );
       }
 

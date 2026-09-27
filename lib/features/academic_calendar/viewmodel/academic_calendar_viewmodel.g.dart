@@ -48,7 +48,7 @@ final class AcademicCalendarViewModelProvider
 }
 
 String _$academicCalendarViewModelHash() =>
-    r'bf27cae72c9b9c2915db7e303a8654a416978140';
+    r'ac552e8210d025d8b14a3f9b726812a9f2f0a5fc';
 
 abstract class _$AcademicCalendarViewModel
     extends $Notifier<AsyncValue<AcademicCalendar?>> {
