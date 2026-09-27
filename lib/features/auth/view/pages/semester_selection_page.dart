@@ -163,66 +163,70 @@ class _SemesterSelectionPageState extends ConsumerState<SemesterSelectionPage> {
                       ),
                       const SizedBox(height: 24),
                       Expanded(
-                        child: ListView.builder(
-                          itemCount: semesters.length,
-                          itemBuilder: (context, index) {
-                            final semester = semesters[index];
-                            final isSelected = selectedSemester == semester;
+                        child: RadioGroup<SemesterInfo>(
+                          groupValue: selectedSemester,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedSemester = value;
+                              inlineError = null;
+                            });
+                          },
+                          child: ListView.builder(
+                            itemCount: semesters.length,
+                            itemBuilder: (context, index) {
+                              final semester = semesters[index];
+                              final isSelected = selectedSemester == semester;
 
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4.0,
-                              ),
-                              child: ListTile(
-                                tileColor: Theme.of(
-                                  context,
-                                ).colorScheme.surfaceContainerLow,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 12,
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 4.0,
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadiusGeometry.circular(
-                                    9,
+                                child: ListTile(
+                                  tileColor: Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainerLow,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 12,
                                   ),
-                                  side: BorderSide(
-                                    color: isSelected
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(
-                                            context,
-                                          ).colorScheme.surfaceContainer,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadiusGeometry.circular(
+                                      9,
+                                    ),
+                                    side: BorderSide(
+                                      color: isSelected
+                                          ? Theme.of(
+                                              context,
+                                            ).colorScheme.primary
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.surfaceContainer,
+                                    ),
                                   ),
-                                ),
-                                leading: Radio<SemesterInfo>(
-                                  value: semester,
-                                  groupValue: selectedSemester,
-                                  onChanged: (value) {
+                                  leading: Radio<SemesterInfo>(
+                                    value: semester,
+                                    activeColor: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                  ),
+                                  title: Text(
+                                    semester.name,
+                                    style: Theme.of(context).textTheme.bodyLarge
+                                        ?.copyWith(
+                                          fontWeight: isSelected
+                                              ? FontWeight.bold
+                                              : null,
+                                        ),
+                                  ),
+                                  onTap: () {
                                     setState(() {
-                                      selectedSemester = value;
+                                      selectedSemester = semester;
                                       inlineError = null;
                                     });
                                   },
-                                  activeColor: Theme.of(
-                                    context,
-                                  ).colorScheme.primary,
                                 ),
-                                title: Text(
-                                  semester.name,
-                                  style: Theme.of(context).textTheme.bodyLarge
-                                      ?.copyWith(
-                                        fontWeight: isSelected
-                                            ? FontWeight.bold
-                                            : null,
-                                      ),
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    selectedSemester = semester;
-                                    inlineError = null;
-                                  });
-                                },
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
                       ),
                       if (inlineError != null) ...[

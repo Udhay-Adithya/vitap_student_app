@@ -132,7 +132,6 @@ class _ForYouViewAllPageState extends ConsumerState<ForYouViewAllPage> {
             context,
           ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w500),
         ),
-        actions: [],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {

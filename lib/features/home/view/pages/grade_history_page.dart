@@ -133,7 +133,7 @@ class _GradeHistoryPageState extends ConsumerState<GradeHistoryPage> {
                             {AnalyticsParams.source: 'GradeHistoryPage'},
                           );
                         } catch (e) {
-                          if (mounted) {
+                          if (context.mounted) {
                             showSnackBar(
                               context,
                               'Failed to share CGPA calculator',
