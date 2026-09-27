@@ -24,7 +24,7 @@ lazy_static! {
 pub async fn solve_captcha(captcha_data: &str) -> VtopResult<String> {
     let img = decode_base64_image(captcha_data)?;
     let pd = img.to_rgba8();
-    let bls_data = saturation(&pd.to_vec());
+    let bls_data = saturation(&pd);
 
     let mut out = String::new();
     let label_txt = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";

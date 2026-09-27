@@ -60,7 +60,7 @@ impl Default for VtopConfig {
         {}
 
         Self {
-            base_url: base_url,
+            base_url,
             timeout_seconds: 30,
             user_agent: DEFAULT_USER_AGENT.to_string(),
         }

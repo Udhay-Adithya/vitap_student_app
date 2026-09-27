@@ -182,11 +182,19 @@ pub fn parse_grade_view_detail(html: String) -> GradeViewDetail {
         if joined.contains("Class Number") && detail.class_number.is_empty() {
             for cell in &cells {
                 if cell.starts_with("Class Number") {
-                    detail.class_number =
-                        cell.splitn(2, ':').nth(1).unwrap_or("").trim().to_string();
+                    detail.class_number = cell
+                        .split_once(':')
+                        .map(|x| x.1)
+                        .unwrap_or("")
+                        .trim()
+                        .to_string();
                 } else if cell.starts_with("Course Type") {
-                    detail.course_type =
-                        cell.splitn(2, ':').nth(1).unwrap_or("").trim().to_string();
+                    detail.course_type = cell
+                        .split_once(':')
+                        .map(|x| x.1)
+                        .unwrap_or("")
+                        .trim()
+                        .to_string();
                 }
             }
             continue;

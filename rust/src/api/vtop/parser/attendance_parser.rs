@@ -44,7 +44,7 @@ pub fn parse_attendance(html: String) -> Vec<AttendanceRecord> {
                 .replace("\n", "");
 
             let course_parts: Vec<&str> = raw_course_name.split(" - ").collect();
-            let course_code = course_parts.get(0).unwrap_or(&"").to_string();
+            let course_code = course_parts.first().unwrap_or(&"").to_string();
             let course_name = course_parts.get(1).unwrap_or(&"").to_string();
             let parsed_course_type = course_parts.last().unwrap_or(&"").to_string();
 
@@ -58,7 +58,7 @@ pub fn parse_attendance(html: String) -> Vec<AttendanceRecord> {
                 .replace("\n", "");
 
             let code_parts: Vec<&str> = raw_course_code.split(" - ").collect();
-            let class_number = code_parts.get(0).unwrap_or(&"").to_string();
+            let class_number = code_parts.first().unwrap_or(&"").to_string();
             let course_slot = code_parts.get(1).unwrap_or(&"").to_string();
 
             let course = AttendanceRecord {

@@ -149,7 +149,8 @@ pub fn parse_per_course_dassignments(html: String) -> Vec<AssignmentRecordEach> 
                 mcode = String::new();
             }
             let can_da_download = cells[8].inner_html().trim().contains("Download")
-                && (!submission_status.eq("") && !submission_status.contains("File Not Uploaded"));
+                && (!submission_status.is_empty()
+                    && !submission_status.contains("File Not Uploaded"));
             let da_download_url;
             if can_da_download {
                 da_download_url = cells[8]
@@ -193,9 +194,9 @@ pub fn parse_process_upload_assignment_response(html: String) -> Vec<Vec<String>
     let mut code_vec: Vec<String> = Vec::new();
     let mut opt_vec: Vec<String> = Vec::new();
     for row in &inputs {
-        if row.value().attr("name").unwrap_or("").to_string() == "code" {
+        if row.value().attr("name").unwrap_or("") == "code" {
             code_vec.push(row.value().attr("value").unwrap_or("").to_string());
-        } else if row.value().attr("name").unwrap_or("").to_string() == "opt" {
+        } else if row.value().attr("name").unwrap_or("") == "opt" {
             opt_vec.push(row.value().attr("value").unwrap_or("").to_string());
         }
     }
@@ -206,11 +207,10 @@ pub fn parse_upload_assignment_response(html: String) -> String {
     let document = Html::parse_document(&html);
     let span_selector = Selector::parse("span").unwrap();
     let spans: Vec<_> = document.select(&span_selector).collect();
-    if spans.len() > 0
-        && spans[0].text().collect::<Vec<_>>().join("") == "Uploaded successfully".to_string()
+    if !spans.is_empty() && spans[0].text().collect::<Vec<_>>().join("") == "Uploaded successfully"
     {
         return spans[0].text().collect::<Vec<_>>().join("");
-    } else if spans.len() > 0
+    } else if !spans.is_empty()
         && spans[0]
             .text()
             .collect::<Vec<_>>()
@@ -223,8 +223,7 @@ pub fn parse_upload_assignment_response(html: String) -> String {
         {
             return "OTP Required".to_string();
         } else if spans.len() > 1
-            && spans[2].text().collect::<Vec<_>>().join("")
-                == "Invalid OTP. Please try again.".to_string()
+            && spans[2].text().collect::<Vec<_>>().join("") == "Invalid OTP. Please try again."
         {
             return spans[2].text().collect::<Vec<_>>().join("");
         } else {
@@ -233,5 +232,5 @@ pub fn parse_upload_assignment_response(html: String) -> String {
     } else if spans.len() > 1 {
         return spans[1].text().collect::<Vec<_>>().join("");
     }
-    return "Failed - Unknown Error".to_string();
+    "Failed - Unknown Error".to_string()
 }

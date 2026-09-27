@@ -19,8 +19,7 @@ pub fn parse_marks(html: String) -> Vec<Marks> {
         el.map(|e| e.text().collect::<Vec<_>>().join(""))
             .unwrap_or_default()
             .trim()
-            .replace('\t', "")
-            .replace('\n', "")
+            .replace(['\t', '\n'], "")
     }
 
     let mut bmarks = false;

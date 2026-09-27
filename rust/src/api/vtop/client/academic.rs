@@ -627,7 +627,7 @@ impl VtopClient {
         let body = format!(
             "authorizedID={}&x={}&classId={}&_csrf={}",
             self.username,
-            urlencoding::encode(&timestamp).to_string(),
+            urlencoding::encode(&timestamp),
             class_id,
             self.session
                 .get_csrf_token()
@@ -703,7 +703,7 @@ impl VtopClient {
         let pre_request_body = format!(
             "authorizedID={}&x={}&classId={}&_csrf={}",
             self.username,
-            urlencoding::encode(&timestamp).to_string(),
+            urlencoding::encode(&timestamp),
             class_id,
             self.session
                 .get_csrf_token()
@@ -726,7 +726,7 @@ impl VtopClient {
         let body = format!(
             "authorizedID={}&x={}&classId={}&mode={}&_csrf={}",
             self.username,
-            urlencoding::encode(&timestamp).to_string(),
+            urlencoding::encode(&timestamp),
             class_id,
             mode,
             self.session
@@ -813,7 +813,7 @@ impl VtopClient {
         self.handle_session_check(&res).await?;
         let text = read_body(res).await?;
         let result = parser::digital_assignment_parser::parse_upload_assignment_response(text);
-        if result == "OTP Required".to_string() {
+        if result == "OTP Required" {
             // Callback for OTP verification
             // OTP input is required from the user
             // The error `VtopError::DigitalAssignmentUploadOtpRequired` should be handled.
@@ -858,7 +858,7 @@ impl VtopClient {
 
         let text = read_body(res).await?;
         let result = parser::digital_assignment_parser::parse_upload_assignment_response(text);
-        if result == "Invalid OTP. Please try again.".to_string() {
+        if result == "Invalid OTP. Please try again." {
             // OTP was incorrect.
             // Need to call again upload_course_dassignment_otp with correct OTP.
             Err(VtopError::DigitalAssignmentUploadIncorrectOtp)
