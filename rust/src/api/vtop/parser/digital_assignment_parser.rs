@@ -73,6 +73,7 @@ pub fn parse_per_course_dassignments(html: String) -> Vec<AssignmentRecordEach> 
     let mut course_assignments: Vec<AssignmentRecordEach> = Vec::new();
     let document = Html::parse_document(&html);
     let rows_selector = Selector::parse("tr").unwrap();
+    let re_for_url = Regex::new(r"vtopDownload\('([^']+)'\)").unwrap();
     for row in document.select(&rows_selector).skip(4) {
         let cells: Vec<_> = row.select(&Selector::parse("td").unwrap()).collect();
         if cells.len() == 9 {
@@ -112,10 +113,8 @@ pub fn parse_per_course_dassignments(html: String) -> Vec<AssignmentRecordEach> 
                 .replace("\t", "")
                 .replace("\n", "");
             let can_qp_download = cells[5].inner_html().trim().contains("Download");
-            let re_for_url = Regex::new(r"vtopDownload\('([^']+)'\)").unwrap();
-            let qp_download_url;
-            if can_qp_download {
-                qp_download_url = cells[5]
+            let qp_download_url = if can_qp_download {
+                cells[5]
                     .select(&Selector::parse("a").unwrap())
                     .next()
                     .and_then(|a| a.value().attr("href"))
@@ -125,10 +124,10 @@ pub fn parse_per_course_dassignments(html: String) -> Vec<AssignmentRecordEach> 
                             .and_then(|caps| caps.get(1))
                             .map(|m| m.as_str().to_string())
                     })
-                    .unwrap_or_default();
+                    .unwrap_or_default()
             } else {
-                qp_download_url = String::new();
-            }
+                String::new()
+            };
             let submission_status = cells[6]
                 .text()
                 .collect::<Vec<_>>()
@@ -137,23 +136,21 @@ pub fn parse_per_course_dassignments(html: String) -> Vec<AssignmentRecordEach> 
                 .replace("\t", "")
                 .replace("\n", "");
             let can_update = cells[7].inner_html().trim().contains("pencil");
-            let mcode;
-            if can_update {
-                mcode = cells[7]
+            let mcode = if can_update {
+                cells[7]
                     .select(&Selector::parse("input").unwrap())
                     .find(|input| input.value().attr("name") == Some("code"))
                     .and_then(|input| input.value().attr("value"))
                     .unwrap_or("")
-                    .to_string();
+                    .to_string()
             } else {
-                mcode = String::new();
-            }
+                String::new()
+            };
             let can_da_download = cells[8].inner_html().trim().contains("Download")
                 && (!submission_status.is_empty()
                     && !submission_status.contains("File Not Uploaded"));
-            let da_download_url;
-            if can_da_download {
-                da_download_url = cells[8]
+            let da_download_url = if can_da_download {
+                cells[8]
                     .select(&Selector::parse("a").unwrap())
                     .next()
                     .and_then(|a| a.value().attr("href"))
@@ -163,10 +160,10 @@ pub fn parse_per_course_dassignments(html: String) -> Vec<AssignmentRecordEach> 
                             .and_then(|caps| caps.get(1))
                             .map(|m| m.as_str().to_string())
                     })
-                    .unwrap_or_default();
+                    .unwrap_or_default()
             } else {
-                da_download_url = String::new();
-            }
+                String::new()
+            };
             let record = AssignmentRecordEach {
                 serial_number,
                 assignment_title,
