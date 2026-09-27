@@ -313,8 +313,8 @@ fn parse_timetable_direct(html: String) -> Timetable {
                                     slot: slot_name,
                                     course_code: course_code.clone(),
                                     course_type: course_type.clone(),
-                                    room_no: room_no,
-                                    block: block,
+                                    room_no,
+                                    block,
                                     start_time: "".to_string(),
                                     end_time: "".to_string(),
                                     name: course_name,
@@ -365,9 +365,9 @@ fn parse_timetable_direct(html: String) -> Timetable {
 
         grouped_slots
             .entry(course_key)
-            .or_insert_with(HashMap::new)
+            .or_default()
             .entry(day_key)
-            .or_insert_with(Vec::new)
+            .or_default()
             .push(slot);
     }
 

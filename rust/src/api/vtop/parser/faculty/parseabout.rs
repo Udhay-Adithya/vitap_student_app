@@ -20,7 +20,7 @@ pub fn parse_faculty_data(html: String) -> FacultyDetails {
     let tables: Vec<_> = document.select(&table_selector).collect();
 
     // Parse first table (faculty details)
-    if let Some(table) = tables.get(0) {
+    if let Some(table) = tables.first() {
         for row in table.select(&row_selector) {
             let cells: Vec<_> = row.select(&cell_selector).collect();
             if cells.len() >= 2 {

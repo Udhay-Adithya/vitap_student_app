@@ -13,7 +13,7 @@ impl VtopClient {
     /// # Arguments
     ///
     /// * `date` - The date for which to fetch biometric records, in the format "DD-MMM-YYYY"
-    ///            (e.g., "15-Oct-2024")
+    ///   (e.g., "15-Oct-2024")
     ///
     /// # Returns
     ///

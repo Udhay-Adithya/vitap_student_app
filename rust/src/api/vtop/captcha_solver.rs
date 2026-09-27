@@ -24,7 +24,7 @@ lazy_static! {
 pub async fn solve_captcha(captcha_data: &str) -> VtopResult<String> {
     let img = decode_base64_image(captcha_data)?;
     let pd = img.to_rgba8();
-    let bls_data = saturation(&pd.to_vec());
+    let bls_data = saturation(&pd);
 
     let mut out = String::new();
     let label_txt = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -43,9 +43,8 @@ pub async fn solve_captcha(captcha_data: &str) -> VtopResult<String> {
         let y2 = 35 - 5 * ((i + 1) % 2);
 
         let mut char_img = Vec::new();
-        for r in y1..y2 {
-            let row_slice = bls_data[r][x1..x2].to_vec();
-            char_img.push(row_slice);
+        for row in &bls_data[y1..y2] {
+            char_img.push(row[x1..x2].to_vec());
         }
 
         let bls_i = pre_img(&char_img);
