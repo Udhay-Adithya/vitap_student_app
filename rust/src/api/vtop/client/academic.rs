@@ -772,13 +772,9 @@ impl VtopClient {
             self.config.base_url
         );
         let mut upload_form = Form::new().text("authorizedID", self.username.clone());
-        let len = process_vectors[0].len();
-        // if len == 0 && process_vectors[1].len() != process_vectors[0].len() {
-        //     return Err(VtopError::DigitalAssignmentUploadProcessVectorsEmpty);
-        // }
-        for i in 0..len {
-            upload_form = upload_form.text("code", process_vectors[0][i].clone());
-            upload_form = upload_form.text("opt", process_vectors[1][i].clone());
+        for (code, opt) in process_vectors[0].iter().zip(&process_vectors[1]) {
+            upload_form = upload_form.text("code", code.clone());
+            upload_form = upload_form.text("opt", opt.clone());
         }
         let mime = match file_name.rsplit('.').next().unwrap_or("") {
             "pdf" => "application/pdf",

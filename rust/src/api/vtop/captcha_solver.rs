@@ -43,9 +43,8 @@ pub async fn solve_captcha(captcha_data: &str) -> VtopResult<String> {
         let y2 = 35 - 5 * ((i + 1) % 2);
 
         let mut char_img = Vec::new();
-        for r in y1..y2 {
-            let row_slice = bls_data[r][x1..x2].to_vec();
-            char_img.push(row_slice);
+        for row in &bls_data[y1..y2] {
+            char_img.push(row[x1..x2].to_vec());
         }
 
         let bls_i = pre_img(&char_img);
