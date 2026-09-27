@@ -73,6 +73,9 @@ pub struct VtopClientBuilder {
 }
 
 impl VtopClientBuilder {
+    // No `Default` impl: this type crosses the bridge, and flutter_rust_bridge
+    // would generate a `default()` binding for it.
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         Self {
             config: VtopConfig::default(),
