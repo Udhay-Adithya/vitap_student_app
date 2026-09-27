@@ -9,6 +9,7 @@ import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/notification_service.dart';
 import 'package:vit_ap_student_app/core/services/secure_store_service.dart';
 import 'package:vit_ap_student_app/core/utils/avatar_image.dart';
+import 'package:vit_ap_student_app/features/academic_calendar/viewmodel/non_instructional_days_provider.dart';
 import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/objectbox.g.dart';
 
@@ -38,6 +39,9 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
       await NotificationService.scheduleTimetableNotifications(
         user: user,
         prefs: prefs,
+        nonInstructionalDays: await ref.read(
+          nonInstructionalDaysProvider.future,
+        ),
       );
       await NotificationService.scheduleExamNotifications(
         user: user,
@@ -67,6 +71,9 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
       await NotificationService.scheduleTimetableNotifications(
         user: userWithId,
         prefs: prefs,
+        nonInstructionalDays: await ref.read(
+          nonInstructionalDaysProvider.future,
+        ),
       );
       await NotificationService.scheduleExamNotifications(
         user: userWithId,
