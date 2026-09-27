@@ -158,18 +158,18 @@ class _ProfileCardState extends ConsumerState<ProfileCard> {
                         final credentials = await ref
                             .read(currentUserProvider.notifier)
                             .getSavedCredentials();
-                        if (credentials != null && mounted) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (context) => SemesterSelectionPage(
-                                registrationNumber:
-                                    credentials.registrationNumber,
-                                password: credentials.password,
-                              ),
+                        if (credentials == null || !context.mounted) return;
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (context) => SemesterSelectionPage(
+                              registrationNumber:
+                                  credentials.registrationNumber,
+                              password: credentials.password,
                             ),
-                          ).then((_) => _loadSelectedSemester());
-                        }
+                          ),
+                        );
+                        await _loadSelectedSemester();
                       },
                       child: const Text(
                         'Change semster',
