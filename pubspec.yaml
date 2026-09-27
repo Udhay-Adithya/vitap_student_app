@@ -11,6 +11,7 @@ dependencies:
   app_settings: ^7.0.0
   cached_network_image: ^3.4.1
   carousel_slider: ^5.0.0
+  crypto: ^3.0.7
   cupertino_icons: ^1.0.6
   device_info_plus: ^13.2.0
   file_picker: ^12.0.0-beta.7
