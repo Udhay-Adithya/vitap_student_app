@@ -3,15 +3,19 @@ use lib_vtop::api::vtop::parser::hostel::weekend_outing_parser::parse_weekend_ou
 
 /// VTOP indents its markup with tabs and wraps the status text mid-phrase, so
 /// a status cell's text really is "Outing\n\t\t\t…Request Accepted". The
-/// fixtures below splice this in to keep that whitespace byte-for-byte: the
-/// parser drops tabs and turns the newline into a space, and whether a weekend
-/// outpass can be downloaded hangs on the result matching exactly.
+/// fixtures below splice this in to keep that whitespace byte-for-byte, since
+/// whether a weekend outpass can be downloaded hangs on the status matching
+/// exactly.
 const WRAP: &str = "\n\t\t\t\t\t\t\t\t\t\t";
 
 /// A trimmed general outing page: the header row (`th` cells), a pending
 /// request with no outpass, and an accepted one whose outpass link carries the
 /// leave id. Places, dates and ids are replaced.
 fn general_outing_page() -> String {
+    general_outing_page_wrapped_with(WRAP)
+}
+
+fn general_outing_page_wrapped_with(wrap: &str) -> String {
     format!(
         r#"
 <table id="BookingRequests">
@@ -40,7 +44,7 @@ fn general_outing_page() -> String {
     <td>
     </td>
     <td>
-      <span>   <span{WRAP}style="color: red;">Waiting for{WRAP}Warden's Approval</span>
+      <span>   <span{wrap}style="color: red;">Waiting for{wrap}Warden's Approval</span>
       </span>
     </td>
     <td>
@@ -58,7 +62,7 @@ fn general_outing_page() -> String {
     <td>
     </td>
     <td>
-      <span>   <span{WRAP}style="color: green;">Leave{WRAP}Request Accepted</span>
+      <span>   <span{wrap}style="color: green;">Leave{wrap}Request Accepted</span>
       </span>
     </td>
     <td>
@@ -78,6 +82,10 @@ fn general_outing_page() -> String {
 /// today: an accepted request with a current-style id, a pending one, and an
 /// accepted one from 2023 with an older id format.
 fn weekend_outing_page() -> String {
+    weekend_outing_page_wrapped_with(WRAP)
+}
+
+fn weekend_outing_page_wrapped_with(wrap: &str) -> String {
     format!(
         r#"
 <table id="BookingRequests">
@@ -106,7 +114,7 @@ fn weekend_outing_page() -> String {
     <td>
     </td>
     <td>
-      <span>  <span style="color: green;">Outing{WRAP}Request Accepted</span>
+      <span>  <span style="color: green;">Outing{wrap}Request Accepted</span>
       </span>
     </td>
     <td>
@@ -130,7 +138,7 @@ fn weekend_outing_page() -> String {
     <td>
     </td>
     <td>
-      <span>  <span style="color: red;">Waiting for{WRAP}Warden's Approval</span>
+      <span>  <span style="color: red;">Waiting for{wrap}Warden's Approval</span>
       </span>
     </td>
     <td>
@@ -148,7 +156,7 @@ fn weekend_outing_page() -> String {
     <td>
     </td>
     <td>
-      <span>  <span style="color: green;">Outing{WRAP}Request Accepted</span>
+      <span>  <span style="color: green;">Outing{wrap}Request Accepted</span>
       </span>
     </td>
     <td>
@@ -254,4 +262,21 @@ fn test_page_without_the_requests_table_yields_nothing() {
 
     assert!(parse_hostel_leave(no_table.to_string()).is_empty());
     assert!(parse_weekend_outing(no_table.to_string()).is_empty());
+}
+
+/// The parsers used to delete tabs and turn newlines into spaces, so a status
+/// came out right only because VTOP happens to indent with tabs. Indented with
+/// spaces, "Outing Request Accepted" arrived with a run of spaces inside it,
+/// failed the exact match, and every outpass silently stopped being
+/// downloadable.
+#[test]
+fn test_status_does_not_depend_on_vtop_indenting_with_tabs() {
+    let spaces = "\n                    ";
+
+    let weekend = parse_weekend_outing(weekend_outing_page_wrapped_with(spaces));
+    let general = parse_hostel_leave(general_outing_page_wrapped_with(spaces));
+
+    assert_eq!(weekend[0].status, "Outing Request Accepted");
+    assert!(weekend[0].can_download);
+    assert_eq!(general[0].status, "Waiting for Warden's Approval");
 }

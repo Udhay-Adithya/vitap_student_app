@@ -22,11 +22,10 @@ pub fn parse_hostel_leave(html: String) -> Vec<GeneralOutingRecord> {
                         .text()
                         .collect::<Vec<_>>()
                         .join("")
-                        .trim()
-                        .replace("\t", "")
-                        .replace("\n", " ")
-                        .trim()
-                        .to_string()
+                        // VTOP wraps text mid-phrase across indented lines.
+                        .split_whitespace()
+                        .collect::<Vec<_>>()
+                        .join(" ")
                 };
 
                 // Status is at index 9 in the actual HTML structure
