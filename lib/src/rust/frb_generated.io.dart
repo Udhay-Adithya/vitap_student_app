@@ -3,13 +3,6 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
-import 'dart:async';
-import 'dart:convert';
-import 'dart:ffi' as ffi;
-
-import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
-import 'package:meta/meta.dart' as meta;
-
 import 'api/simple.dart';
 import 'api/vtop/captcha_solver.dart';
 import 'api/vtop/client/academic.dart';
@@ -68,8 +61,13 @@ import 'api/vtop/vtop_client.dart';
 import 'api/vtop/vtop_config.dart';
 import 'api/vtop/vtop_errors.dart';
 import 'api/vtop_get_client.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:ffi' as ffi;
 import 'frb_generated.dart';
 import 'lib.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
+import 'package:meta/meta.dart' as meta;
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RustLibApiImplPlatform({

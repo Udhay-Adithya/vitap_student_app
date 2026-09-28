@@ -6,12 +6,6 @@
 // Static analysis wrongly picks the IO variant, thus ignore this
 // ignore_for_file: argument_type_not_assignable
 
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
-import 'package:meta/meta.dart' as meta;
-
 import 'api/simple.dart';
 import 'api/vtop/captcha_solver.dart';
 import 'api/vtop/client/academic.dart';
@@ -70,8 +64,12 @@ import 'api/vtop/vtop_client.dart';
 import 'api/vtop/vtop_config.dart';
 import 'api/vtop/vtop_errors.dart';
 import 'api/vtop_get_client.dart';
+import 'dart:async';
+import 'dart:convert';
 import 'frb_generated.dart';
 import 'lib.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
+import 'package:meta/meta.dart' as meta;
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RustLibApiImplPlatform({

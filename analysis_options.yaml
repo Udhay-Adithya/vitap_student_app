@@ -16,7 +16,7 @@ analyzer:
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
-    - "lib/src/rust/**"
+    - "lib/src/rust/frb_generated*.dart"
     - "rust_builder/**"
 
 linter:
