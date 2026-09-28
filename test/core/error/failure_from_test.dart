@@ -94,6 +94,8 @@ void main() {
         VtopError.loginOtpRequired(),
         VtopError.loginOtpIncorrect(),
         VtopError.loginOtpExpired(),
+        VtopError.outingFormUnavailable(''),
+        VtopError.outingFormUnavailable('Open from Tuesday'),
       ];
 
       for (final error in variants) {
@@ -105,6 +107,28 @@ void main() {
       expect(
         vtopErrorMessage(const VtopError.menuUnavailable()),
         'VTOP is not serving this page right now. Please try again later.',
+      );
+    });
+
+    // Outside its window VTOP serves the outing form with the student fields
+    // left out. The app used to show that as "Unable to process server
+    // response", because its handler waited for a variant only login raises.
+    test('passes on VTOP\'s notice when it withholds an outing form', () {
+      const notice =
+          'You are eligible to fill this form from Tuesday 12:00AM to '
+          'Friday 11:59PM';
+
+      expect(
+        vtopErrorMessage(const VtopError.outingFormUnavailable(notice)),
+        'VTOP is not accepting outing applications right now. $notice.',
+      );
+    });
+
+    test('still explains a withheld outing form when VTOP gives no notice', () {
+      expect(
+        vtopErrorMessage(const VtopError.outingFormUnavailable('  ')),
+        'VTOP is not accepting outing applications right now. '
+        'Please try again later.',
       );
     });
 
