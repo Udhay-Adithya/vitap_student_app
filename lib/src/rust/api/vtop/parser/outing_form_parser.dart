@@ -9,6 +9,8 @@ import '../../../frb_generated.dart';
 import '../types/outing_info.dart';
 import '../vtop_errors.dart';
 
+// These functions are ignored because they are not marked as `pub`: `vtop_notice`
+
 Future<OutingInfo> parseOutingForm({required String html}) => RustLib
     .instance
     .api

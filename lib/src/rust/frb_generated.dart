@@ -9390,6 +9390,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         return VtopError_LoginOtpIncorrect();
       case 24:
         return VtopError_LoginOtpExpired();
+      case 25:
+        return VtopError_OutingFormUnavailable(dco_decode_String(raw[1]));
       default:
         throw Exception("unreachable");
     }
@@ -11859,6 +11861,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         return VtopError_LoginOtpIncorrect();
       case 24:
         return VtopError_LoginOtpExpired();
+      case 25:
+        var var_field0 = sse_decode_String(deserializer);
+        return VtopError_OutingFormUnavailable(var_field0);
       default:
         throw UnimplementedError('');
     }
@@ -14149,6 +14154,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(23, serializer);
       case VtopError_LoginOtpExpired():
         sse_encode_i_32(24, serializer);
+      case VtopError_OutingFormUnavailable(field0: final field0):
+        sse_encode_i_32(25, serializer);
+        sse_encode_String(field0, serializer);
     }
   }
 
