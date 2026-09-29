@@ -94,6 +94,9 @@ String vtopErrorMessage(VtopError error) => switch (error) {
         'semester list.',
   VtopError_MenuUnavailable() =>
     'VTOP is not serving this page right now. Please try again later.',
+  VtopError_OutingFormUnavailable(:final field0) => _outingFormUnavailable(
+    field0,
+  ),
   VtopError_DigitalAssignmentFileNotFound() =>
     'Selected file is inaccessible or does not exist.',
   VtopError_DigitalAssignmentFileTypeNotSupported() =>
@@ -105,3 +108,15 @@ String vtopErrorMessage(VtopError error) => switch (error) {
   VtopError_DigitalAssignmentUploadIncorrectOtp() =>
     'Incorrect OTP entered. Please try again.',
 };
+
+/// VTOP withholds an outing form outside the hours it takes applications.
+///
+/// [vtopNotice] is VTOP's own statement of when the form is open. It is passed
+/// on when present: this happens precisely when the app believed the form was
+/// open, so VTOP's word is the one to trust.
+String _outingFormUnavailable(String vtopNotice) {
+  const lead = 'VTOP is not accepting outing applications right now.';
+  final notice = vtopNotice.trim();
+  if (notice.isEmpty) return '$lead Please try again later.';
+  return '$lead ${notice.endsWith('.') ? notice : '$notice.'}';
+}

@@ -66,11 +66,12 @@ page open** — it can demand an OTP for a page someone only glanced at. Biometr
 and attendance both fetch on an explicit tap for this reason, and neither has
 pull-to-refresh. This cost a 1-star review before the OTP sheet explained itself.
 
-**The weekend outing form is only served Tue–Sat.** Outside that VTOP returns the
-page with student fields stripped, and the Rust parser reports
-`RegistrationParsingError` — mapped to a friendly message in
-`outing_remote_repository.dart` only, since that variant means something else at
-login.
+**The weekend outing form is only served part of the week.** Outside its window
+VTOP still returns the page, with the student fields stripped. The parser reports
+`OutingFormUnavailable`, carrying VTOP's own notice from the hidden `jsonBom`
+input ("…from Tuesday 12:00AM to Friday 11:59PM"), and `failureFrom` passes that
+notice on. The app gates the form Tue–Sat (`isWeekendOutingFormOpen`); Saturday
+is there for Monday outings' deadline, not because VTOP was seen serving it.
 
 **Timetable rows arrive in VTOP's order, not chronological.** Sort before
 displaying. Empty grid cells arrive as `"-"`; `parseClassTime` returns null

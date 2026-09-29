@@ -132,18 +132,3 @@ DateTime nextWeekendOutingFormOpening({DateTime? now}) {
 const String weekendOutingFormWindowMessage =
     'Weekend outing applications are open from Tuesday 12:00 AM to '
     'Saturday 11:59 PM.';
-
-/// What to tell a student when VTOP withholds the form anyway.
-///
-/// Stands in for the parser's "missing registration number" failure: with no
-/// form body the Rust side cannot find the registration number and reports
-/// that, which would otherwise surface as an alarming and entirely wrong "check
-/// your registration number".
-///
-/// Deliberately hedged rather than quoting [weekendOutingFormWindowMessage] —
-/// this fires precisely when VTOP disagrees with the app's idea of the window,
-/// so naming exact hours here would contradict the very thing that just
-/// happened.
-const String weekendOutingFormUnavailableMessage =
-    'VTOP is not accepting weekend outing applications right now. The form is '
-    'usually available from Tuesday to Saturday.';

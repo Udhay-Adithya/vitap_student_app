@@ -35,12 +35,26 @@ pub fn parse_outing_form(html: String) -> Result<OutingInfo, VtopError> {
         }
     }
 
-    // Validate that we got the required fields
+    // Outside the hours it takes applications, VTOP still serves the page but
+    // leaves the student fields out. Say so, rather than reporting a page that
+    // could not be read.
     if outing_info.registration_number.is_empty() {
-        return Err(VtopError::ParseError(
-            "Failed to parse outing form - missing registration number".to_string(),
-        ));
+        return Err(VtopError::OutingFormUnavailable(vtop_notice(&document)));
     }
 
     Ok(outing_info)
+}
+
+/// VTOP's own explanation of when the form is open, if the page carries one.
+///
+/// It sits in a hidden `jsonBom` input, e.g. "You are eligible to fill this
+/// form from Tuesday 12:00AM to Friday 11:59PM".
+fn vtop_notice(document: &Html) -> String {
+    let selector = Selector::parse("input#jsonBom").unwrap();
+    document
+        .select(&selector)
+        .next()
+        .and_then(|input| input.value().attr("value"))
+        .map(|value| value.split_whitespace().collect::<Vec<_>>().join(" "))
+        .unwrap_or_default()
 }

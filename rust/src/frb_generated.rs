@@ -10724,6 +10724,10 @@ impl SseDecode for crate::api::vtop::vtop_errors::VtopError {
             24 => {
                 return crate::api::vtop::vtop_errors::VtopError::LoginOtpExpired;
             }
+            25 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::vtop::vtop_errors::VtopError::OutingFormUnavailable(var_field0);
+            }
             _ => {
                 unimplemented!("");
             }
@@ -12956,6 +12960,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::vtop::vtop_errors::VtopError 
             crate::api::vtop::vtop_errors::VtopError::LoginOtpExpired => {
                 [24.into_dart()].into_dart()
             }
+            crate::api::vtop::vtop_errors::VtopError::OutingFormUnavailable(field0) => {
+                [25.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
             _ => {
                 unimplemented!("");
             }
@@ -15113,6 +15120,10 @@ impl SseEncode for crate::api::vtop::vtop_errors::VtopError {
             }
             crate::api::vtop::vtop_errors::VtopError::LoginOtpExpired => {
                 <i32>::sse_encode(24, serializer);
+            }
+            crate::api::vtop::vtop_errors::VtopError::OutingFormUnavailable(field0) => {
+                <i32>::sse_encode(25, serializer);
+                <String>::sse_encode(field0, serializer);
             }
             _ => {
                 unimplemented!("");

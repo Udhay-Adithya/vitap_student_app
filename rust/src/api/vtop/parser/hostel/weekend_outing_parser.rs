@@ -21,11 +21,10 @@ pub fn parse_weekend_outing(html: String) -> Vec<WeekendOutingRecord> {
                         .text()
                         .collect::<Vec<_>>()
                         .join("")
-                        .trim()
-                        .replace("\t", "")
-                        .replace("\n", " ")
-                        .trim()
-                        .to_string()
+                        // VTOP wraps text mid-phrase across indented lines.
+                        .split_whitespace()
+                        .collect::<Vec<_>>()
+                        .join(" ")
                 } else {
                     String::new()
                 }

@@ -1,4 +1,5 @@
 use lib_vtop::api::vtop::parser::outing_form_parser::parse_outing_form;
+use lib_vtop::api::vtop::vtop_errors::VtopError;
 
 /// The student block of the general outing form: read-only inputs VTOP fills
 /// in, which the app sends back when applying. Identity is replaced. The page
@@ -64,11 +65,40 @@ fn test_parent_contact_is_empty_when_the_form_has_no_such_field() {
 }
 
 /// Outside its window VTOP still answers with a normal page, just without the
-/// student fields. Applying from it would submit a blank registration number,
-/// so the parser has to refuse it.
+/// student fields. This used to come back as a `ParseError`, which the app
+/// showed as "Unable to process server response" — while its handler for this
+/// case listened for `RegistrationParsingError`, which only login raises.
 #[test]
-fn test_weekend_form_served_outside_its_window_is_refused() {
+fn test_weekend_form_served_outside_its_window_is_unavailable() {
     let result = parse_outing_form(WEEKEND_FORM_OUTSIDE_WINDOW.to_string());
 
-    assert!(result.is_err());
+    assert!(matches!(result, Err(VtopError::OutingFormUnavailable(_))));
+}
+
+/// VTOP says when the form opens; passing that on beats any window the app
+/// could state, since the app's idea of the window is what just proved wrong.
+#[test]
+fn test_unavailable_form_carries_vtops_own_notice() {
+    let Err(VtopError::OutingFormUnavailable(notice)) =
+        parse_outing_form(WEEKEND_FORM_OUTSIDE_WINDOW.to_string())
+    else {
+        panic!("expected OutingFormUnavailable");
+    };
+
+    assert_eq!(
+        notice,
+        "You are eligible to fill this form from Tuesday 12:00AM to Friday 11:59PM"
+    );
+}
+
+#[test]
+fn test_unavailable_form_without_a_notice_carries_an_empty_one() {
+    let without_notice = WEEKEND_FORM_OUTSIDE_WINDOW.replace(
+        "You are eligible to fill this form from Tuesday 12:00AM to Friday 11:59PM",
+        "",
+    );
+
+    let result = parse_outing_form(without_notice);
+
+    assert!(matches!(result, Err(VtopError::OutingFormUnavailable(n)) if n.is_empty()));
 }
