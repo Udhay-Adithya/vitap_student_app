@@ -156,8 +156,21 @@ To set up the project for local development:
     dart run build_runner watch
     
     # For Rust bridge code generation
-    flutter_rust_bridge_codegen generate
+    flutter_rust_bridge_codegen generate --no-auto-upgrade-dependency
     ```
+
+    The bridge is pinned to `flutter_rust_bridge` 2.12.0, and codegen also
+    needs `cargo-expand`. Install the matching versions once:
+
+    ```bash
+    cargo install flutter_rust_bridge_codegen --version 2.12.0 --locked
+    cargo install cargo-expand --locked
+    ```
+
+    Always pass `--no-auto-upgrade-dependency`. Without it, codegen bumps
+    `flutter_rust_bridge` to its own version and rewrites every generated
+    file. CI regenerates on every pull request and fails if the committed
+    output differs.
 
 ## Coding Guidelines
 
@@ -200,7 +213,7 @@ cargo test
 cargo build
 
 # Generate Flutter-Rust bridge code
-flutter_rust_bridge_codegen generate
+flutter_rust_bridge_codegen generate --no-auto-upgrade-dependency
 ```
 
 ### File Organization

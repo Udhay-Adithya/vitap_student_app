@@ -103,6 +103,15 @@ sealed class VtopError with _$VtopError implements FrbException {
   ///Login otp expired
   const factory VtopError.loginOtpExpired() = VtopError_LoginOtpExpired;
 
+  /// VTOP served an outing form with the student's details left out.
+  ///
+  /// It does this outside the hours it takes applications, instead of saying
+  /// no: the page still loads, but there is nothing to build a request from.
+  /// Carries VTOP's own notice of when the form is open, from the page's
+  /// hidden `jsonBom` input, or an empty string when the page has none.
+  const factory VtopError.outingFormUnavailable(String field0) =
+      VtopError_OutingFormUnavailable;
+
   /// Get the raw error details for debugging (not for end users)
   Future<String> debugMessage() => RustLib.instance.api
       .crateApiVtopVtopErrorsVtopErrorDebugMessage(that: this);

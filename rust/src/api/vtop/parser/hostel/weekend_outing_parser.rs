@@ -21,11 +21,10 @@ pub fn parse_weekend_outing(html: String) -> Vec<WeekendOutingRecord> {
                         .text()
                         .collect::<Vec<_>>()
                         .join("")
-                        .trim()
-                        .replace("\t", "")
-                        .replace("\n", " ")
-                        .trim()
-                        .to_string()
+                        // VTOP wraps text mid-phrase across indented lines.
+                        .split_whitespace()
+                        .collect::<Vec<_>>()
+                        .join(" ")
                 } else {
                     String::new()
                 }
@@ -63,7 +62,7 @@ pub fn parse_weekend_outing(html: String) -> Vec<WeekendOutingRecord> {
                         cells[download_idx].select(&download_selector).next()
                     {
                         if let Some(data_url) = download_link.value().attr("data-leave-url") {
-                            data_url.split('/').last().unwrap_or("").to_string()
+                            data_url.split('/').next_back().unwrap_or("").to_string()
                         } else {
                             String::new()
                         }
@@ -75,7 +74,7 @@ pub fn parse_weekend_outing(html: String) -> Vec<WeekendOutingRecord> {
                 {
                     if let Some(data_url) = download_link.value().attr("data-leave-url") {
                         // Extract ID from URL like "/vtop/hostel/downloadOutingForm/W23235307220"
-                        data_url.split('/').last().unwrap_or("").to_string()
+                        data_url.split('/').next_back().unwrap_or("").to_string()
                     } else {
                         String::new()
                     }

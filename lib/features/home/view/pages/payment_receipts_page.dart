@@ -75,11 +75,9 @@ class _PaymentReceiptsPageState extends ConsumerState<PaymentReceiptsPage> {
                       secondaryText: "Seems like you haven't made any yet.",
                     )
                   : RefreshIndicator(
-                      onRefresh: () async {
-                        ref
-                            .read(paymentReceiptsViewModelProvider.notifier)
-                            .fetchPendingPayments();
-                      },
+                      onRefresh: () => ref
+                          .read(paymentReceiptsViewModelProvider.notifier)
+                          .fetchPendingPayments(),
                       child: ListView.separated(
                         padding: const EdgeInsets.all(16),
                         itemCount: receipts.length,

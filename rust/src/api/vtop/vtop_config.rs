@@ -60,7 +60,7 @@ impl Default for VtopConfig {
         {}
 
         Self {
-            base_url: base_url,
+            base_url,
             timeout_seconds: 30,
             user_agent: DEFAULT_USER_AGENT.to_string(),
         }
@@ -73,6 +73,9 @@ pub struct VtopClientBuilder {
 }
 
 impl VtopClientBuilder {
+    // No `Default` impl: this type crosses the bridge, and flutter_rust_bridge
+    // would generate a `default()` binding for it.
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         Self {
             config: VtopConfig::default(),

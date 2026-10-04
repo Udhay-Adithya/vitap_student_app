@@ -1,0 +1,80 @@
+name: Bindings
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  # Must match flutter_rust_bridge in pubspec.yaml and rust/Cargo.toml.
+  FRB_VERSION: 2.12.0
+  CARGO_EXPAND_VERSION: 1.0.121
+
+jobs:
+  check:
+    name: bindings up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The generated Rust is formatted by rustfmt and derived from
+      # `cargo expand`, so it depends on the toolchain. Same pin as rust.yml.
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.94.1
+          components: rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+
+      - name: Cache codegen tools
+        id: tools
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/flutter_rust_bridge_codegen
+            ~/.cargo/bin/cargo-expand
+          key: codegen-${{ runner.os }}-frb-${{ env.FRB_VERSION }}-expand-${{ env.CARGO_EXPAND_VERSION }}
+
+      - name: Install codegen tools
+        if: steps.tools.outputs.cache-hit != 'true'
+        run: |
+          cargo install flutter_rust_bridge_codegen --version "$FRB_VERSION" --locked
+          cargo install cargo-expand --version "$CARGO_EXPAND_VERSION" --locked
+
+      # Codegen formats the Dart it writes and runs build_runner, so the
+      # Flutter version matters too. Same pin as flutter.yml.
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.6
+          channel: stable
+          cache: true
+
+      - name: Provide placeholder .env
+        run: cp .env.example .env
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Without --no-auto-upgrade-dependency, codegen bumps flutter_rust_bridge
+      # to its own version and rewrites every generated file.
+      - name: Regenerate
+        run: flutter_rust_bridge_codegen generate --no-auto-upgrade-dependency
+
+      - name: Fail if anything changed
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::Generated code is out of date. Run 'flutter_rust_bridge_codegen generate --no-auto-upgrade-dependency' and commit the result."
+            git status --porcelain
+            git diff --stat
+            exit 1
+          fi

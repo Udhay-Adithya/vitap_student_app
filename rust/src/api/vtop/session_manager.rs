@@ -16,6 +16,9 @@ pub struct SessionManager {
 }
 
 impl SessionManager {
+    // No `Default` impl: this type crosses the bridge, and flutter_rust_bridge
+    // would generate a `default()` binding for it.
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         #[cfg(not(target_arch = "wasm32"))]
         let jar = Jar::default();

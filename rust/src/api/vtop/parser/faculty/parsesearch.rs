@@ -29,7 +29,7 @@ fn extract_emp_id_from_row(row: &scraper::ElementRef) -> String {
 }
 
 fn clean(text: String) -> String {
-    text.trim().replace('\t', "").replace('\n', "")
+    text.trim().replace(['\t', '\n'], "")
 }
 
 /// Parse the first matching faculty from a search-by-name/id response.

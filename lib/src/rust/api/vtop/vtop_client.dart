@@ -490,31 +490,25 @@ abstract class VtopClient implements RustOpaqueInterface {
   Future<VtopResultVecAttendanceRecordOptionCapstoneAttendance>
   getAttendanceWithCapstone({required String semesterId});
 
-  /// Retrieves biometric attendance records for a specific date.
-  ///
-  /// Fetches the student's biometric entry/exit records from the campus biometric system
-  /// for the specified date. This includes timestamps of when the student entered and
-  /// exited the campus premises, useful for tracking attendance and time spent on campus.
+  /// Retrieves the student's biometric punches for a specific date.
   ///
   /// # Arguments
   ///
-  /// * `date` - The date for which to fetch biometric records, in the format "DD-MMM-YYYY"
-  ///            (e.g., "15-Oct-2024")
+  /// * `date` - The day to fetch, as `dd/MM/yyyy` (e.g. `"25/09/2026"`). VTOP
+  ///   does not reject any other format: it answers "No Record(S) Found",
+  ///   which is indistinguishable from a day without punches.
   ///
   /// # Returns
   ///
-  /// Returns a `VtopResult<Vec<BiometricRecord>>` containing a list of biometric records:
-  /// - Entry timestamp (date and time of campus entry)
-  /// - Exit timestamp (date and time of campus exit)
-  /// - Location/gate information
-  /// - Duration spent on campus
-  /// - Any remarks or notes
+  /// One `BiometricRecord` per punch, newest first, carrying its serial,
+  /// date, time (`in_time`) and venue (`location`). VTOP reports single
+  /// punches rather than in/out pairs, so `day`, `out_time` and `duration`
+  /// are empty. A day without punches gives an empty list.
   ///
   /// # Errors
   ///
   /// This function will return an error if:
   /// - The session is not authenticated (`VtopError::SessionExpired`)
-  /// - The provided date format is invalid
   /// - Network communication fails (`VtopError::NetworkError`)
   /// - The VTOP server returns an error response (`VtopError::VtopServerError`)
   /// - Session expires during the request and re-authentication fails
@@ -523,12 +517,9 @@ abstract class VtopClient implements RustOpaqueInterface {
   ///
   /// ```
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-  /// let records = client.get_biometric_data("15-Oct-2024".to_string()).await?;
+  /// let records = client.get_biometric_data("25/09/2026".to_string()).await?;
   /// for record in records {
-  ///     println!("Entry: {}, Exit: {}",
-  ///         record.entry_time,
-  ///         record.exit_time
-  ///     );
+  ///     println!("{} at {}", record.in_time, record.location);
   /// }
   /// # Ok(())
   /// # }
@@ -714,25 +705,35 @@ abstract class VtopClient implements RustOpaqueInterface {
     required String semesterId,
   });
 
-  ///   Question paper download URL format:
-  ///         'https://vtop.vitap.ac.in/vtop/' +
-  ///         'examinations/doDownloadQuestion/{Experiment-1 || DA01 || AST01}/{classId}
-  ///         ?authorizedID=2XBCEXXXXX
-  ///         &_csrf=XXXX-baba-XXXX-a95e-b1937c33c4XXc
-  ///         &x=Sun,%2025%20Jan%202026%2004:24:59%20GMT'
-  ///     Digital assignment download URL format:
-  ///         'examinations/downloadSTudentDA/{Experiment-1 || DA01 || AST01}/{classId}
-  ///         ?authorizedID=2XBCEXXXXX
-  ///         &_csrf=XXXX-baba-XXXX-a95e-b1937c33c4XXc
-  ///         &x=Sun,%2025%20Jan%202026%2004:24:59%20GMT'
-  ///         (Note: the timestamp is URL-encoded.)
-  ///     Retrieves the PDF bytes of a digital assignment or question paper based on the provided download URL.
-  ///     The PDF can be retrieved using the same approach as the hostel leave pass retrieval method.
-  ///     Arguments:
-  ///     - `qp_download_url`: The download URL for the question paper.
-  ///     - `da_download_url`: The download URL for the digital assignment.
-  ///     Returns:
-  ///     - `VtopResult<Vec<u8>>` containing the PDF bytes of the digital assignment or question paper.
+  /// Retrieves the PDF bytes of a digital assignment or question paper.
+  ///
+  /// The PDF is fetched the same way as a hostel leave pass.
+  ///
+  /// Question paper download URL format:
+  ///
+  /// ```text
+  /// examinations/doDownloadQuestion/{Experiment-1 || DA01 || AST01}/{classId}
+  ///     ?authorizedID=2XBCEXXXXX
+  ///     &_csrf=XXXX-baba-XXXX-a95e-b1937c33c4XXc
+  ///     &x=Sun,%2025%20Jan%202026%2004:24:59%20GMT
+  /// ```
+  ///
+  /// Digital assignment download URL format (the timestamp is URL-encoded):
+  ///
+  /// ```text
+  /// examinations/downloadSTudentDA/{Experiment-1 || DA01 || AST01}/{classId}
+  ///     ?authorizedID=2XBCEXXXXX
+  ///     &_csrf=XXXX-baba-XXXX-a95e-b1937c33c4XXc
+  ///     &x=Sun,%2025%20Jan%202026%2004:24:59%20GMT
+  /// ```
+  ///
+  /// # Arguments
+  ///
+  /// * `da_qp_download_url` - The download URL of the digital assignment or question paper.
+  ///
+  /// # Returns
+  ///
+  /// Returns a `VtopResult<Vec<u8>>` containing the PDF bytes.
   Future<VtopResultVecU8> getDaOrQpPdf({required String daQpDownloadUrl});
 
   /// Retrieves the examination schedule for all courses in a specific semester.

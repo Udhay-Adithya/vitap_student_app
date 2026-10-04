@@ -22,11 +22,10 @@ pub fn parse_hostel_leave(html: String) -> Vec<GeneralOutingRecord> {
                         .text()
                         .collect::<Vec<_>>()
                         .join("")
-                        .trim()
-                        .replace("\t", "")
-                        .replace("\n", " ")
-                        .trim()
-                        .to_string()
+                        // VTOP wraps text mid-phrase across indented lines.
+                        .split_whitespace()
+                        .collect::<Vec<_>>()
+                        .join(" ")
                 };
 
                 // Status is at index 9 in the actual HTML structure
@@ -38,7 +37,7 @@ pub fn parse_hostel_leave(html: String) -> Vec<GeneralOutingRecord> {
                     if let Some(download_link) = cells[10].select(&download_selector).next() {
                         if let Some(data_url) = download_link.value().attr("data-url") {
                             // Extract ID from URL like "/vtop/hostel/downloadLeavePass/L2234920"
-                            let id = data_url.split('/').last().unwrap_or("").to_string();
+                            let id = data_url.split('/').next_back().unwrap_or("").to_string();
                             (true, id)
                         } else {
                             (false, String::new())

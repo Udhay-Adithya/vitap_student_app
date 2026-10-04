@@ -568,7 +568,6 @@ impl VtopClient {
     /// Returns a `VtopResult<Vec<DigitalAssignments>>` containing a vector of digital assignments
     /// where each assignment includes course code, title, type, faculty name, class ID, and
     /// a list of assignment details (title, due date, submission status, marks).
-
     pub async fn get_all_digital_assignments(
         &mut self,
         semester_id: &str,
@@ -611,7 +610,6 @@ impl VtopClient {
     ///
     /// Returns a `VtopResult<Vec<AssignmentRecordEach>>` containing assignment details including
     /// serial number, title, due date, submission status, marks, and weightage.
-
     pub async fn get_per_course_dassignments(
         &mut self,
         class_id: &str,
@@ -627,7 +625,7 @@ impl VtopClient {
         let body = format!(
             "authorizedID={}&x={}&classId={}&_csrf={}",
             self.username,
-            urlencoding::encode(&timestamp).to_string(),
+            urlencoding::encode(&timestamp),
             class_id,
             self.session
                 .get_csrf_token()
@@ -638,30 +636,35 @@ impl VtopClient {
         Ok(parser::digital_assignment_parser::parse_per_course_dassignments(text))
     }
 
-    ///   Question paper download URL format:
-    ///         'https://vtop.vitap.ac.in/vtop/' +
-    ///         'examinations/doDownloadQuestion/{Experiment-1 || DA01 || AST01}/{classId}
-    ///         ?authorizedID=2XBCEXXXXX
-    ///         &_csrf=XXXX-baba-XXXX-a95e-b1937c33c4XXc
-    ///         &x=Sun,%2025%20Jan%202026%2004:24:59%20GMT'
-
-    ///     Digital assignment download URL format:
-    ///         'examinations/downloadSTudentDA/{Experiment-1 || DA01 || AST01}/{classId}
-    ///         ?authorizedID=2XBCEXXXXX
-    ///         &_csrf=XXXX-baba-XXXX-a95e-b1937c33c4XXc
-    ///         &x=Sun,%2025%20Jan%202026%2004:24:59%20GMT'
-    ///         (Note: the timestamp is URL-encoded.)
-
-    ///     Retrieves the PDF bytes of a digital assignment or question paper based on the provided download URL.
-    ///     The PDF can be retrieved using the same approach as the hostel leave pass retrieval method.
-
-    ///     Arguments:
-    ///     - `qp_download_url`: The download URL for the question paper.
-    ///     - `da_download_url`: The download URL for the digital assignment.
-
-    ///     Returns:
-    ///     - `VtopResult<Vec<u8>>` containing the PDF bytes of the digital assignment or question paper.
-
+    /// Retrieves the PDF bytes of a digital assignment or question paper.
+    ///
+    /// The PDF is fetched the same way as a hostel leave pass.
+    ///
+    /// Question paper download URL format:
+    ///
+    /// ```text
+    /// examinations/doDownloadQuestion/{Experiment-1 || DA01 || AST01}/{classId}
+    ///     ?authorizedID=2XBCEXXXXX
+    ///     &_csrf=XXXX-baba-XXXX-a95e-b1937c33c4XXc
+    ///     &x=Sun,%2025%20Jan%202026%2004:24:59%20GMT
+    /// ```
+    ///
+    /// Digital assignment download URL format (the timestamp is URL-encoded):
+    ///
+    /// ```text
+    /// examinations/downloadSTudentDA/{Experiment-1 || DA01 || AST01}/{classId}
+    ///     ?authorizedID=2XBCEXXXXX
+    ///     &_csrf=XXXX-baba-XXXX-a95e-b1937c33c4XXc
+    ///     &x=Sun,%2025%20Jan%202026%2004:24:59%20GMT
+    /// ```
+    ///
+    /// # Arguments
+    ///
+    /// * `da_qp_download_url` - The download URL of the digital assignment or question paper.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `VtopResult<Vec<u8>>` containing the PDF bytes.
     pub async fn get_da_or_qp_pdf(&mut self, da_qp_download_url: String) -> VtopResult<Vec<u8>> {
         if !self.session.is_authenticated() {
             return Err(VtopError::SessionExpired);
@@ -703,7 +706,7 @@ impl VtopClient {
         let pre_request_body = format!(
             "authorizedID={}&x={}&classId={}&_csrf={}",
             self.username,
-            urlencoding::encode(&timestamp).to_string(),
+            urlencoding::encode(&timestamp),
             class_id,
             self.session
                 .get_csrf_token()
@@ -726,7 +729,7 @@ impl VtopClient {
         let body = format!(
             "authorizedID={}&x={}&classId={}&mode={}&_csrf={}",
             self.username,
-            urlencoding::encode(&timestamp).to_string(),
+            urlencoding::encode(&timestamp),
             class_id,
             mode,
             self.session
@@ -772,13 +775,9 @@ impl VtopClient {
             self.config.base_url
         );
         let mut upload_form = Form::new().text("authorizedID", self.username.clone());
-        let len = process_vectors[0].len();
-        // if len == 0 && process_vectors[1].len() != process_vectors[0].len() {
-        //     return Err(VtopError::DigitalAssignmentUploadProcessVectorsEmpty);
-        // }
-        for i in 0..len {
-            upload_form = upload_form.text("code", process_vectors[0][i].clone());
-            upload_form = upload_form.text("opt", process_vectors[1][i].clone());
+        for (code, opt) in process_vectors[0].iter().zip(&process_vectors[1]) {
+            upload_form = upload_form.text("code", code.clone());
+            upload_form = upload_form.text("opt", opt.clone());
         }
         let mime = match file_name.rsplit('.').next().unwrap_or("") {
             "pdf" => "application/pdf",
@@ -813,7 +812,7 @@ impl VtopClient {
         self.handle_session_check(&res).await?;
         let text = read_body(res).await?;
         let result = parser::digital_assignment_parser::parse_upload_assignment_response(text);
-        if result == "OTP Required".to_string() {
+        if result == "OTP Required" {
             // Callback for OTP verification
             // OTP input is required from the user
             // The error `VtopError::DigitalAssignmentUploadOtpRequired` should be handled.
@@ -858,7 +857,7 @@ impl VtopClient {
 
         let text = read_body(res).await?;
         let result = parser::digital_assignment_parser::parse_upload_assignment_response(text);
-        if result == "Invalid OTP. Please try again.".to_string() {
+        if result == "Invalid OTP. Please try again." {
             // OTP was incorrect.
             // Need to call again upload_course_dassignment_otp with correct OTP.
             Err(VtopError::DigitalAssignmentUploadIncorrectOtp)

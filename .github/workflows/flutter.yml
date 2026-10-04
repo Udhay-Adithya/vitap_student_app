@@ -1,0 +1,52 @@
+name: Flutter
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  OBJECTBOX_VERSION: 5.3.2
+
+jobs:
+  check:
+    name: analyze and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.6
+          channel: stable
+          cache: true
+
+      # `.env` is declared as an asset, so the bundle can't build without one.
+      # Tests never read it; the placeholder values are enough.
+      - name: Provide placeholder .env
+        run: cp .env.example .env
+
+      # The persistence tests open a real store and skip without this library.
+      # See test/helpers/object_box_test_store.dart.
+      - name: Install ObjectBox native library
+        run: |
+          mkdir -p "$RUNNER_TEMP/objectbox"
+          curl -sSfL "https://github.com/objectbox/objectbox-c/releases/download/v${OBJECTBOX_VERSION}/objectbox-linux-x64.tar.gz" \
+            | tar -xz -C "$RUNNER_TEMP/objectbox"
+          cp "$RUNNER_TEMP/objectbox/lib/libobjectbox.so" lib/
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test

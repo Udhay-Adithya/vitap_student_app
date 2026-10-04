@@ -591,9 +591,9 @@ impl VtopClient {
 
         if response_url.contains("error") {
             if response_text.contains("Invalid Captcha") {
-                return Err(VtopError::AuthenticationFailed(
+                Err(VtopError::AuthenticationFailed(
                     "Invalid Captcha".to_string(),
-                ));
+                ))
             } else if Self::is_otp_required(&response_text) {
                 self.current_page = Some(response_text);
                 let _ = self.extract_csrf_token();
@@ -633,7 +633,7 @@ impl VtopClient {
     /// # Arguments
     ///
     /// * `k` - If `true`, loads the initial VTOP page first to establish session cookies
-    ///         and extract initial CSRF tokens. If `false`, skips initial page load.
+    ///   and extract initial CSRF tokens. If `false`, skips initial page load.
     ///
     /// # Returns
     ///
@@ -702,7 +702,7 @@ impl VtopClient {
     /// - The CAPTCHA image element is not found in the HTML (`VtopError::CaptchaRequired`)
     /// - The image source doesn't contain base64 data (`VtopError::CaptchaRequired`)
     fn extract_captcha_data(&mut self) -> VtopResult<()> {
-        let document = Html::parse_document(&self.current_page.as_ref().ok_or(
+        let document = Html::parse_document(self.current_page.as_ref().ok_or(
             VtopError::ParseError("Current page not found at captcha extration".into()),
         )?);
         let selector = Selector::parse("img.form-control.img-fluid.bg-light.border-0").unwrap();
@@ -737,7 +737,7 @@ impl VtopClient {
     /// - The current page HTML is not available (`VtopError::ParseError`)
     /// - The authorizedIDX hidden input field is not found (`VtopError::RegistrationParsingError`)
     fn get_regno(&mut self) -> VtopResult<()> {
-        let document = Html::parse_document(&self.current_page.as_ref().ok_or(
+        let document = Html::parse_document(self.current_page.as_ref().ok_or(
             VtopError::ParseError("Current page not found at captcha extration".into()),
         )?);
         let selector = Selector::parse("input[type=hidden][name=authorizedIDX]").unwrap();
@@ -767,7 +767,7 @@ impl VtopClient {
     /// - The current page HTML is not available (`VtopError::ParseError`)
     /// - The CSRF token input field is not found in the HTML (`VtopError::ParseError`)
     fn extract_csrf_token(&mut self) -> VtopResult<()> {
-        let document = Html::parse_document(&self.current_page.as_ref().ok_or(
+        let document = Html::parse_document(self.current_page.as_ref().ok_or(
             VtopError::ParseError("Current page not found at csrf extration".into()),
         )?);
         let selector = Selector::parse("input[name='_csrf']").unwrap();
@@ -830,7 +830,7 @@ impl VtopClient {
     fn get_login_page_error(data: &str) -> String {
         let ptext = r#"span.text-danger.text-center[role="alert"]"#;
         let document = Html::parse_document(data);
-        let selector = Selector::parse(&ptext).unwrap();
+        let selector = Selector::parse(ptext).unwrap();
         if let Some(element) = document.select(&selector).next() {
             let error_message = element.text().collect::<Vec<_>>().join(" ");
             error_message.trim().into()

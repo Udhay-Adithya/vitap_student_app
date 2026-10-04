@@ -60,6 +60,13 @@ pub enum VtopError {
     LoginOtpIncorrect,
     ///Login otp expired
     LoginOtpExpired,
+    /// VTOP served an outing form with the student's details left out.
+    ///
+    /// It does this outside the hours it takes applications, instead of saying
+    /// no: the page still loads, but there is nothing to build a request from.
+    /// Carries VTOP's own notice of when the form is open, from the page's
+    /// hidden `jsonBom` input, or an empty string when the page has none.
+    OutingFormUnavailable(String),
 }
 
 impl VtopError {
@@ -113,6 +120,13 @@ impl VtopError {
             VtopError::MenuUnavailable => {
                 "VTOP is not serving this page right now. Please try again later.".to_string()
             }
+            VtopError::OutingFormUnavailable(notice) => {
+                if notice.is_empty() {
+                    "VTOP is not accepting outing applications right now.".to_string()
+                } else {
+                    format!("VTOP is not accepting outing applications right now. {}", notice)
+                }
+            }
             VtopError::InvalidResponse => "Received unexpected response from server. Please try again.".to_string(),
             VtopError::ResponseReadError => "Failed to read server response. Please try again.".to_string(),
         }
@@ -137,6 +151,7 @@ impl VtopError {
             VtopError::CaptchaRequired => "CaptchaRequired".to_string(),
             VtopError::InvalidSemesterId => "InvalidSemesterId".to_string(),
             VtopError::MenuUnavailable => "MenuUnavailable".to_string(),
+            VtopError::OutingFormUnavailable(_) => "OutingFormUnavailable".to_string(),
             VtopError::InvalidResponse => "InvalidResponse".to_string(),
             VtopError::ResponseReadError => "ResponseReadError".to_string(),
             VtopError::DigitalAssignmentFileNotFound => "FileNotFound".to_string(),
@@ -180,6 +195,9 @@ impl std::fmt::Display for VtopError {
             VtopError::CaptchaRequired => write!(f, "Captcha verification required"),
             VtopError::InvalidSemesterId => write!(f, "Semester id is not the expected shape"),
             VtopError::MenuUnavailable => write!(f, "VTOP refused the request"),
+            VtopError::OutingFormUnavailable(notice) => {
+                write!(f, "Outing form served without student details: {}", notice)
+            }
             VtopError::InvalidResponse => write!(f, "Invalid response from server"),
             VtopError::ResponseReadError => write!(f, "Failed to read response body"),
             VtopError::DigitalAssignmentFileNotFound => write!(f, "File Selection Error"),
