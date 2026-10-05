@@ -34,24 +34,15 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
       await serviceLocator.get<SecureStorageService>().saveCredentials(
         credentials,
       );
-
-      final prefs = ref.read(userPreferencesProvider);
-      await NotificationService.scheduleTimetableNotifications(
-        user: user,
-        prefs: prefs,
-        nonInstructionalDays: await ref.read(
-          nonInstructionalDaysProvider.future,
-        ),
-      );
-      await NotificationService.scheduleExamNotifications(
-        user: user,
-        prefs: prefs,
-      );
     } catch (e) {
+      // Only a failure to *store* the account rolls it back. Anything after
+      // this point has the student signed in already.
       state = null;
       _clearUserDataObjectBox();
       throw Exception('Login failed: $e');
     }
+
+    await _scheduleNotifications(user);
   }
 
   // Update user in state and ObjectBox
@@ -64,24 +55,43 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
 
       state = userWithId;
       _saveUserToObjectBox(userWithId);
+    } catch (e) {
+      debugPrint('Failed to update user data: $e');
+      throw Exception('Failed to update user data: $e');
+    }
 
-      // Reschedule notifications with updated user data
+    await NotificationService.cancelAllNotifications();
+    await _scheduleNotifications(state ?? updatedUser);
+  }
+
+  /// Rebuilds the reminder schedule, swallowing anything that goes wrong.
+  ///
+  /// Reminders are a convenience laid on top of data the student already has,
+  /// so a failure here must not fail the sign-in that triggered it. It used to
+  /// share `loginUser`'s `catch`, which rolled the account back — so a refused
+  /// alarm, or an unreadable stored calendar, deleted every row the student
+  /// had just signed in to see, left their credentials in place, and (because
+  /// nothing awaited the call) said nothing at all.
+  Future<void> _scheduleNotifications(User user) async {
+    try {
       final prefs = ref.read(userPreferencesProvider);
-      await NotificationService.cancelAllNotifications();
       await NotificationService.scheduleTimetableNotifications(
-        user: userWithId,
+        user: user,
         prefs: prefs,
         nonInstructionalDays: await ref.read(
           nonInstructionalDaysProvider.future,
         ),
       );
       await NotificationService.scheduleExamNotifications(
-        user: userWithId,
+        user: user,
         prefs: prefs,
       );
-    } catch (e) {
-      debugPrint('Failed to update user data: $e');
-      throw Exception('Failed to update user data: $e');
+    } catch (e, stackTrace) {
+      debugPrint('Failed to schedule notifications: $e');
+      ref
+          .read(analyticsServiceProvider)
+          .logError('notification_error', e, location: 'scheduleNotifications');
+      debugPrintStack(stackTrace: stackTrace, label: 'scheduleNotifications');
     }
   }
 
