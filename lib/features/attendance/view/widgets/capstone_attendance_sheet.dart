@@ -3,6 +3,7 @@ import 'package:vit_ap_student_app/core/common/widget/app_tab_bar.dart';
 import 'package:vit_ap_student_app/core/constants/analytics_constants.dart';
 import 'package:vit_ap_student_app/core/models/capstone_attendance.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
+import 'package:vit_ap_student_app/features/attendance/utils/capstone_punch_order.dart';
 import 'package:vit_ap_student_app/features/attendance/view/widgets/capstone_attendance_card.dart';
 import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:wave/wave.dart';
@@ -268,7 +269,7 @@ Widget _buildInfoRow(BuildContext context, String label, String value) {
 
 Widget _buildCalendarTab(BuildContext context, CapstoneAttendance capstone) {
   final colorScheme = Theme.of(context).colorScheme;
-  final punches = capstone.punches.toList();
+  final punches = newestPunchesFirst(capstone.punches);
 
   if (punches.isEmpty) {
     return Center(
