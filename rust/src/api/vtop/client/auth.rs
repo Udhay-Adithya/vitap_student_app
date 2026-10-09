@@ -69,8 +69,12 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+    /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let cookies = client.get_cookie().await?;
     /// assert!(!cookies.is_empty());
+    /// # Ok(())
+    /// # }
     /// ```
     #[cfg(not(target_arch = "wasm32"))]
     pub async fn get_cookie(&self) -> VtopResult<Vec<u8>> {
@@ -294,8 +298,10 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-    /// use lib_vtop::{VtopClient, VtopConfig, SessionManager};
+    /// use lib_vtop::api::vtop::session_manager::SessionManager;
+    /// use lib_vtop::api::vtop::vtop_config::VtopConfig;
     ///
     /// let config = VtopConfig::default();
     /// let session = SessionManager::new();
@@ -859,6 +865,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # fn example(client: &mut VtopClient) {
     /// if client.is_authenticated() {
     ///     println!("Session is active");

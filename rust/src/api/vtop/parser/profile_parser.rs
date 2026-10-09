@@ -9,9 +9,14 @@ use scraper::{Html, Selector};
 /// # Examples
 ///
 /// ```
-/// let html = std::fs::read_to_string("student_profile.html").unwrap();
-/// let profile = parse_student_profile(html);
-/// assert!(!profile.student_name.is_empty());
+/// use lib_vtop::api::vtop::parser::profile_parser::parse_student_profile;
+///
+/// let profile = parse_student_profile(
+///     r#"<table><tr><td>Student Name</td><td>Test Student</td></tr></table>"#
+///         .to_string(),
+/// );
+///
+/// assert_eq!(profile.student_name, "Test Student");
 /// ```
 /// Collapses every run of whitespace to a single space and upper-cases the result.
 ///
@@ -35,7 +40,7 @@ pub fn parse_student_profile(html: String) -> StudentProfile {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```text
     /// use scraper::{Html, Selector};
     /// let html = r#"
     ///     <table>
@@ -72,7 +77,7 @@ pub fn parse_student_profile(html: String) -> StudentProfile {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```text
     /// use scraper::Html;
     /// let html = r#"
     ///     <table>

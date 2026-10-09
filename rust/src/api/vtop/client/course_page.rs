@@ -71,6 +71,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let courses = client.get_courses_for_course_page("AP2025264").await?;
     /// for course in courses.courses {
@@ -133,6 +134,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let slots = client.get_slots_for_course_page("AP2025264", "AP2025264000394").await?;
     /// for entry in slots.class_entries {
@@ -202,6 +204,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let detail = client.get_course_detail("AP2025264", "70735", "AP2025264000442").await?;
     /// println!("Course: {} - {}", detail.course_info.course_code, detail.course_info.course_title);
@@ -276,6 +279,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Get course detail first
     /// let detail = client.get_course_detail("AP2025264", "70735", "AP2025264000442").await?;
@@ -337,6 +341,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let detail = client.get_course_detail("AP2025264", "70735", "AP2025264000442").await?;
     ///

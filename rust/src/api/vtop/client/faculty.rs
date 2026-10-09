@@ -33,19 +33,15 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// // Search by name
-    /// let results = client.get_faculty_search("Sharma".to_string()).await?;
-    /// for faculty in results.faculty_list {
-    ///     println!("{} - {} ({})",
-    ///         faculty.name,
-    ///         faculty.designation,
-    ///         faculty.department
-    ///     );
-    /// }
-    ///
-    /// // Search by employee ID
-    /// let results = client.get_faculty_search("EMP123".to_string()).await?;
+    /// // Matches by name or employee id, and answers with the first match.
+    /// let faculty = client.get_faculty_search("Sharma".to_string()).await?;
+    /// println!(
+    ///     "{} - {} ({})",
+    ///     faculty.faculty_name, faculty.designation, faculty.school_or_centre
+    /// );
+    /// println!("Employee id: {}", faculty.emp_id);
     /// # Ok(())
     /// # }
     /// ```
@@ -108,17 +104,18 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// // First search for faculty
-    /// let search_results = client.get_faculty_search("Sharma".to_string()).await?;
+    /// // The employee id comes from a search.
+    /// let faculty = client.get_faculty_search("Sharma".to_string()).await?;
     ///
-    /// // Then get detailed information
-    /// if let Some(faculty) = search_results.faculty_list.first() {
-    ///     let details = client.get_faculty_data(faculty.emp_id.clone()).await?;
-    ///     println!("Name: {}", details.name);
-    ///     println!("Email: {}", details.email);
-    ///     println!("Department: {}", details.department);
-    ///     println!("Cabin: {}", details.cabin_number);
+    /// let details = client.get_faculty_data(faculty.emp_id).await?;
+    /// println!("Name: {}", details.name);
+    /// println!("Email: {}", details.email);
+    /// println!("Department: {}", details.department);
+    /// println!("Cabin: {}", details.cabin_number);
+    /// for hour in details.office_hours {
+    ///     println!("{}: {}", hour.day, hour.timings);
     /// }
     /// # Ok(())
     /// # }

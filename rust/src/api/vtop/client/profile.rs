@@ -45,39 +45,27 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let grade_history = client.get_grade_history().await?;
     ///
-    /// // Display overall performance
-    /// println!("CGPA: {:.2}", grade_history.cgpa);
-    /// println!("Total Credits: {}", grade_history.total_credits);
+    /// // Every figure arrives as VTOP wrote it, so these are strings.
+    /// println!("CGPA: {}", grade_history.cgpa);
+    /// println!(
+    ///     "Credits: {} earned of {} registered",
+    ///     grade_history.credits_earned, grade_history.credits_registered
+    /// );
     ///
-    /// // Display semester-wise performance
-    /// for semester in &grade_history.semesters {
-    ///     println!("\n{} - SGPA: {:.2}", semester.name, semester.sgpa);
-    ///     
-    ///     for course in &semester.courses {
-    ///         println!("  {} | {} | Grade: {} | Credits: {}",
-    ///             course.code,
-    ///             course.name,
-    ///             course.grade,
-    ///             course.credits
-    ///         );
-    ///     }
-    /// }
-    /// # Ok(())
-    /// # }
-    /// ```
-    ///
-    /// ```
-    /// # async fn example2(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// // Calculate semester-wise GPA trend
-    /// let grade_history = client.get_grade_history().await?;
-    ///
-    /// println!("Academic Performance Trend:");
-    /// for semester in &grade_history.semesters {
-    ///     let bar = "█".repeat((semester.sgpa * 10.0) as usize);
-    ///     println!("{:20} | {:.2} {}", semester.name, semester.sgpa, bar);
+    /// // One flat list of every graded course, not grouped by semester.
+    /// for course in &grade_history.courses {
+    ///     println!(
+    ///         "{} | {} | {} | Grade: {} | Credits: {}",
+    ///         course.exam_month,
+    ///         course.course_code,
+    ///         course.course_title,
+    ///         course.grade,
+    ///         course.credits
+    ///     );
     /// }
     /// # Ok(())
     /// # }
@@ -162,36 +150,19 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let profile = client.get_student_profile().await?;
     ///
-    /// // Display student information
-    /// println!("=== Student Profile ===");
     /// println!("Name: {}", profile.student_name);
     /// println!("Reg No: {}", profile.registration_number);
-    /// println!("Program: {} - {}", profile.program, profile.branch);
+    /// println!("Application No: {}", profile.application_number);
     /// println!("Email: {}", profile.email);
-    /// println!("Phone: {}", profile.phone);
-    /// println!("\nAcademic Performance:");
-    /// println!("CGPA: {:.2}", profile.grade_history.cgpa);
-    /// println!("Credits Earned: {}", profile.grade_history.total_credits);
-    /// # Ok(())
-    /// # }
-    /// ```
     ///
-    /// ```
-    /// # async fn example2(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// // Generate a student report card
-    /// let profile = client.get_student_profile().await?;
-    ///
-    /// println!("╔═══════════════════════════════════════╗");
-    /// println!("║       STUDENT ACADEMIC REPORT         ║");
-    /// println!("╠═══════════════════════════════════════╣");
-    /// println!("║ Name: {:<31} ║", profile.student_name);
-    /// println!("║ Reg:  {:<31} ║", profile.registration_number);
-    /// println!("║ Program: {:<28} ║", profile.program);
-    /// println!("║ CGPA: {:<31.2} ║", profile.grade_history.cgpa);
-    /// println!("╚═══════════════════════════════════════╝");
+    /// // The profile carries the grade history and the mentor with it, so
+    /// // neither needs a second request.
+    /// println!("CGPA: {}", profile.grade_history.cgpa);
+    /// println!("Mentor: {}", profile.mentor_details.faculty_name);
     /// # Ok(())
     /// # }
     /// ```
