@@ -130,12 +130,28 @@ class AuthViewModel extends _$AuthViewModel {
       _analytics.logEvent(AnalyticsEvents.loginSuccess, {
         AnalyticsParams.method: 'vtop_credentials',
       });
-      _getDataSuccess(user, newCredentials);
+      await _getDataSuccess(user, newCredentials);
     }
   }
 
-  AsyncValue<User> _getDataSuccess(User user, Credentials credentials) {
-    _currentUserNotifier.loginUser(user, credentials);
+  /// Stores the signed-in account, then reports the outcome.
+  ///
+  /// Awaited: this used to be fire-and-forget, so a failure to store the
+  /// account surfaced nowhere — the app navigated on to a home page with no
+  /// account behind it, and every page said there was no user.
+  Future<AsyncValue<User>> _getDataSuccess(
+    User user,
+    Credentials credentials,
+  ) async {
+    try {
+      await _currentUserNotifier.loginUser(user, credentials);
+    } catch (e) {
+      _analytics.logError('auth_error', e, location: '_getDataSuccess');
+      return state = AsyncValue.error(
+        'Signed in, but saving the account failed. Please try again.',
+        StackTrace.current,
+      );
+    }
     return state = AsyncValue.data(user);
   }
 
