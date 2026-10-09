@@ -8,7 +8,9 @@ import 'package:vit_ap_student_app/core/models/exam_schedule.dart';
 import 'package:vit_ap_student_app/core/models/timetable.dart' as td;
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/models/user_preferences.dart';
+import 'package:vit_ap_student_app/core/services/class_reminder_schedule.dart';
 import 'package:vit_ap_student_app/core/utils/request_notification_permission.dart';
+import 'package:vit_ap_student_app/features/academic_calendar/model/non_instructional_days.dart';
 
 /// Type of file download for notification display
 enum DownloadType {
@@ -261,9 +263,17 @@ class NotificationService {
     await _notifications.cancel(id: notificationId);
   }
 
+  /// Schedules class reminders for the next [classReminderHorizonWeeks] weeks.
+  ///
+  /// [nonInstructionalDays] comes from the stored academic calendar. Days it
+  /// lists are skipped, which is why reminders are scheduled one occurrence at
+  /// a time rather than as a weekly repeat — a repeating alarm cannot drop a
+  /// single week. Passing nothing keeps every occurrence, so a student who has
+  /// never opened the calendar page sees no change.
   static Future<void> scheduleTimetableNotifications({
     required User user,
     required UserPreferences prefs,
+    NonInstructionalDays nonInstructionalDays = NonInstructionalDays.empty,
   }) async {
     if (!prefs.isTimetableNotificationsEnabled) return;
 
@@ -282,13 +292,28 @@ class NotificationService {
       timetable.sunday,
     ];
 
+    final now = DateTime.now();
+
     for (var i = 0; i < days.length; i++) {
       final daySlots = days[i];
       for (var slot in daySlots) {
-        if (slot.startTime != null && slot.courseName != null) {
+        if (slot.startTime == null || slot.courseName == null) continue;
+
+        final startTime = _parseTime(slot.startTime!);
+        if (startTime == null) continue;
+
+        final occurrences = classReminderOccurrences(
+          from: now,
+          weekday: i + 1,
+          startTime: startTime,
+          delayMinutes: prefs.timetableNotificationDelay,
+          nonInstructionalDays: nonInstructionalDays,
+        );
+
+        for (final occurrence in occurrences) {
           await _scheduleClassNotification(
             slot: slot,
-            weekday: i + 1,
+            occurrence: occurrence,
             delayMinutes: prefs.timetableNotificationDelay,
           );
         }
@@ -298,17 +323,10 @@ class NotificationService {
 
   static Future<void> _scheduleClassNotification({
     required td.Day slot,
-    required int weekday,
+    required ClassReminderOccurrence occurrence,
     required int delayMinutes,
   }) async {
-    final startTime = _parseTime(slot.startTime!);
-    if (startTime == null) return;
-
-    final notificationTime = _calculateNotificationTime(
-      weekday: weekday,
-      time: startTime,
-      delayMinutes: delayMinutes,
-    );
+    final notificationTime = tz.TZDateTime.from(occurrence.notifyAt, tz.local);
 
     final androidDetails = AndroidNotificationDetails(
       'timetable_reminders',
@@ -325,7 +343,12 @@ class NotificationService {
     );
 
     await _notifications.zonedSchedule(
-      id: slot.hashCode,
+      // Per occurrence rather than per slot, so a reschedule replaces the same
+      // day's reminder instead of every week sharing one id.
+      id: classReminderNotificationId(
+        slotId: slot.hashCode,
+        classStart: occurrence.classStart,
+      ),
       title: '📅 Class Starting Soon',
       body:
           'Your ${slot.courseName} class is about to begin at ${slot.venue} in $delayMinutes minutes. Don\'t miss out!',
@@ -336,32 +359,12 @@ class NotificationService {
           threadIdentifier: _groupKeyClassReminders,
         ),
       ),
+      // No matchDateTimeComponents: each occurrence is scheduled on its own
+      // date. A weekly repeat is what made holidays impossible to skip.
       androidScheduleMode: AndroidScheduleMode.inexact,
-      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
     );
   }
 
-  static tz.TZDateTime _calculateNotificationTime({
-    required int weekday,
-    required TimeOfDay time,
-    required int delayMinutes,
-  }) {
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduledDate = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day + (weekday - now.weekday) % 7,
-      time.hour,
-      time.minute,
-    );
-
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 7));
-    }
-
-    return scheduledDate.subtract(Duration(minutes: delayMinutes));
-  }
 
   static TimeOfDay? _parseTime(String startTime) {
     try {

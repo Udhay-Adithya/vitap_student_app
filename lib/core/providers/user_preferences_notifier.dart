@@ -4,6 +4,7 @@ import 'package:vit_ap_student_app/core/models/user_preferences.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/services/notification_service.dart';
+import 'package:vit_ap_student_app/features/academic_calendar/viewmodel/non_instructional_days_provider.dart';
 import 'package:vit_ap_student_app/init_dependencies.dart';
 
 part 'user_preferences_notifier.g.dart';
@@ -39,6 +40,9 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
           await NotificationService.scheduleTimetableNotifications(
             user: user,
             prefs: newPreferences,
+            nonInstructionalDays: await ref.read(
+              nonInstructionalDaysProvider.future,
+            ),
           );
         }
 
