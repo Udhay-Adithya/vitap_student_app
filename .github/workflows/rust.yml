@@ -42,6 +42,7 @@ jobs:
       - name: Clippy
         run: cargo clippy --all-targets -- -D warnings
 
-      # Doctests are excluded until their examples compile.
+      # Doctests included: the examples are the only thing checking that the
+      # documented API still matches the real one.
       - name: Test
-        run: cargo test --lib --tests
+        run: cargo test
