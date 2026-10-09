@@ -8,10 +8,13 @@ use scraper::{Html, Selector};
 /// # Examples
 ///
 /// ```
-/// let html = std::fs::read_to_string("tests/data/grade_history.html").unwrap();
-/// let grade_history = parse_grade_history(html);
-/// assert!(!grade_history.cgpa.is_empty());
-/// assert!(!grade_history.courses.is_empty());
+/// use lib_vtop::api::vtop::parser::grade_history_parser::parse_grade_history;
+///
+/// // A page with no CGPA table at all — a student in their first semester.
+/// let grade_history = parse_grade_history("<html></html>".to_string());
+///
+/// assert_eq!(grade_history.cgpa, "N/A");
+/// assert!(grade_history.courses.is_empty());
 /// ```
 pub fn parse_grade_history(html: String) -> GradeHistory {
     let doc = Html::parse_document(&html);

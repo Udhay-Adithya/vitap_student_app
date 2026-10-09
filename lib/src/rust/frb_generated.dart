@@ -14376,6 +14376,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// // Delete a general outing application
   /// let response = client.delete_general_outing("L24044195432".to_string()).await?;
@@ -14388,6 +14389,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// ```
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example2(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// // Get outing reports and delete a specific one
   /// let reports = client.get_general_outing_reports().await?;
@@ -14432,6 +14434,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// // Delete a weekend outing booking
   /// let response = client.delete_weekend_outing(
@@ -14474,6 +14477,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// let detail = client.get_course_detail("AP2025264", "70735", "AP2025264000442").await?;
   ///
@@ -14521,6 +14525,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// // Get course detail first
   /// let detail = client.get_course_detail("AP2025264", "70735", "AP2025264000442").await?;
@@ -14753,14 +14758,16 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-  /// let attendance = client.get_attendance("AP2425SEM1234").await?;
+  /// let attendance = client.get_attendance("AP2026272").await?;
   /// for record in attendance {
-  ///     println!("{}: {}% ({}/{})",
+  ///     println!(
+  ///         "{}: {}% ({}/{})",
   ///         record.course_name,
-  ///         record.percentage,
-  ///         record.attended,
-  ///         record.total
+  ///         record.attendance_percentage,
+  ///         record.attended_classes,
+  ///         record.total_classes
   ///     );
   /// }
   /// # Ok(())
@@ -14808,18 +14815,17 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-  /// let details = client.get_attendance_detail(
-  ///     "AP2425SEM1234",
-  ///     "CSE1001",
-  ///     "Theory"
-  /// ).await?;
+  /// // The course id and type code come from a `get_attendance` record.
+  /// let details = client
+  ///     .get_attendance_detail("AP2026272", "AM_CSE3009_00200", "ETH")
+  ///     .await?;
   ///
   /// for session in details {
-  ///     println!("Date: {}, Status: {}, Topic: {}",
-  ///         session.date,
-  ///         session.status,
-  ///         session.topic
+  ///     println!(
+  ///         "{} {} | {} | {}",
+  ///         session.date, session.slot, session.status, session.remark
   ///     );
   /// }
   /// # Ok(())
@@ -14894,6 +14900,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// let records = client.get_biometric_data("25/09/2026".to_string()).await?;
   /// for record in records {
@@ -15016,8 +15023,12 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+  /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// let cookies = client.get_cookie().await?;
   /// assert!(!cookies.is_empty());
+  /// # Ok(())
+  /// # }
   /// ```
   Future<VtopResultVecU8> getCookie() => RustLib.instance.api
       .crateApiVtopVtopClientVtopClientGetCookie(that: this);
@@ -15051,6 +15062,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// let detail = client.get_course_detail("AP2025264", "70735", "AP2025264000442").await?;
   /// println!("Course: {} - {}", detail.course_info.course_code, detail.course_info.course_title);
@@ -15099,6 +15111,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// let courses = client.get_courses_for_course_page("AP2025264").await?;
   /// for course in courses.courses {
@@ -15185,16 +15198,20 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-  /// let schedule = client.get_exam_schedule("AP2425SEM1234").await?;
+  /// let schedule = client.get_exam_schedule("AP2026272").await?;
+  /// // Grouped per exam — CAT1, CAT2, FAT — each with its own courses.
   /// for exam in schedule {
-  ///     println!("{} - {} on {} at {}",
-  ///         exam.course_name,
-  ///         exam.exam_type,
-  ///         exam.exam_date,
-  ///         exam.exam_time
-  ///     );
-  ///     println!("Venue: {}, Seat: {}", exam.venue, exam.seat_number);
+  ///     println!("{}", exam.exam_type);
+  ///     for course in exam.subjects {
+  ///         println!(
+  ///             "  {} on {} at {}",
+  ///             course.course_name, course.exam_date, course.exam_time
+  ///         );
+  ///         // Both read "-" until seats are allocated.
+  ///         println!("  Venue: {}, Seat: {}", course.venue, course.seat_number);
+  ///     }
   /// }
   /// # Ok(())
   /// # }
@@ -15241,17 +15258,18 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-  /// // First search for faculty
-  /// let search_results = client.get_faculty_search("Sharma".to_string()).await?;
+  /// // The employee id comes from a search.
+  /// let faculty = client.get_faculty_search("Sharma".to_string()).await?;
   ///
-  /// // Then get detailed information
-  /// if let Some(faculty) = search_results.faculty_list.first() {
-  ///     let details = client.get_faculty_data(faculty.emp_id.clone()).await?;
-  ///     println!("Name: {}", details.name);
-  ///     println!("Email: {}", details.email);
-  ///     println!("Department: {}", details.department);
-  ///     println!("Cabin: {}", details.cabin_number);
+  /// let details = client.get_faculty_data(faculty.emp_id).await?;
+  /// println!("Name: {}", details.name);
+  /// println!("Email: {}", details.email);
+  /// println!("Department: {}", details.department);
+  /// println!("Cabin: {}", details.cabin_number);
+  /// for hour in details.office_hours {
+  ///     println!("{}: {}", hour.day, hour.timings);
   /// }
   /// # Ok(())
   /// # }
@@ -15291,19 +15309,15 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-  /// // Search by name
-  /// let results = client.get_faculty_search("Sharma".to_string()).await?;
-  /// for faculty in results.faculty_list {
-  ///     println!("{} - {} ({})",
-  ///         faculty.name,
-  ///         faculty.designation,
-  ///         faculty.department
-  ///     );
-  /// }
-  ///
-  /// // Search by employee ID
-  /// let results = client.get_faculty_search("EMP123".to_string()).await?;
+  /// // Matches by name or employee id, and answers with the first match.
+  /// let faculty = client.get_faculty_search("Sharma".to_string()).await?;
+  /// println!(
+  ///     "{} - {} ({})",
+  ///     faculty.faculty_name, faculty.designation, faculty.school_or_centre
+  /// );
+  /// println!("Employee id: {}", faculty.emp_id);
   /// # Ok(())
   /// # }
   /// ```
@@ -15343,6 +15357,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// // First get the outing records
   /// let outings = client.get_general_outing_reports().await?;
@@ -15393,12 +15408,18 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// let outings = client.get_general_outing_reports().await?;
   /// for outing in outings {
-  ///     println!("Destination: {}", outing.destination);
-  ///     println!("Date: {}", outing.outing_date);
+  ///     println!("Place: {}", outing.place_of_visit);
+  ///     println!("From: {} {}", outing.from_date, outing.from_time);
+  ///     println!("To: {} {}", outing.to_date, outing.to_time);
   ///     println!("Status: {}", outing.status);
+  ///     // An outpass is only served once the request is accepted.
+  ///     if outing.can_download {
+  ///         println!("Leave id: {}", outing.leave_id);
+  ///     }
   /// }
   /// # Ok(())
   /// # }
@@ -15449,39 +15470,27 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// let grade_history = client.get_grade_history().await?;
   ///
-  /// // Display overall performance
-  /// println!("CGPA: {:.2}", grade_history.cgpa);
-  /// println!("Total Credits: {}", grade_history.total_credits);
+  /// // Every figure arrives as VTOP wrote it, so these are strings.
+  /// println!("CGPA: {}", grade_history.cgpa);
+  /// println!(
+  ///     "Credits: {} earned of {} registered",
+  ///     grade_history.credits_earned, grade_history.credits_registered
+  /// );
   ///
-  /// // Display semester-wise performance
-  /// for semester in &grade_history.semesters {
-  ///     println!("\n{} - SGPA: {:.2}", semester.name, semester.sgpa);
-  ///
-  ///     for course in &semester.courses {
-  ///         println!("  {} | {} | Grade: {} | Credits: {}",
-  ///             course.code,
-  ///             course.name,
-  ///             course.grade,
-  ///             course.credits
-  ///         );
-  ///     }
-  /// }
-  /// # Ok(())
-  /// # }
-  /// ```
-  ///
-  /// ```
-  /// # async fn example2(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-  /// // Calculate semester-wise GPA trend
-  /// let grade_history = client.get_grade_history().await?;
-  ///
-  /// println!("Academic Performance Trend:");
-  /// for semester in &grade_history.semesters {
-  ///     let bar = "█".repeat((semester.sgpa * 10.0) as usize);
-  ///     println!("{:20} | {:.2} {}", semester.name, semester.sgpa, bar);
+  /// // One flat list of every graded course, not grouped by semester.
+  /// for course in &grade_history.courses {
+  ///     println!(
+  ///         "{} | {} | {} | Grade: {} | Credits: {}",
+  ///         course.exam_month,
+  ///         course.course_code,
+  ///         course.course_title,
+  ///         course.grade,
+  ///         course.credits
+  ///     );
   /// }
   /// # Ok(())
   /// # }
@@ -15566,6 +15575,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// // Get weekend outing records
   /// let outings = client.get_weekend_outing_reports().await?;
@@ -15621,14 +15631,18 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-  /// let marks = client.get_marks("AP2425SEM1234").await?;
-  /// for course_marks in marks {
-  ///     println!("{}: Total {}/{}",
-  ///         course_marks.course_name,
-  ///         course_marks.total_marks_obtained,
-  ///         course_marks.total_marks_maximum
-  ///     );
+  /// let marks = client.get_marks("AP2026272").await?;
+  /// for course in marks {
+  ///     println!("{} - {}", course.course_code, course.course_title);
+  ///     // Each assessment VTOP has published for the course.
+  ///     for assessment in course.details {
+  ///         println!(
+  ///             "  {}: {}/{}",
+  ///             assessment.mark_title, assessment.scored_mark, assessment.max_mark
+  ///         );
+  ///     }
   /// }
   /// # Ok(())
   /// # }
@@ -15813,6 +15827,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// let semester_data = client.get_semesters().await?;
   /// for semester in semester_data.semesters {
@@ -15851,6 +15866,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// let slots = client.get_slots_for_course_page("AP2025264", "AP2025264000394").await?;
   /// for entry in slots.class_entries {
@@ -15926,36 +15942,19 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// let profile = client.get_student_profile().await?;
   ///
-  /// // Display student information
-  /// println!("=== Student Profile ===");
   /// println!("Name: {}", profile.student_name);
   /// println!("Reg No: {}", profile.registration_number);
-  /// println!("Program: {} - {}", profile.program, profile.branch);
+  /// println!("Application No: {}", profile.application_number);
   /// println!("Email: {}", profile.email);
-  /// println!("Phone: {}", profile.phone);
-  /// println!("\nAcademic Performance:");
-  /// println!("CGPA: {:.2}", profile.grade_history.cgpa);
-  /// println!("Credits Earned: {}", profile.grade_history.total_credits);
-  /// # Ok(())
-  /// # }
-  /// ```
   ///
-  /// ```
-  /// # async fn example2(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-  /// // Generate a student report card
-  /// let profile = client.get_student_profile().await?;
-  ///
-  /// println!("╔═══════════════════════════════════════╗");
-  /// println!("║       STUDENT ACADEMIC REPORT         ║");
-  /// println!("╠═══════════════════════════════════════╣");
-  /// println!("║ Name: {:<31} ║", profile.student_name);
-  /// println!("║ Reg:  {:<31} ║", profile.registration_number);
-  /// println!("║ Program: {:<28} ║", profile.program);
-  /// println!("║ CGPA: {:<31.2} ║", profile.grade_history.cgpa);
-  /// println!("╚═══════════════════════════════════════╝");
+  /// // The profile carries the grade history and the mentor with it, so
+  /// // neither needs a second request.
+  /// println!("CGPA: {}", profile.grade_history.cgpa);
+  /// println!("Mentor: {}", profile.mentor_details.faculty_name);
   /// # Ok(())
   /// # }
   /// ```
@@ -15992,6 +15991,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// let semesters = client.get_semesters().await?;
   /// if let Some(current_sem) = semesters.semesters.first() {
@@ -16037,12 +16037,17 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// let weekend_outings = client.get_weekend_outing_reports().await?;
   /// for outing in weekend_outings {
-  ///     println!("Checkout: {}", outing.checkout_date);
-  ///     println!("Expected return: {}", outing.checkin_date);
+  ///     // One day out, with a window rather than a return date.
+  ///     println!("Date: {} ({})", outing.date, outing.time);
+  ///     println!("Place: {}", outing.place_of_visit);
   ///     println!("Status: {}", outing.status);
+  ///     if outing.can_download {
+  ///         println!("Booking id: {}", outing.booking_id);
+  ///     }
   /// }
   /// # Ok(())
   /// # }
@@ -16083,6 +16088,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # fn example(client: &mut VtopClient) {
   /// if client.is_authenticated() {
   ///     println!("Session is active");
@@ -16125,8 +16131,10 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-  /// use lib_vtop::{VtopClient, VtopConfig, SessionManager};
+  /// use lib_vtop::api::vtop::session_manager::SessionManager;
+  /// use lib_vtop::api::vtop::vtop_config::VtopConfig;
   ///
   /// let config = VtopConfig::default();
   /// let session = SessionManager::new();
@@ -16228,6 +16236,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// // Submit a general outing application for medical appointment
   /// let response = client.submit_general_outing_form(
@@ -16245,6 +16254,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// ```
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example2(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// // Submit for evening shopping trip
   /// let response = client.submit_general_outing_form(
@@ -16320,6 +16330,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// # Examples
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// // Submit a weekend outing application
   /// let response = client.submit_weekend_outing_form(
@@ -16336,6 +16347,7 @@ class VtopClientImpl extends RustOpaque implements VtopClient {
   /// ```
   ///
   /// ```
+  /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
   /// # async fn example2(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
   /// // Submit for friend visit
   /// let response = client.submit_weekend_outing_form(

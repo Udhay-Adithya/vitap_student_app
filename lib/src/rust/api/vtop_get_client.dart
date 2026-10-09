@@ -251,8 +251,13 @@ Future<String> fetchGeneralOutingReports({required VtopClient client}) =>
 /// # Examples
 ///
 /// ```
-/// let pdf_bytes = leave_report_download(&mut client, "LEAVE123".to_string()).await?;
+/// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+/// # async fn example(mut client: VtopClient) -> Result<(), Box<dyn std::error::Error>> {
+/// # use lib_vtop::api::vtop_get_client::*;
+/// let pdf_bytes = fetch_general_outing_pdf(&mut client, "L2000001".to_string()).await?;
 /// assert!(!pdf_bytes.is_empty());
+/// # Ok(())
+/// # }
 /// ```
 Future<Uint8List> fetchGeneralOutingPdf({
   required VtopClient client,
@@ -269,7 +274,12 @@ Future<Uint8List> fetchGeneralOutingPdf({
 /// # Examples
 ///
 /// ```
+/// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+/// # async fn example(mut client: VtopClient) -> Result<(), Box<dyn std::error::Error>> {
+/// # use lib_vtop::api::vtop_get_client::*;
 /// let response = delete_weekend_outing(&mut client, "W24044341477".to_string()).await?;
+/// # Ok(())
+/// # }
 /// ```
 Future<String> deleteWeekendOuting({
   required VtopClient client,
@@ -286,9 +296,19 @@ Future<String> deleteWeekendOuting({
 /// # Examples
 ///
 /// ```
-/// let mut client = get_vtop_client("username".to_string(), "password".to_string());
-/// let profile = student_profile(&mut client).await.unwrap();
-/// assert_eq!(profile.name, "John Doe");
+/// # use lib_vtop::api::vtop_get_client::{fetch_student_profile, get_vtop_client};
+/// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+/// let mut client = get_vtop_client(
+///     "23BCE0001".to_string(),
+///     "password".to_string(),
+///     "Mozilla/5.0".to_string(),
+/// );
+///
+/// // JSON for the Dart side to decode.
+/// let json = fetch_student_profile(&mut client).await?;
+/// println!("{json}");
+/// # Ok(())
+/// # }
 /// ```
 Future<String> fetchStudentProfile({required VtopClient client}) => RustLib
     .instance
@@ -302,8 +322,13 @@ Future<String> fetchStudentProfile({required VtopClient client}) => RustLib
 /// # Examples
 ///
 /// ```
+/// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+/// # async fn example(mut client: VtopClient) -> Result<(), Box<dyn std::error::Error>> {
+/// # use lib_vtop::api::vtop_get_client::*;
 /// let grade_history = fetch_grade_history(&mut client).await.unwrap();
 /// assert!(!grade_history.courses.is_empty());
+/// # Ok(())
+/// # }
 /// ```
 Future<GradeHistory> fetchGradeHistory({required VtopClient client}) =>
     RustLib.instance.api.crateApiVtopGetClientFetchGradeHistory(client: client);
@@ -320,10 +345,9 @@ Future<GradeHistory> fetchGradeHistory({required VtopClient client}) =>
 /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
 /// # use lib_vtop::api::vtop_get_client::fetch_grade_view;
 /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-/// let courses = fetch_grade_view(client, "AP2025264".to_string()).await?;
-/// for course in &courses {
-///     println!("{} - {}", course.course_code, course.grade);
-/// }
+/// // Serialized for the Dart side, so this is JSON rather than a struct.
+/// let json = fetch_grade_view(client, "AP2025264".to_string()).await?;
+/// println!("{json}");
 /// # Ok(())
 /// # }
 /// ```
@@ -348,7 +372,8 @@ Future<String> fetchGradeView({
 ///     "AP2025264".to_string(),
 ///     "AM_CSE1008_00200".to_string(),
 /// ).await?;
-/// println!("total: {}", detail.total);
+/// // JSON for the Dart side to decode.
+/// println!("{detail}");
 /// # Ok(())
 /// # }
 /// ```
@@ -406,7 +431,12 @@ Future<String> studentPaymentReceiptDownload({
 /// # Examples
 ///
 /// ```
+/// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+/// # async fn example(mut client: VtopClient) -> Result<(), Box<dyn std::error::Error>> {
+/// # use lib_vtop::api::vtop_get_client::*;
 /// let html = init_course_page(&mut client).await?;
+/// # Ok(())
+/// # }
 /// ```
 Future<String> initCoursePage({required VtopClient client}) =>
     RustLib.instance.api.crateApiVtopGetClientInitCoursePage(client: client);
@@ -416,10 +446,14 @@ Future<String> initCoursePage({required VtopClient client}) =>
 /// # Examples
 ///
 /// ```
-/// let courses = fetch_courses_for_course_page(&mut client, "AP2025264".to_string()).await?;
-/// for course in courses.courses {
-///     println!("{} - {}", course.course_code, course.course_title);
-/// }
+/// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+/// # async fn example(mut client: VtopClient) -> Result<(), Box<dyn std::error::Error>> {
+/// # use lib_vtop::api::vtop_get_client::*;
+/// // JSON for the Dart side to decode.
+/// let json = fetch_courses_for_course_page(&mut client, "AP2025264".to_string()).await?;
+/// println!("{json}");
+/// # Ok(())
+/// # }
 /// ```
 Future<String> fetchCoursesForCoursePage({
   required VtopClient client,
@@ -434,10 +468,14 @@ Future<String> fetchCoursesForCoursePage({
 /// # Examples
 ///
 /// ```
+/// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+/// # async fn example(mut client: VtopClient) -> Result<(), Box<dyn std::error::Error>> {
+/// # use lib_vtop::api::vtop_get_client::*;
 /// let slots = fetch_slots_for_course_page(&mut client, "AP2025264".to_string(), "AP2025264000394".to_string()).await?;
-/// for entry in slots.class_entries {
-///     println!("{} - {} ({})", entry.course_code, entry.slot, entry.erp_id);
-/// }
+/// // JSON for the Dart side to decode.
+/// println!("{slots}");
+/// # Ok(())
+/// # }
 /// ```
 Future<String> fetchSlotsForCoursePage({
   required VtopClient client,
@@ -457,7 +495,12 @@ Future<String> fetchSlotsForCoursePage({
 /// # Examples
 ///
 /// ```
+/// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+/// # async fn example(mut client: VtopClient) -> Result<(), Box<dyn std::error::Error>> {
+/// # use lib_vtop::api::vtop_get_client::*;
 /// let detail = fetch_course_detail(&mut client, "AP2025264".to_string(), "70735".to_string(), "AP2025264000442".to_string()).await?;
+/// # Ok(())
+/// # }
 /// ```
 Future<String> fetchCourseDetail({
   required VtopClient client,
@@ -479,8 +522,13 @@ Future<String> fetchCourseDetail({
 /// # Examples
 ///
 /// ```
+/// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+/// # async fn example(mut client: VtopClient) -> Result<(), Box<dyn std::error::Error>> {
+/// # use lib_vtop::api::vtop_get_client::*;
 /// let bytes = download_course_material(&mut client, "downloadPdf/AP2025264/AP2025264000442/19/10-12-2025".to_string()).await?;
 /// std::fs::write("material.pdf", bytes)?;
+/// # Ok(())
+/// # }
 /// ```
 Future<Uint8List> downloadCourseMaterial({
   required VtopClient client,
@@ -495,8 +543,13 @@ Future<Uint8List> downloadCourseMaterial({
 /// # Examples
 ///
 /// ```
+/// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+/// # async fn example(mut client: VtopClient) -> Result<(), Box<dyn std::error::Error>> {
+/// # use lib_vtop::api::vtop_get_client::*;
 /// let bytes = download_all_course_materials(&mut client, "academics/common/allCourseMeterialDownload/1/1/AP2025264/AP2025264000442".to_string()).await?;
 /// std::fs::write("all_materials.zip", bytes)?;
+/// # Ok(())
+/// # }
 /// ```
 Future<Uint8List> downloadAllCourseMaterials({
   required VtopClient client,
@@ -511,8 +564,13 @@ Future<Uint8List> downloadAllCourseMaterials({
 /// # Examples
 ///
 /// ```
+/// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+/// # async fn example(mut client: VtopClient) -> Result<(), Box<dyn std::error::Error>> {
+/// # use lib_vtop::api::vtop_get_client::*;
 /// let bytes = download_course_syllabus(&mut client, "AM_CSE2009_00110".to_string(), "ETH".to_string()).await?;
 /// std::fs::write("syllabus.pdf", bytes)?;
+/// # Ok(())
+/// # }
 /// ```
 Future<Uint8List> downloadCourseSyllabus({
   required VtopClient client,
@@ -529,8 +587,13 @@ Future<Uint8List> downloadCourseSyllabus({
 /// # Examples
 ///
 /// ```
+/// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+/// # async fn example(mut client: VtopClient) -> Result<(), Box<dyn std::error::Error>> {
+/// # use lib_vtop::api::vtop_get_client::*;
 /// let bytes = download_course_plan_excel(&mut client, "AP2025264".to_string(), "AP2025264000442".to_string()).await?;
 /// std::fs::write("course_plan.xlsx", bytes)?;
+/// # Ok(())
+/// # }
 /// ```
 Future<Uint8List> downloadCoursePlanExcel({
   required VtopClient client,
@@ -582,8 +645,13 @@ Future<String> uploadDigitalAssignmentWithOtp({
 /// # Examples
 ///
 /// ```
+/// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+/// # async fn example(mut client: VtopClient) -> Result<(), Box<dyn std::error::Error>> {
+/// # use lib_vtop::api::vtop_get_client::*;
 /// let bytes = download_digital_assignment(&mut client, "examinations/doDownloadQuestion/Experiment-1/AP2025264000697".to_string()).await?;
 /// std::fs::write("question_paper.pdf", bytes)?;
+/// # Ok(())
+/// # }
 /// ```
 Future<Uint8List> downloadDigitalAssignment({
   required VtopClient client,

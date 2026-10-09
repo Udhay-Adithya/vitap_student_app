@@ -80,7 +80,9 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
-    /// use lib_vtop::{VtopClient, VtopConfig, SessionManager};
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
+    /// use lib_vtop::api::vtop::session_manager::SessionManager;
+    /// use lib_vtop::api::vtop::vtop_config::VtopConfig;
     ///
     /// let config = VtopConfig::default();
     /// let session = SessionManager::new();

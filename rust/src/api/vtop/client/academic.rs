@@ -37,6 +37,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let semester_data = client.get_semesters().await?;
     /// for semester in semester_data.semesters {
@@ -132,6 +133,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let semesters = client.get_semesters().await?;
     /// if let Some(current_sem) = semesters.semesters.first() {
@@ -193,14 +195,16 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// let attendance = client.get_attendance("AP2425SEM1234").await?;
+    /// let attendance = client.get_attendance("AP2026272").await?;
     /// for record in attendance {
-    ///     println!("{}: {}% ({}/{})",
+    ///     println!(
+    ///         "{}: {}% ({}/{})",
     ///         record.course_name,
-    ///         record.percentage,
-    ///         record.attended,
-    ///         record.total
+    ///         record.attendance_percentage,
+    ///         record.attended_classes,
+    ///         record.total_classes
     ///     );
     /// }
     /// # Ok(())
@@ -260,18 +264,17 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// let details = client.get_attendance_detail(
-    ///     "AP2425SEM1234",
-    ///     "CSE1001",
-    ///     "Theory"
-    /// ).await?;
+    /// // The course id and type code come from a `get_attendance` record.
+    /// let details = client
+    ///     .get_attendance_detail("AP2026272", "AM_CSE3009_00200", "ETH")
+    ///     .await?;
     ///
     /// for session in details {
-    ///     println!("Date: {}, Status: {}, Topic: {}",
-    ///         session.date,
-    ///         session.status,
-    ///         session.topic
+    ///     println!(
+    ///         "{} {} | {} | {}",
+    ///         session.date, session.slot, session.status, session.remark
     ///     );
     /// }
     /// # Ok(())
@@ -445,14 +448,18 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// let marks = client.get_marks("AP2425SEM1234").await?;
-    /// for course_marks in marks {
-    ///     println!("{}: Total {}/{}",
-    ///         course_marks.course_name,
-    ///         course_marks.total_marks_obtained,
-    ///         course_marks.total_marks_maximum
-    ///     );
+    /// let marks = client.get_marks("AP2026272").await?;
+    /// for course in marks {
+    ///     println!("{} - {}", course.course_code, course.course_title);
+    ///     // Each assessment VTOP has published for the course.
+    ///     for assessment in course.details {
+    ///         println!(
+    ///             "  {}: {}/{}",
+    ///             assessment.mark_title, assessment.scored_mark, assessment.max_mark
+    ///         );
+    ///     }
     /// }
     /// # Ok(())
     /// # }
@@ -517,16 +524,20 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
-    /// let schedule = client.get_exam_schedule("AP2425SEM1234").await?;
+    /// let schedule = client.get_exam_schedule("AP2026272").await?;
+    /// // Grouped per exam — CAT1, CAT2, FAT — each with its own courses.
     /// for exam in schedule {
-    ///     println!("{} - {} on {} at {}",
-    ///         exam.course_name,
-    ///         exam.exam_type,
-    ///         exam.exam_date,
-    ///         exam.exam_time
-    ///     );
-    ///     println!("Venue: {}, Seat: {}", exam.venue, exam.seat_number);
+    ///     println!("{}", exam.exam_type);
+    ///     for course in exam.subjects {
+    ///         println!(
+    ///             "  {} on {} at {}",
+    ///             course.course_name, course.exam_date, course.exam_time
+    ///         );
+    ///         // Both read "-" until seats are allocated.
+    ///         println!("  Venue: {}, Seat: {}", course.venue, course.seat_number);
+    ///     }
     /// }
     /// # Ok(())
     /// # }

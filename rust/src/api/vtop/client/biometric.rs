@@ -30,6 +30,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let records = client.get_biometric_data("25/09/2026".to_string()).await?;
     /// for record in records {

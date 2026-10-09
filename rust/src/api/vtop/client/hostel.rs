@@ -38,12 +38,18 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let outings = client.get_general_outing_reports().await?;
     /// for outing in outings {
-    ///     println!("Destination: {}", outing.destination);
-    ///     println!("Date: {}", outing.outing_date);
+    ///     println!("Place: {}", outing.place_of_visit);
+    ///     println!("From: {} {}", outing.from_date, outing.from_time);
+    ///     println!("To: {} {}", outing.to_date, outing.to_time);
     ///     println!("Status: {}", outing.status);
+    ///     // An outpass is only served once the request is accepted.
+    ///     if outing.can_download {
+    ///         println!("Leave id: {}", outing.leave_id);
+    ///     }
     /// }
     /// # Ok(())
     /// # }
@@ -98,6 +104,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // First get the outing records
     /// let outings = client.get_general_outing_reports().await?;
@@ -164,12 +171,17 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// let weekend_outings = client.get_weekend_outing_reports().await?;
     /// for outing in weekend_outings {
-    ///     println!("Checkout: {}", outing.checkout_date);
-    ///     println!("Expected return: {}", outing.checkin_date);
+    ///     // One day out, with a window rather than a return date.
+    ///     println!("Date: {} ({})", outing.date, outing.time);
+    ///     println!("Place: {}", outing.place_of_visit);
     ///     println!("Status: {}", outing.status);
+    ///     if outing.can_download {
+    ///         println!("Booking id: {}", outing.booking_id);
+    ///     }
     /// }
     /// # Ok(())
     /// # }
@@ -225,6 +237,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Get weekend outing records
     /// let outings = client.get_weekend_outing_reports().await?;
@@ -303,6 +316,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Submit a general outing application for medical appointment
     /// let response = client.submit_general_outing_form(
@@ -320,6 +334,7 @@ impl VtopClient {
     /// ```
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example2(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Submit for evening shopping trip
     /// let response = client.submit_general_outing_form(
@@ -472,6 +487,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Submit a weekend outing application
     /// let response = client.submit_weekend_outing_form(
@@ -488,6 +504,7 @@ impl VtopClient {
     /// ```
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example2(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Submit for friend visit
     /// let response = client.submit_weekend_outing_form(
@@ -619,6 +636,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Delete a general outing application
     /// let response = client.delete_general_outing("L24044195432".to_string()).await?;
@@ -631,6 +649,7 @@ impl VtopClient {
     /// ```
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example2(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Get outing reports and delete a specific one
     /// let reports = client.get_general_outing_reports().await?;
@@ -712,6 +731,7 @@ impl VtopClient {
     /// # Examples
     ///
     /// ```
+    /// # use lib_vtop::api::vtop::vtop_client::VtopClient;
     /// # async fn example(client: &mut VtopClient) -> Result<(), Box<dyn std::error::Error>> {
     /// // Delete a weekend outing booking
     /// let response = client.delete_weekend_outing(
