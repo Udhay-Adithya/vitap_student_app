@@ -65,10 +65,10 @@ class OutingChoiceChips extends StatelessWidget {
                     // Shape carries the selection alongside colour: the chosen
                     // chip goes fully rounded, the rest stay squarer.
                     shape: value == option
-                        ? RoundedRectangleBorder(
+                        ? const StadiumBorder()
+                        : RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
-                          )
-                        : const StadiumBorder(),
+                          ),
                     onSelected: (bool selected) {
                       final String? next = selected ? option : null;
                       onChanged(next);
