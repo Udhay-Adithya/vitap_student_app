@@ -46,6 +46,12 @@ flutter_rust_bridge_codegen = "2.12.0"
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
 
+# Debug builds keep debug info for lib_vtop itself but drop it for dependencies,
+# which is most of a debug build's size. Backtraces in our own code keep line
+# numbers; stepping into a dependency in a native debugger needs this removed.
+[profile.dev.package."*"]
+debug = false
+
 [profile.release]
 panic = "abort" # Strip expensive panic clean-up logic
 codegen-units = 1 # Compile crates one after another so the compiler can optimize better

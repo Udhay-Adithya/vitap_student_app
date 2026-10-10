@@ -149,6 +149,10 @@ To set up the project for local development:
     flutter run -d ios
     ```
 
+    Builds take a lot of disk space, mostly for the Rust library. See
+    [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for where it goes and how to
+    keep it down.
+
 7. **Code generation** (if applicable):
 
     ```bash

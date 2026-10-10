@@ -119,6 +119,12 @@
    flutter run
    ```
 
+   Building an APK without a device attached? Pass
+   `--target-platform android-arm64` (or `android-x64` for an x86_64
+   emulator), or the Rust library is compiled for three architectures. Builds
+   are large — see [TROUBLESHOOTING.md](TROUBLESHOOTING.md) if you run low on
+   disk space.
+
 ## 🏗️ Project Structure
 
 ```bash
