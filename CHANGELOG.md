@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.2] - 2026-10-10
+
+### Changed
+
+- The grade view loads with one request instead of two ([#77](https://github.com/Udhay-Adithya/vitap_student_app/pull/77))
+
+### Fixed
+
+- Your application number, name, date of birth, blood group and every proctor detail are shown again instead of coming back blank. VTOP splits labels like "APPLICATION NUMBER" across lines with a run of tabs between the words, which stopped them being matched ([#73](https://github.com/Udhay-Adithya/vitap_student_app/pull/73))
+- A page no longer comes back empty after the app quietly signs you back in. When VTOP dropped the session the app re-authenticated and then read the old expired response anyway ([#74](https://github.com/Udhay-Adithya/vitap_student_app/pull/74))
+- A page VTOP refuses to serve now says so, rather than showing an empty list as though you had no records ([#78](https://github.com/Udhay-Adithya/vitap_student_app/pull/78))
+- A semester the app can no longer make sense of is reported, instead of showing an empty semester that looks the same as having no data ([#79](https://github.com/Udhay-Adithya/vitap_student_app/pull/79))
+- Login reports what actually went wrong when VTOP never serves a captcha, instead of failing later for an unrelated reason ([#76](https://github.com/Udhay-Adithya/vitap_student_app/pull/76))
+- Applying for a weekend outing outside the hours VTOP accepts them now tells you when the form opens, quoting VTOP's own notice, instead of "Unable to process server response" ([#97](https://github.com/Udhay-Adithya/vitap_student_app/pull/97))
+- Signing in no longer discards everything it has just downloaded when class reminders cannot be scheduled. Your saved credentials stayed behind, so the app looked signed in while every page reported no user ([#101](https://github.com/Udhay-Adithya/vitap_student_app/pull/101))
+- The capstone attendance day-wise list starts with the most recent day instead of the first day of the semester ([8ffb32d](https://github.com/Udhay-Adithya/vitap_student_app/commit/8ffb32d))
+- Pull to refresh on payment receipts keeps its spinner until the receipts arrive, rather than dropping it straight away ([6680d00](https://github.com/Udhay-Adithya/vitap_student_app/commit/6680d00))
+
+### Internal
+
+- Pull requests are now checked automatically: `flutter analyze`, `flutter test`, `cargo fmt`, `cargo clippy` and `cargo test` ([#92](https://github.com/Udhay-Adithya/vitap_student_app/pull/92)), and a check that the committed generated code is up to date ([#98](https://github.com/Udhay-Adithya/vitap_student_app/pull/98))
+- Cleared the backlog those checks would have failed on: 58 Clippy warnings ([#90](https://github.com/Udhay-Adithya/vitap_student_app/pull/90)) and 111 analyzer issues ([#91](https://github.com/Udhay-Adithya/vitap_student_app/pull/91))
+- Regenerating the Flutter-Rust bindings is reproducible again; it had started rewriting 62 files from unchanged source ([#95](https://github.com/Udhay-Adithya/vitap_student_app/pull/95))
+- Repository errors are mapped to messages in one tested place instead of 36 copies of the same `catch` ([#93](https://github.com/Udhay-Adithya/vitap_student_app/pull/93))
+- Tests for the VTOP parsers that had none, covering attendance, marks, exam schedule, grade history, biometric, outings, faculty ([#96](https://github.com/Udhay-Adithya/vitap_student_app/pull/96)) and the course page ([#99](https://github.com/Udhay-Adithya/vitap_student_app/pull/99))
+- The Rust doc examples compile and run again, which caught several that documented an API that no longer existed ([#102](https://github.com/Udhay-Adithya/vitap_student_app/pull/102))
+- Tests holding the rules that had nothing enforcing them: attendance and biometric never fetching on page open, the login OTP flow, and upload loading states ([#103](https://github.com/Udhay-Adithya/vitap_student_app/pull/103))
+- The JSON crossing the Rust bridge is pinned on both sides, so a renamed field fails a test instead of reaching you as "Invalid response format from server" ([#104](https://github.com/Udhay-Adithya/vitap_student_app/pull/104))
+- Pointed the Rust crate metadata at a repository that exists ([#72](https://github.com/Udhay-Adithya/vitap_student_app/pull/72))
+
 ## [2.5.1] - 2026-09-03
 
 ### Fixed
