@@ -4,7 +4,7 @@
 //! list from VTOP and saving it as a JSON file.
 //!
 //! ## What it does
-//! 1. Authenticates against VTOP using credentials from the `.env` file
+//! 1. Authenticates against VTOP using credentials from the `rust/.env` file
 //!    (or prompts interactively if they are missing).
 //! 2. Issues a single POST to `/vtop/hrms/EmployeeSearchForStudent` with
 //!    `empId=` (empty string, which VTOP interprets as "return all") to
@@ -29,7 +29,8 @@
 //! `fetchFacultyData` respectively.
 //!
 //! ## Environment
-//! Reads `VTOP_USERNAME` and `VTOP_PASSWORD` from `.env` (see `.env.example`).
+//! Reads `VTOP_USERNAME` and `VTOP_PASSWORD` from `rust/.env` (see
+//! `rust/.env.example`).
 //! If the OTP flow is triggered, the binary prompts for the one-time code
 //! via stdin.
 
@@ -39,7 +40,7 @@
 //! list from VTOP and saving it as a JSON file.
 //!
 //! ## What it does
-//! 1. Authenticates against VTOP using credentials from the `.env` file
+//! 1. Authenticates against VTOP using credentials from the `rust/.env` file
 //!    (or prompts interactively if they are missing).
 //! 2. Issues a single POST to `/vtop/hrms/EmployeeSearchForStudent` with
 //!    `empId=` (empty string, which VTOP interprets as "return all") to
@@ -64,7 +65,8 @@
 //! `fetchFacultyData` respectively.
 //!
 //! ## Environment
-//! Reads `VTOP_USERNAME` and `VTOP_PASSWORD` from `.env` (see `.env.example`).
+//! Reads `VTOP_USERNAME` and `VTOP_PASSWORD` from `rust/.env` (see
+//! `rust/.env.example`).
 //! If the OTP flow is triggered, the binary prompts for the one-time code
 //! via stdin.
 
