@@ -1,0 +1,31 @@
+{
+  "Friday": [],
+  "Monday": [
+    {
+      "course_code": "CSE3009",
+      "course_name": "NoSQL Databases",
+      "course_type": "Embedded Theory",
+      "end_time": "09:50",
+      "faculty": "Test Faculty",
+      "slot": "C1",
+      "start_time": "09:00",
+      "venue": "430"
+    }
+  ],
+  "Saturday": [],
+  "Sunday": [],
+  "Thursday": [
+    {
+      "course_code": "CSE3009",
+      "course_name": "NoSQL Databases",
+      "course_type": "Embedded Theory",
+      "end_time": "09:50",
+      "faculty": "Test Faculty",
+      "slot": "C1",
+      "start_time": "09:00",
+      "venue": "430"
+    }
+  ],
+  "Tuesday": [],
+  "Wednesday": []
+}

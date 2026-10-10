@@ -1,0 +1,38 @@
+{
+  "capstone": {
+    "absent": "2",
+    "date_of_registration": "2026-07-06 00:00:00.0",
+    "guide_evaluation_status": "Registered",
+    "on_duty": "4",
+    "percentage": "90",
+    "present": "14",
+    "punches": [
+      {
+        "date": "17-07-2026",
+        "day": "FRIDAY",
+        "day_type": "Instructional",
+        "punch_time": "09:05",
+        "serial": "1",
+        "status": "Present"
+      }
+    ],
+    "title": "A capstone project"
+  },
+  "records": [
+    {
+      "attendance_between_percentage": "0",
+      "attendance_percentage": "92",
+      "attended_classes": "23",
+      "class_number": "AP2026272000101",
+      "course_code": "CSE3009",
+      "course_id": "AM_CSE3009_00200",
+      "course_name": "NoSQL Databases",
+      "course_slot": "C1+TCC1",
+      "course_type": "Embedded Theory",
+      "course_type_code": "ETH",
+      "debar_status": "-",
+      "faculty": "Test Faculty - SCOPE",
+      "total_classes": "25"
+    }
+  ]
+}
