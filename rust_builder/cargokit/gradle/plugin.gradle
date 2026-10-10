@@ -137,13 +137,11 @@ class CargoKitPlugin implements Plugin<Project> {
             def jniLibs = project.android.sourceSets.maybeCreate(buildType).jniLibs;
             jniLibs.srcDir(new File(cargoOutputDir))
 
+            // Build only what Flutter asks for. `flutter run` passes the device's
+            // ABI; with no target-platform this falls back to Flutter's defaults,
+            // which already include x64 for emulators. Flutter no longer adds
+            // x86/x64 to debug builds itself, and has dropped x86 entirely.
             def platforms = com.flutter.gradle.FlutterPluginUtils.getTargetPlatforms(project).collect()
-
-            // Same thing addFlutterDependencies does in flutter.gradle
-            if (buildType == "debug") {
-                platforms.add("android-x86")
-                platforms.add("android-x64")
-            }
 
             // The task name depends on plugin properties, which are not available
             // at this point
