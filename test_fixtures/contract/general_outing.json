@@ -1,0 +1,15 @@
+[
+  {
+    "can_download": true,
+    "from_date": "2026-01-12 00:00:00.0",
+    "from_time": "12:00 PM",
+    "leave_id": "L2000001",
+    "place_of_visit": "Vijayawada",
+    "purpose_of_visit": "Shopping",
+    "registration_number": "23BCE0001",
+    "serial": "1",
+    "status": "Leave Request Accepted",
+    "to_date": "2026-01-12 00:00:00.0",
+    "to_time": "07:00 PM"
+  }
+]

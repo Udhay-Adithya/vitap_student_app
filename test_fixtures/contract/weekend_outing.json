@@ -1,0 +1,17 @@
+[
+  {
+    "booking_id": "W26000000001",
+    "can_download": true,
+    "contact_number": "",
+    "date": "2026-07-26",
+    "hostel_block": "MH-1",
+    "parent_contact_number": "",
+    "place_of_visit": "Vijayawada",
+    "purpose_of_visit": "Shopping",
+    "registration_number": "23BCE0001",
+    "room_number": "101",
+    "serial": "1",
+    "status": "Outing Request Accepted",
+    "time": "10:30 AM- 4:30PM"
+  }
+]
