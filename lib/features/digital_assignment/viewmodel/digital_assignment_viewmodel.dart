@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
 import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/digital_assignment/model/digital_assignment_model.dart';
+import 'package:vit_ap_student_app/features/digital_assignment/repository/assignment_reminder_store.dart';
 import 'package:vit_ap_student_app/features/digital_assignment/repository/digital_assignment_remote_repository.dart';
 
 part 'digital_assignment_viewmodel.g.dart';
@@ -47,6 +49,19 @@ class DigitalAssignmentViewModel extends _$DigitalAssignmentViewModel {
       state = AsyncValue.error(failure.message, StackTrace.current);
     } else if (res case Right(value: final assignments)) {
       state = AsyncValue.data(assignments);
+      await _updateReminders(assignments);
+    }
+  }
+
+  /// Reminders are a convenience on top of the list just shown, so a failure
+  /// here must not turn a successful fetch into an error.
+  Future<void> _updateReminders(List<DigitalAssignment> assignments) async {
+    try {
+      const store = AssignmentReminderStore();
+      await store.saveAssignments(assignments);
+      await store.reschedule();
+    } catch (e) {
+      debugPrint('Failed to schedule assignment reminders: $e');
     }
   }
 }

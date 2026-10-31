@@ -9,6 +9,7 @@ import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/notification_service.dart';
 import 'package:vit_ap_student_app/core/services/secure_store_service.dart';
 import 'package:vit_ap_student_app/core/utils/avatar_image.dart';
+import 'package:vit_ap_student_app/features/digital_assignment/repository/assignment_reminder_store.dart';
 import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/objectbox.g.dart';
 
@@ -82,6 +83,7 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
         user: user,
         prefs: prefs,
       );
+      await const AssignmentReminderStore().reschedule();
     } catch (e, stackTrace) {
       debugPrint('Failed to schedule notifications: $e');
       ref
@@ -110,6 +112,7 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
 
       // Clear Notifications
       await NotificationService.cancelAllNotifications();
+      await const AssignmentReminderStore().clearAssignments();
 
       // Preferences are the device's and mostly survive a logout, but the
       // last-synced stamps belong to the account that fetched the data.
