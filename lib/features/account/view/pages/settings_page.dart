@@ -9,10 +9,12 @@ import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/services/notification_service.dart';
 import 'package:vit_ap_student_app/core/theme/app_theme_enum.dart';
 import 'package:vit_ap_student_app/core/utils/show_toast.dart';
+import 'package:vit_ap_student_app/features/account/view/widgets/assignment_reminder_section.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/circular_theme_indicator.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/developer_mode_tiles.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/menu_section.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/menu_tile.dart';
+import 'package:vit_ap_student_app/features/digital_assignment/repository/assignment_reminder_store.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   final bool isDeveloperModeEnabled;
@@ -50,6 +52,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           prefs: prefs,
         );
       }
+
+      await const AssignmentReminderStore().reschedule();
 
       if (mounted) showToast(context, 'Notifications rescheduled');
       ref
@@ -220,6 +224,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     ),
                 ],
               ),
+
+              const SizedBox(height: 24),
+
+              const AssignmentReminderSection(),
 
               const SizedBox(height: 24),
 

@@ -9,6 +9,7 @@ import 'package:vit_ap_student_app/core/models/timetable.dart' as td;
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/models/user_preferences.dart';
 import 'package:vit_ap_student_app/core/utils/request_notification_permission.dart';
+import 'package:vit_ap_student_app/features/digital_assignment/utils/assignment_reminders.dart';
 
 /// Type of file download for notification display
 enum DownloadType {
@@ -39,6 +40,13 @@ const _groupKeyClassReminders = 'com.vitap.class_reminders';
 
 /// Group key for exam reminder notifications
 const _groupKeyExamReminders = 'com.vitap.exam_reminders';
+
+/// Group key for assignment deadline reminders
+const _groupKeyAssignmentReminders = 'com.vitap.assignment_reminders';
+
+/// Payload marking a pending notification as an assignment reminder, so those
+/// can be replaced without touching class or exam reminders.
+const _assignmentReminderPayload = 'assignment_reminder';
 
 /// Fixed notification IDs for group summaries (must not collide with content IDs)
 const _downloadGroupSummaryId = 0x7F000001;
@@ -502,6 +510,83 @@ class NotificationService {
     final pending = await _notifications.pendingNotificationRequests();
     for (final notification in pending) {
       if (notification.title?.contains('Upcoming Exam') ?? false) {
+        await _notifications.cancel(id: notification.id);
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Assignment Deadline Reminders
+  // ---------------------------------------------------------------------------
+
+  /// Replaces every pending assignment reminder with [reminders].
+  ///
+  /// Built by `AssignmentReminderStore.reschedule`, which decides what is due
+  /// and when; this only hands it to the OS.
+  static Future<void> scheduleAssignmentReminders(
+    List<PlannedReminder> reminders,
+  ) async {
+    await cancelAssignmentReminders();
+    if (reminders.isEmpty) return;
+
+    // Exact alarms need a permission Android 14+ denies by default. Without
+    // it the OS may deliver late, which a 1-hour reminder can't afford — but
+    // late beats an exception that schedules nothing.
+    final bool canExact =
+        await _notifications
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >()
+            ?.canScheduleExactNotifications() ??
+        false;
+
+    for (final reminder in reminders) {
+      final androidDetails = AndroidNotificationDetails(
+        'assignment_reminders',
+        'Assignment Reminders',
+        channelDescription: 'Reminders before a digital assignment is due',
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: 'app_icon',
+        playSound: true,
+        enableVibration: true,
+        category: AndroidNotificationCategory.reminder,
+        groupKey: _groupKeyAssignmentReminders,
+        styleInformation: BigTextStyleInformation(
+          reminder.body,
+          contentTitle: reminder.title,
+        ),
+      );
+
+      try {
+        await _notifications.zonedSchedule(
+          id: reminder.id,
+          title: reminder.title,
+          body: reminder.body,
+          scheduledDate: reminder.fireAt,
+          notificationDetails: NotificationDetails(
+            android: androidDetails,
+            iOS: const DarwinNotificationDetails(
+              threadIdentifier: _groupKeyAssignmentReminders,
+            ),
+          ),
+          androidScheduleMode: canExact
+              ? AndroidScheduleMode.exactAllowWhileIdle
+              : AndroidScheduleMode.inexactAllowWhileIdle,
+          payload: _assignmentReminderPayload,
+        );
+      } on ArgumentError catch (e) {
+        // The moment passed between planning and scheduling. Skip that one
+        // rather than abandon the rest.
+        debugPrint('Skipped assignment reminder ${reminder.id}: $e');
+      }
+    }
+  }
+
+  static Future<void> cancelAssignmentReminders() async {
+    final pending = await _notifications.pendingNotificationRequests();
+    for (final notification in pending) {
+      if (notification.payload == _assignmentReminderPayload) {
         await _notifications.cancel(id: notification.id);
       }
     }

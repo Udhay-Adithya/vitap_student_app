@@ -4,6 +4,7 @@ import 'package:vit_ap_student_app/core/models/user_preferences.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/services/notification_service.dart';
+import 'package:vit_ap_student_app/features/digital_assignment/repository/assignment_reminder_store.dart';
 import 'package:vit_ap_student_app/init_dependencies.dart';
 
 part 'user_preferences_notifier.g.dart';
@@ -49,6 +50,9 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
             prefs: newPreferences,
           );
         }
+
+        // Swept away with everything else above, so put back too.
+        await const AssignmentReminderStore().reschedule();
       }
     } catch (e) {
       throw Exception('Failed to update preferences: $e');
