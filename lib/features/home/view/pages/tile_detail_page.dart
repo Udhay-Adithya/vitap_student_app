@@ -50,10 +50,9 @@ class _TileDetailPageState extends ConsumerState<TileDetailPage> {
     // Read before the launch: the page can be closed while the browser opens.
     final analytics = ref.read(analyticsServiceProvider);
     await directToWeb(item.url);
-    analytics.logEvent(
-      AnalyticsEvents.tileDetailLinkOpened,
-      {AnalyticsParams.target: item.title},
-    );
+    analytics.logEvent(AnalyticsEvents.tileDetailLinkOpened, {
+      AnalyticsParams.target: item.title,
+    });
   }
 
   @override
