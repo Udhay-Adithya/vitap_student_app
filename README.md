@@ -206,7 +206,7 @@ app store, must:
 - publish its complete source code under the same license
 - keep the attribution "Based on VITAP Student" with a link to this
   repository, both inside the app and in its README
-- use its own name and icon, as described in `TRADEMARKS.md`
+- use its own name and icon, as described in `BRANDING.md`
 
 The Rust crate in `rust/` (`lib_vtop`) is licensed separately under the
 Apache License 2.0. See `rust/LICENSE` and `rust/NOTICE`.

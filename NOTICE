@@ -49,16 +49,18 @@ object form, including apps published on any app store.
    official release of it, or as published or endorsed by its
    maintainers.
 
-3. Names and logos (section 7(e)).
+3. Name and logo (section 7(e)).
 
-   This license grants no right to use the name "VITAP Student",
-   its logos, or its app icons. Modified versions must use a different
-   name and icon. See TRADEMARKS.md.
+   This license grants no right to use the name "VITAP Student" for a
+   modified version, or to use its logo or app icons. Modified versions
+   must use a different name and icon. See BRANDING.md.
 
 
 Components under other licenses
 -------------------------------
 
+- assets/images/logo/ and the launcher icons generated from it: not
+  licensed, all rights reserved. See BRANDING.md.
 - rust/ (lib_vtop): Apache License 2.0. See rust/LICENSE and
   rust/NOTICE.
 - rust_builder/cargokit/: its own license, in that directory.
