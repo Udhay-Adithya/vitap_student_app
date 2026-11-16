@@ -55,3 +55,7 @@ Closes #<!-- issue number -->
 - [ ] Tested on Android
 - [ ] Tested on iOS *(or noted why not applicable)*
 - [ ] Existing features unaffected by this change
+
+### Licensing
+
+- [ ] I agree to the terms in [Licensing of Contributions](https://github.com/Udhay-Adithya/vitap_student_app/blob/main/CONTRIBUTING.md#licensing-of-contributions), including the extra license grant to the maintainer

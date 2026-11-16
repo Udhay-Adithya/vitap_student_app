@@ -17,6 +17,7 @@ This document provides guidelines for contributing to this project. Please read 
   - [Commit Messages](#commit-messages)
 - [Testing](#testing)
 - [Documentation](#documentation)
+- [Licensing of Contributions](#licensing-of-contributions)
 - [Community](#community)
 
 ## Code of Conduct
@@ -313,6 +314,31 @@ cd rust && cargo test test_function_name
 - Update API documentation if you modify data models or services.
 - Include screenshots for UI changes in your PR description.
 - Update the changelog for significant changes.
+
+## Licensing of Contributions
+
+The app is licensed under the GNU GPL, version 3 only, with the
+additional terms in `NOTICE`. The Rust crate in `rust/` (`lib_vtop`) is
+licensed under the Apache License 2.0.
+
+By opening a pull request, you agree that:
+
+1. Your contribution is your own work, or you have the right to submit
+   it under these terms.
+2. Your contribution is licensed under the license of the part of the
+   repository it changes: GPL-3.0-only with the `NOTICE` terms for the
+   app, Apache-2.0 for `rust/`.
+3. You also grant the project maintainer a perpetual, worldwide,
+   non-exclusive, royalty-free, irrevocable license to use, modify and
+   distribute your contribution under other terms. This is needed to
+   publish the official app on stores whose terms conflict with the GPL,
+   such as the Apple App Store, and to change the project's license in
+   future.
+4. You keep the copyright in your contribution. You can still use it
+   anywhere else under any terms you like.
+
+The pull request template includes a checkbox for this. Pull requests
+without it ticked are not merged.
 
 ## Community
 
