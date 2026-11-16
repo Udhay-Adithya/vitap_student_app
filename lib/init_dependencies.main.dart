@@ -7,6 +7,8 @@ part of 'init_dependencies.dart';
 /// analytics opt-out and the session guard act on the instances the widgets
 /// will see.
 Future<ProviderContainer> initDependencies() async {
+  registerAppLicenses();
+
   final objectbox = await ObjectBox.create();
   final container = ProviderContainer(
     overrides: [storeProvider.overrideWithValue(objectbox.store)],
