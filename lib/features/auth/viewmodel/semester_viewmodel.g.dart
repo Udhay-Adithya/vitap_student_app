@@ -44,7 +44,7 @@ final class SemesterViewModelProvider
   }
 }
 
-String _$semesterViewModelHash() => r'eca251dbe11b09b1a82f24f8d31bedb3583db9d0';
+String _$semesterViewModelHash() => r'5fc3ad2912e4c1171dcb278c095b4b22b7444f25';
 
 abstract class _$SemesterViewModel
     extends $Notifier<AsyncValue<List<SemesterInfo>>?> {
