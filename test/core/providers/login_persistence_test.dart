@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/models/user_preferences.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/providers/reminder_scheduler.dart';
 import 'package:vit_ap_student_app/core/services/notification_service.dart';
 
 import '../../helpers/object_box_test_store.dart';
@@ -10,6 +11,9 @@ import '../../helpers/provider_harness.dart';
 
 /// Refuses to schedule, the way a denied exact-alarm permission does.
 class _RefusingNotificationService extends Fake implements NotificationService {
+  @override
+  Future<void> cancelAllNotifications() async {}
+
   @override
   Future<void> scheduleTimetableNotifications({
     required User user,
@@ -43,6 +47,8 @@ void main() {
           ],
         );
         addTearDown(container.dispose);
+        // Started at app launch; reminders follow the user from there.
+        container.read(reminderSchedulerProvider);
         return container;
       }
 
@@ -64,6 +70,8 @@ void main() {
         await ref
             .read(currentUserProvider.notifier)
             .loginUser(newUser(), testCredentials());
+        // Reminders are scheduled off the back of the state change.
+        await pumpEventQueue();
 
         expect(deps.analytics.errorTypes, contains('notification_error'));
         expect(deps.store.count<User>(), 1);

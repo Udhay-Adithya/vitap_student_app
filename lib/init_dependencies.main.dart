@@ -64,6 +64,9 @@ Future<ProviderContainer> initDependencies() async {
     secureStorage: container.read(secureStorageServiceProvider),
   );
 
+  // Reminders follow the signed-in user from here on.
+  container.read(reminderSchedulerProvider);
+
   // Warm up the fonts before the first frame paints.
   await _preloadFonts();
 
