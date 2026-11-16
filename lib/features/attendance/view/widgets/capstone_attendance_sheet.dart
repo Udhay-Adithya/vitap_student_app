@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vit_ap_student_app/core/common/widget/app_tab_bar.dart';
 import 'package:vit_ap_student_app/core/constants/analytics_constants.dart';
 import 'package:vit_ap_student_app/core/models/capstone_attendance.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/features/attendance/utils/capstone_punch_order.dart';
 import 'package:vit_ap_student_app/features/attendance/view/widgets/capstone_attendance_card.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:wave/wave.dart';
 
 /// The capstone/SDP detail sheet.
@@ -17,7 +17,8 @@ void showCapstoneAttendanceSheet(
   BuildContext context,
   CapstoneAttendance capstone,
 ) {
-  serviceLocator<AnalyticsService>()
+  ProviderScope.containerOf(context, listen: false)
+      .read(analyticsServiceProvider)
       .logEvent(AnalyticsEvents.attendanceDetailOpened, {
         AnalyticsParams.courseType: 'capstone',
         'attendance_percentage': capstone.percentageValue ?? -1,

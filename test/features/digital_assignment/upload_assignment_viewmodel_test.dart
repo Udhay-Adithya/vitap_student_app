@@ -60,12 +60,13 @@ void main() {
         bool signedIn = true,
         String? failure,
       }) async {
-        await registerTestDependencies(
+        final deps = testDependencies(
           credentials: signedIn ? testCredentials() : null,
         );
         repository = _FakeAssignmentRepository(failure: failure);
         final container = ProviderContainer(
           overrides: [
+            ...deps.overrides,
             digitalAssignmentRemoteRepositoryProvider.overrideWithValue(
               repository,
             ),

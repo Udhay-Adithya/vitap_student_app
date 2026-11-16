@@ -8,13 +8,13 @@ import 'package:vit_ap_student_app/core/constants/app_constants.dart';
 import 'package:vit_ap_student_app/core/constants/server_constants.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/models/contributor.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
+import 'package:vit_ap_student_app/core/providers/http_client.dart';
 
 part 'github_repository.g.dart';
 
 @riverpod
 GithubRepository githubRepository(Ref ref) {
-  final client = serviceLocator<http.Client>();
+  final client = ref.watch(httpClientProvider);
   return GithubRepository(client);
 }
 

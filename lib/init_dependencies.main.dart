@@ -1,10 +1,20 @@
 part of 'init_dependencies.dart';
 
-final GetIt serviceLocator = GetIt.instance;
+/// Prepares everything the first frame needs and returns the container the
+/// app runs on.
+///
+/// Startup work reads its dependencies from that same container, so the
+/// analytics opt-out and the session guard act on the instances the widgets
+/// will see.
+Future<ProviderContainer> initDependencies() async {
+  final objectbox = await ObjectBox.create();
+  final container = ProviderContainer(
+    overrides: [storeProvider.overrideWithValue(objectbox.store)],
+  );
 
-Future<void> initDependencies() async {
-  await initObjectBox();
-  await initServices();
+  // Hydrate the demo-mode flag so it can be read synchronously everywhere.
+  await DemoService.init();
+
   await RustLib.init();
 
   // Dotenv
@@ -29,31 +39,17 @@ Future<void> initDependencies() async {
   // Init Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Register analytics and honour the persisted opt-out before anything is
-  // able to log. The store is already open, so preferences can be read
-  // directly rather than waiting for the Riverpod container.
-  final analytics = FirebaseAnalyticsService();
-  serviceLocator.registerSingleton<AnalyticsService>(analytics);
-  final storedPreferences = serviceLocator<Store>()
+  // Honour the persisted analytics opt-out before anything is able to log.
+  // The store is already open, so preferences are read straight from it
+  // rather than through the user preferences notifier.
+  final analytics = container.read(analyticsServiceProvider);
+  final storedPreferences = objectbox.store
       .box<UserPreferences>()
       .query()
       .build()
       .findFirst();
   await analytics.initialize(
     enabled: storedPreferences?.analyticsEnabled ?? true,
-  );
-
-  // Register the InterceptedClient
-  serviceLocator.registerSingleton<http.Client>(Client());
-
-  // Register SSL client that trusts the VTOP server certificate
-  serviceLocator.registerSingleton<IOClient>(
-    IOClient(
-      HttpClient()
-        ..badCertificateCallback =
-            (X509Certificate cert, String host, int port) =>
-                host == ServerConstants.vtopDomain,
-    ),
   );
 
   // Initialize Timezone
@@ -63,10 +59,15 @@ Future<void> initDependencies() async {
 
   // A stored user with no credentials behind it cannot reach VTOP, so drop it
   // before the first frame decides which page to open on.
-  await discardSessionWithoutCredentials();
+  await discardSessionWithoutCredentials(
+    store: objectbox.store,
+    secureStorage: container.read(secureStorageServiceProvider),
+  );
 
   // Warm up the fonts before the first frame paints.
   await _preloadFonts();
+
+  return container;
 }
 
 /// Warms up the fonts that are still fetched at runtime via `google_fonts`, so
@@ -99,24 +100,4 @@ Future<void> _preloadFonts() async {
   } catch (_) {
     // Non-fatal: fonts will load lazily on demand.
   }
-}
-
-Future<void> initObjectBox() async {
-  final objectbox = await ObjectBox.create();
-  serviceLocator.registerSingleton<Store>(objectbox.store);
-}
-
-Future<void> initServices() async {
-  serviceLocator.registerSingleton<FlutterSecureStorage>(
-    const FlutterSecureStorage(),
-  );
-
-  serviceLocator.registerSingleton<SecureStorageService>(
-    SecureStorageService(serviceLocator<FlutterSecureStorage>()),
-  );
-
-  serviceLocator.registerSingleton<VtopClientService>(VtopClientService());
-
-  // Hydrate the demo-mode flag so it can be read synchronously everywhere.
-  await DemoService.init();
 }

@@ -64,7 +64,7 @@ part 'my_remote_repository.g.dart';
 
 @riverpod
 MyRemoteRepository myRemoteRepository(Ref ref) {
-  final vtopService = serviceLocator<VtopClientService>();
+  final vtopService = ref.watch(vtopClientServiceProvider);
   return MyRemoteRepository(vtopService);
 }
 
@@ -108,7 +108,7 @@ class MyRemoteRepository {
 ```dart
 @riverpod
 MyRepository myRepository(Ref ref) {
-  final client = serviceLocator<http.Client>();
+  final client = ref.watch(httpClientProvider);
   return MyRepository(client);
 }
 
@@ -319,13 +319,17 @@ rust/src/
 
 ### Data persistence
 
-- **ObjectBox** (`lib/objectbox.g.dart`, `lib/objectbox-model.json`) — local on-device database for `User` and all related entities. The `Store` is registered in GetIt.
+- **ObjectBox** (`lib/objectbox.g.dart`, `lib/objectbox-model.json`) — local on-device database for `User` and all related entities. The `Store` is reached through `storeProvider`.
 - **FlutterSecureStorage** — stores VTOP credentials (reg number, password, semester ID) via `SecureStorageService`.
 - **SharedPreferences** — user preferences (theme, font scale, notification settings) via `UserPreferencesNotifier`.
 
 ### Dependency injection
 
-**GetIt** service locator, initialized in `lib/init_dependencies.dart`. The `serviceLocator` instance is exported from that file and used directly in repositories and providers. Services registered at startup: `FlutterSecureStorage`, `SecureStorageService`, `VtopClientService`, `ConnectionChecker`, `Store` (ObjectBox), `http.Client`, `IOClient`.
+Riverpod providers, the same as everything else. Shared services each have a `keepAlive` provider next to their class: `storeProvider` (`lib/core/providers/store.dart`), `secureStorageServiceProvider`, `vtopClientServiceProvider`, `httpClientProvider` (`lib/core/providers/http_client.dart`) and `analyticsServiceProvider`.
+
+`storeProvider` has no default. `initDependencies()` in `lib/init_dependencies.dart` opens ObjectBox, overrides the provider with the open store, runs the rest of startup against that `ProviderContainer`, and returns it for `main` to mount with `UncontrolledProviderScope`. Tests build their own container with the overrides from `testDependencies()` in `test/helpers/provider_harness.dart`.
+
+Read dependencies with `ref`. Code without a `ref` takes them as parameters, or uses `ProviderScope.containerOf(context, listen: false)` where it only has a `BuildContext`.
 
 ### State management
 
@@ -339,7 +343,7 @@ The "For You" feed (`lib/features/home/`) is a community content feed backed by 
 
 - **Base URL**: `ServerConstants.forYouApiBaseUrl`
 - **Auth**: `X-API-Key` header using `FOR_YOU_API_KEY` from `.env`
-- **HTTP client**: uses the plain `http.Client` from GetIt (not the SSL-bypass `IOClient`)
+- **HTTP client**: uses the shared `http.Client` from `httpClientProvider`
 - **Approval gate**: only items with `is_approved == true` are shown to users
 - **Like tracking**: likes are tracked per-session only (in-memory `LikedItemsSession` provider), so they reset on app restart — by design
 - **Filtering/sorting**: done locally in `ForYouViewModel` on the cached `_allItems` list; no extra API calls
@@ -407,7 +411,7 @@ else if (res case Right(value: final data)) { /* use data */ }
 ```
 
 ### VTOP session management
-`VtopClientService` is a singleton managing a single VTOP client session. Sessions expire after 15 minutes; service proactively refreshes at 14 minutes. Always use `executeWithRetry()` in repositories — never call `getVtopClient()` directly from a viewmodel. The `IOClient` in GetIt bypasses SSL verification (VTOP uses a self-signed certificate).
+`VtopClientService` is a singleton managing a single VTOP client session. Sessions expire after 15 minutes; service proactively refreshes at 14 minutes. Always use `executeWithRetry()` in repositories — never call `getVtopClient()` directly from a viewmodel.
 
 ### Linting rules enforced
 - `prefer_single_quotes` — always single quotes for strings

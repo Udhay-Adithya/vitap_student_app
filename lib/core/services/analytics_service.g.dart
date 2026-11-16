@@ -8,18 +8,18 @@ part of 'analytics_service.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Riverpod handle on the singleton registered in [serviceLocator].
+/// The analytics backend.
 ///
-/// Both entry points resolve the same instance, so overriding the get_it
-/// registration in a test also swaps what widgets see through this provider.
+/// Built lazily, after Firebase is initialised: `initDependencies` reads it to
+/// apply the stored opt-out before anything can log. Tests override it.
 
 @ProviderFor(analyticsService)
 final analyticsServiceProvider = AnalyticsServiceProvider._();
 
-/// Riverpod handle on the singleton registered in [serviceLocator].
+/// The analytics backend.
 ///
-/// Both entry points resolve the same instance, so overriding the get_it
-/// registration in a test also swaps what widgets see through this provider.
+/// Built lazily, after Firebase is initialised: `initDependencies` reads it to
+/// apply the stored opt-out before anything can log. Tests override it.
 
 final class AnalyticsServiceProvider
     extends
@@ -29,10 +29,10 @@ final class AnalyticsServiceProvider
           AnalyticsService
         >
     with $Provider<AnalyticsService> {
-  /// Riverpod handle on the singleton registered in [serviceLocator].
+  /// The analytics backend.
   ///
-  /// Both entry points resolve the same instance, so overriding the get_it
-  /// registration in a test also swaps what widgets see through this provider.
+  /// Built lazily, after Firebase is initialised: `initDependencies` reads it to
+  /// apply the stored opt-out before anything can log. Tests override it.
   AnalyticsServiceProvider._()
     : super(
         from: null,
@@ -66,4 +66,4 @@ final class AnalyticsServiceProvider
   }
 }
 
-String _$analyticsServiceHash() => r'51913f4bb719650746119ec2009d51447bbf43a3';
+String _$analyticsServiceHash() => r'3ba82ae5bfa86d2be30e0c41d94d646790270551';

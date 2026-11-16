@@ -1,10 +1,9 @@
-import 'package:objectbox/objectbox.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/models/user_preferences.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/providers/store.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/services/notification_service.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
 part 'user_preferences_notifier.g.dart';
 
@@ -13,14 +12,14 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
   @override
   UserPreferences build() {
     // Load cached user preferences from ObjectBox
-    final store = serviceLocator.get<Store>();
+    final store = ref.watch(storeProvider);
     return store.box<UserPreferences>().query().build().findFirst() ??
         UserPreferences();
   }
 
   Future<void> updatePreferences(UserPreferences newPreferences) async {
     try {
-      final store = serviceLocator.get<Store>();
+      final store = ref.read(storeProvider);
       final box = store.box<UserPreferences>();
       final existing = box.query().build().findFirst();
       if (existing != null) {
@@ -76,13 +75,13 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
   /// data already buffered on the device.
   Future<void> toggleAnalytics(bool value) async {
     await updatePreferences(state.copyWith(isAnalyticsEnabled: value));
-    await serviceLocator<AnalyticsService>().setCollectionEnabled(
-      enabled: value,
-    );
+    await ref
+        .read(analyticsServiceProvider)
+        .setCollectionEnabled(enabled: value);
   }
 
   // Manually clear user preferences
   void clearUserPreferences() {
-    serviceLocator.get<Store>().box<UserPreferences>().removeAll();
+    ref.read(storeProvider).box<UserPreferences>().removeAll();
   }
 }

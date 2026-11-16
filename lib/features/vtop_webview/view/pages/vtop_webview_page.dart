@@ -7,7 +7,6 @@ import 'package:vit_ap_student_app/core/services/secure_store_service.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/vtop_webview/models/webview_cookie_data.dart';
 import 'package:vit_ap_student_app/features/vtop_webview/view/widgets/url_bar.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -41,6 +40,9 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
 
   /// Initialize the WebView with cookies from the authenticated Rust session
   Future<void> _initializeWebView() async {
+    // Read before the first await: the page can close while this is loading.
+    final secureStorage = ref.read(secureStorageServiceProvider);
+    final vtopService = ref.read(vtopClientServiceProvider);
     try {
       _setState(() {
         _isLoading = true;
@@ -49,8 +51,7 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
       });
 
       // Get credentials from secure storage
-      final credentials = await serviceLocator<SecureStorageService>()
-          .getCredentials();
+      final credentials = await secureStorage.getCredentials();
 
       if (credentials == null) {
         _setState(() {
@@ -61,7 +62,6 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
       }
 
       // Get or create an authenticated VTOP client
-      final vtopService = serviceLocator<VtopClientService>();
       final client = await vtopService.getClientFromCredentials(credentials);
 
       // Check if client is authenticated
@@ -321,7 +321,7 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
 
   /// Refresh the session by resetting the client and reinitializing
   Future<void> _refreshSession() async {
-    serviceLocator<VtopClientService>().resetClient();
+    ref.read(vtopClientServiceProvider).resetClient();
     await _initializeWebView();
   }
 

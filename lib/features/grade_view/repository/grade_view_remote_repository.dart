@@ -7,14 +7,13 @@ import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/grade_view/model/grade_view_course.dart';
 import 'package:vit_ap_student_app/features/grade_view/model/grade_view_detail.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'grade_view_remote_repository.g.dart';
 
 @riverpod
 GradeViewRemoteRepository gradeViewRemoteRepository(Ref ref) {
-  final vtopService = serviceLocator<VtopClientService>();
+  final vtopService = ref.watch(vtopClientServiceProvider);
   return GradeViewRemoteRepository(vtopService);
 }
 

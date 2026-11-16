@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:vit_ap_student_app/core/constants/analytics_constants.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
@@ -15,7 +16,6 @@ import 'package:vit_ap_student_app/features/home/view/pages/outing/outing_page.d
 import 'package:vit_ap_student_app/features/home/view/pages/payments_page.dart';
 import 'package:vit_ap_student_app/features/home/view/widgets/quick_access/quick_access_icon.dart';
 import 'package:vit_ap_student_app/features/vtop_webview/view/pages/vtop_webview_page.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
 /// The Quick Access shortcut grid on the home page.
 ///
@@ -23,14 +23,14 @@ import 'package:vit_ap_student_app/init_dependencies.dart';
 /// the column count derived from the available width. Two rows show while
 /// collapsed; if the items do not all fit, the last visible cell becomes a
 /// More control that springs the rest open in place.
-class QuickAccess extends StatefulWidget {
+class QuickAccess extends ConsumerStatefulWidget {
   const QuickAccess({super.key});
 
   @override
-  State<QuickAccess> createState() => _QuickAccessState();
+  ConsumerState<QuickAccess> createState() => _QuickAccessState();
 }
 
-class _QuickAccessState extends State<QuickAccess> {
+class _QuickAccessState extends ConsumerState<QuickAccess> {
   /// Rows visible before the grid is expanded.
   static const int _collapsedRows = 2;
 
@@ -134,7 +134,7 @@ class _QuickAccessState extends State<QuickAccess> {
   static Widget _vtopWebViewPage(BuildContext _) => const VtopWebViewPage();
 
   void _open(_QuickAccessItem item) {
-    serviceLocator<AnalyticsService>().logEvent(
+    ref.read(analyticsServiceProvider).logEvent(
       AnalyticsEvents.quickAccessUsed,
       {AnalyticsParams.feature: item.feature},
     );
@@ -147,7 +147,8 @@ class _QuickAccessState extends State<QuickAccess> {
 
   void _toggleExpanded(int hiddenCount) {
     setState(() => _expanded = !_expanded);
-    serviceLocator<AnalyticsService>()
+    ref
+        .read(analyticsServiceProvider)
         .logEvent(AnalyticsEvents.quickAccessUsed, {
           AnalyticsParams.feature: _expanded ? 'more_expand' : 'more_collapse',
           AnalyticsParams.count: hiddenCount,

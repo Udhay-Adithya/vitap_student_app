@@ -56,4 +56,4 @@ final class AcademicCalendarRepositoryProvider
 }
 
 String _$academicCalendarRepositoryHash() =>
-    r'b26470e1c31d5d1d999e3e1e0838eb30a17d59ce';
+    r'1921ee5704601b993d404b3175dc91814cbd1f02';

@@ -43,9 +43,10 @@ void main() {
       late TestDependencies deps;
 
       Future<ProviderContainer> harness() async {
-        deps = await registerTestDependencies(credentials: testCredentials());
+        deps = testDependencies(credentials: testCredentials());
         final container = ProviderContainer(
           overrides: [
+            ...deps.overrides,
             outingRemoteRepositoryProvider.overrideWithValue(
               _OfflineOutingRepository(),
             ),

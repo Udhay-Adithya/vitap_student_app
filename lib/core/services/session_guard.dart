@@ -6,7 +6,6 @@ import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/secure_store_service.dart';
 import 'package:vit_ap_student_app/core/utils/session_validity.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/objectbox.g.dart';
 
 /// Discards a stored user that has no usable credentials behind it.
@@ -21,14 +20,14 @@ import 'package:vit_ap_student_app/objectbox.g.dart';
 ///
 /// Called before the first frame, so `CurrentUserNotifier` reads an empty box
 /// and the app opens on onboarding instead.
-Future<void> discardSessionWithoutCredentials() async {
-  final store = serviceLocator.get<Store>();
+Future<void> discardSessionWithoutCredentials({
+  required Store store,
+  required SecureStorageService secureStorage,
+}) async {
   final userBox = store.box<User>();
 
   // Nothing stored means onboarding is already where the app will land.
   if (userBox.isEmpty()) return;
-
-  final secureStorage = serviceLocator.get<SecureStorageService>();
 
   Credentials? credentials;
   try {

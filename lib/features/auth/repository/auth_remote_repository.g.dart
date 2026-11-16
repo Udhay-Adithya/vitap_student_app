@@ -55,4 +55,4 @@ final class AuthRemoteRepositoryProvider
 }
 
 String _$authRemoteRepositoryHash() =>
-    r'96122e9c7f34af37440c3ab91ead8d4b03b38a43';
+    r'a1c20538728e80ad093b1551e04b0dc5011c09f2';

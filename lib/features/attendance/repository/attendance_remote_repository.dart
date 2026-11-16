@@ -10,7 +10,6 @@ import 'package:vit_ap_student_app/core/models/capstone_attendance.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/attendance/model/attendance_detail.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'attendance_remote_repository.g.dart';
@@ -27,7 +26,7 @@ typedef AttendanceFetch = ({
 
 @riverpod
 AttendanceRemoteRepository attendanceRemoteRepository(Ref ref) {
-  final vtopService = serviceLocator<VtopClientService>();
+  final vtopService = ref.watch(vtopClientServiceProvider);
   return AttendanceRemoteRepository(vtopService);
 }
 

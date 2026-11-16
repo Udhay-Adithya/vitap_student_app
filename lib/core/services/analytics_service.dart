@@ -2,7 +2,6 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/constants/analytics_constants.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
 part 'analytics_service.g.dart';
 
@@ -19,9 +18,9 @@ part 'analytics_service.g.dart';
 ///    (see [AnalyticsService.logEvent]) and the only user-scoped values ever
 ///    sent are the coarse [StudentIdentity] buckets.
 ///
-/// Resolve it with `ref.read(analyticsServiceProvider)` inside Riverpod
-/// widgets and view models, or `serviceLocator<AnalyticsService>()` from plain
-/// widgets, route observers and utility functions.
+/// Resolve it with `ref.read(analyticsServiceProvider)`. Code without a `ref`
+/// takes the service as a parameter, or reads it through
+/// `ProviderScope.containerOf(context)` where it only has a `BuildContext`.
 abstract interface class AnalyticsService {
   /// Applies the persisted opt-out choice and prepares the backend. Safe to
   /// call before the user has made a choice — [enabled] defaults to the value
@@ -322,10 +321,9 @@ class NoopAnalyticsService implements AnalyticsService {
   Future<void> reset() async {}
 }
 
-/// Riverpod handle on the singleton registered in [serviceLocator].
+/// The analytics backend.
 ///
-/// Both entry points resolve the same instance, so overriding the get_it
-/// registration in a test also swaps what widgets see through this provider.
+/// Built lazily, after Firebase is initialised: `initDependencies` reads it to
+/// apply the stored opt-out before anything can log. Tests override it.
 @Riverpod(keepAlive: true)
-AnalyticsService analyticsService(Ref ref) =>
-    serviceLocator<AnalyticsService>();
+AnalyticsService analyticsService(Ref ref) => FirebaseAnalyticsService();

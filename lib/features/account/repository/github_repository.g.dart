@@ -53,4 +53,4 @@ final class GithubRepositoryProvider
   }
 }
 
-String _$githubRepositoryHash() => r'd6dbf09f63f64a712ef249c3cb87ac49d8fc1a53';
+String _$githubRepositoryHash() => r'16965b36c82757ba4095447f8c1560f3a48171ad';

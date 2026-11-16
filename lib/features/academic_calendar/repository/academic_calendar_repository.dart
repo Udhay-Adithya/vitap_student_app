@@ -8,8 +8,8 @@ import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/academic_calendar.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
+import 'package:vit_ap_student_app/core/providers/store.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/objectbox.g.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
@@ -23,9 +23,9 @@ const String defaultClassGroup = 'COMB';
 
 @riverpod
 AcademicCalendarRepository academicCalendarRepository(Ref ref) {
-  final store = serviceLocator<Store>();
+  final store = ref.watch(storeProvider);
   return AcademicCalendarRepository(
-    vtopService: serviceLocator<VtopClientService>(),
+    vtopService: ref.watch(vtopClientServiceProvider),
     store: store,
   );
 }

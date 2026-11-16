@@ -13,11 +13,11 @@ void main() {
       late TestDependencies deps;
 
       setUp(() async {
-        deps = await registerTestDependencies();
+        deps = testDependencies();
       });
 
       ProviderContainer newContainer() {
-        final container = ProviderContainer();
+        final container = ProviderContainer(overrides: deps.overrides);
         addTearDown(container.dispose);
         return container;
       }
