@@ -15,9 +15,7 @@ class CourseOptionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       tileColor: Theme.of(context).colorScheme.surfaceContainerLow,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

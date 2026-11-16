@@ -7,7 +7,6 @@ import 'package:vit_ap_student_app/core/services/secure_store_service.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/vtop_webview/models/webview_cookie_data.dart';
 import 'package:vit_ap_student_app/features/vtop_webview/view/widgets/url_bar.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -41,6 +40,9 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
 
   /// Initialize the WebView with cookies from the authenticated Rust session
   Future<void> _initializeWebView() async {
+    // Read before the first await: the page can close while this is loading.
+    final secureStorage = ref.read(secureStorageServiceProvider);
+    final vtopService = ref.read(vtopClientServiceProvider);
     try {
       _setState(() {
         _isLoading = true;
@@ -49,8 +51,7 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
       });
 
       // Get credentials from secure storage
-      final credentials =
-          await serviceLocator<SecureStorageService>().getCredentials();
+      final credentials = await secureStorage.getCredentials();
 
       if (credentials == null) {
         _setState(() {
@@ -61,7 +62,6 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
       }
 
       // Get or create an authenticated VTOP client
-      final vtopService = serviceLocator<VtopClientService>();
       final client = await vtopService.getClientFromCredentials(credentials);
 
       // Check if client is authenticated
@@ -108,74 +108,73 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
       await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       await controller.setUserAgent(userAgent);
       await controller.setNavigationDelegate(
-          NavigationDelegate(
-            onProgress: (int progress) {
-              _setState(() {
-                _loadingProgress = progress / 100;
-              });
-            },
-            onPageStarted: (String url) {
-              _setState(() {
-                _isLoading = true;
-                _currentUrl = url;
-              });
-              _trace('started  -> $url');
-            },
-            onPageFinished: (String url) async {
-              _setState(() {
-                _isLoading = false;
-                _currentUrl = url;
-              });
-              _trace('finished -> $url');
+        NavigationDelegate(
+          onProgress: (int progress) {
+            _setState(() {
+              _loadingProgress = progress / 100;
+            });
+          },
+          onPageStarted: (String url) {
+            _setState(() {
+              _isLoading = true;
+              _currentUrl = url;
+            });
+            _trace('started  -> $url');
+          },
+          onPageFinished: (String url) async {
+            _setState(() {
+              _isLoading = false;
+              _currentUrl = url;
+            });
+            _trace('finished -> $url');
 
-              // Extract CSRF token from the page for potential future use
-              await _extractCsrfToken();
+            // Extract CSRF token from the page for potential future use
+            await _extractCsrfToken();
 
-              // If we're on the open/page, auto-navigate to content page
-              if (url.contains(ServerConstants.vtopOpenPage) &&
-                  _csrfToken != null) {
-                _trace('on open page with csrf, posting to content');
-                await Future<void>.delayed(const Duration(milliseconds: 300));
-                await _navigateWithPost(ServerConstants.vtopContentPage);
-              }
-              // Content page loaded - reveal the WebView!
-              else if (url.contains(ServerConstants.vtopContentPage)) {
-                _trace('REACHED CONTENT - session accepted');
-                _setState(() {
-                  _isContentLoaded = true;
-                });
-              }
-              // Check if redirected to login page (session expired)
-              else if (url.contains(ServerConstants.vtopLoginPage) ||
-                  url.contains(ServerConstants.vtopPreLoginPage)) {
-                _trace(
-                    'BOUNCED TO LOGIN - session not accepted by the portal');
-                _setState(() {
-                  _errorMessage =
-                      'Session expired. Please go back and try again.';
-                });
-              }
-            },
-            onWebResourceError: (WebResourceError error) {
-              debugPrint('WebView error: ${error.description}');
-              // Only show error if it's a main frame error
-              if (error.isForMainFrame ?? false) {
-                _setState(() {
-                  _errorMessage = 'Failed to load page: ${error.description}';
-                });
-              }
-            },
-            onNavigationRequest: (NavigationRequest request) {
-              _trace('request  -> ${request.url}');
-              // Allow all VTOP navigation
-              if (request.url.startsWith(ServerConstants.vtopBaseUrl)) {
-                return NavigationDecision.navigate;
-              }
-              // Block external links
-              _trace('blocked external -> ${request.url}');
-              return NavigationDecision.prevent;
-            },
-          ),
+            // If we're on the open/page, auto-navigate to content page
+            if (url.contains(ServerConstants.vtopOpenPage) &&
+                _csrfToken != null) {
+              _trace('on open page with csrf, posting to content');
+              await Future<void>.delayed(const Duration(milliseconds: 300));
+              await _navigateWithPost(ServerConstants.vtopContentPage);
+            }
+            // Content page loaded - reveal the WebView!
+            else if (url.contains(ServerConstants.vtopContentPage)) {
+              _trace('REACHED CONTENT - session accepted');
+              _setState(() {
+                _isContentLoaded = true;
+              });
+            }
+            // Check if redirected to login page (session expired)
+            else if (url.contains(ServerConstants.vtopLoginPage) ||
+                url.contains(ServerConstants.vtopPreLoginPage)) {
+              _trace('BOUNCED TO LOGIN - session not accepted by the portal');
+              _setState(() {
+                _errorMessage =
+                    'Session expired. Please go back and try again.';
+              });
+            }
+          },
+          onWebResourceError: (WebResourceError error) {
+            debugPrint('WebView error: ${error.description}');
+            // Only show error if it's a main frame error
+            if (error.isForMainFrame ?? false) {
+              _setState(() {
+                _errorMessage = 'Failed to load page: ${error.description}';
+              });
+            }
+          },
+          onNavigationRequest: (NavigationRequest request) {
+            _trace('request  -> ${request.url}');
+            // Allow all VTOP navigation
+            if (request.url.startsWith(ServerConstants.vtopBaseUrl)) {
+              return NavigationDecision.navigate;
+            }
+            // Block external links
+            _trace('blocked external -> ${request.url}');
+            return NavigationDecision.prevent;
+          },
+        ),
       );
       _controller = controller;
 
@@ -183,7 +182,8 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
       // The authenticated cookies + CSRF from Rust will be used for POST navigation
       await controller.loadRequest(
         Uri.parse(
-            '${ServerConstants.vtopBaseUrl}${ServerConstants.vtopOpenPage}'),
+          '${ServerConstants.vtopBaseUrl}${ServerConstants.vtopOpenPage}',
+        ),
       );
 
       _setState(() {});
@@ -255,8 +255,11 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
       .replaceAll('<', '&lt;')
       .replaceAll('>', '&gt;');
 
-  Future<void> _navigateWithPost(String path,
-      {Map<String, String>? additionalParams, bool verifyMenu = true}) async {
+  Future<void> _navigateWithPost(
+    String path, {
+    Map<String, String>? additionalParams,
+    bool verifyMenu = true,
+  }) async {
     if (_controller == null || _csrfToken == null) {
       return;
     }
@@ -270,11 +273,14 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
     };
 
     final formFields = params.entries
-        .map((e) =>
-            '<input type="hidden" name="${_htmlAttrEscape(e.key)}" value="${_htmlAttrEscape(e.value)}">')
+        .map(
+          (e) =>
+              '<input type="hidden" name="${_htmlAttrEscape(e.key)}" value="${_htmlAttrEscape(e.value)}">',
+        )
         .join('');
 
-    final jsCode = '''
+    final jsCode =
+        '''
       (function() {
         var form = document.createElement('form');
         form.method = 'POST';
@@ -315,7 +321,7 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
 
   /// Refresh the session by resetting the client and reinitializing
   Future<void> _refreshSession() async {
-    serviceLocator<VtopClientService>().resetClient();
+    ref.read(vtopClientServiceProvider).resetClient();
     await _initializeWebView();
   }
 
@@ -408,8 +414,8 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
             Text(
               'Please wait while we log you in',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 24),
             if (_loadingProgress > 0)
@@ -445,8 +451,8 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
               _errorMessage ?? 'An unknown error occurred',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 24),
             FilledButton.icon(

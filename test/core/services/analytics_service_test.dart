@@ -23,10 +23,7 @@ void main() {
     });
 
     test('normalises a lowercase branch code', () {
-      expect(
-        StudentIdentity.fromRegistrationNumber('22bce1234').branch,
-        'BCE',
-      );
+      expect(StudentIdentity.fromRegistrationNumber('22bce1234').branch, 'BCE');
     });
 
     test('tolerates surrounding whitespace', () {

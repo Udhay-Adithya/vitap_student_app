@@ -69,10 +69,10 @@ class DemoService {
   /// Credentials persisted for the demo session so the rest of the app treats
   /// the demo user like any other logged-in user.
   Credentials get credentials => Credentials(
-        registrationNumber: demoRegistrationNumber,
-        password: demoPassword,
-        semSubId: demoSemesterId,
-      );
+    registrationNumber: demoRegistrationNumber,
+    password: demoPassword,
+    semSubId: demoSemesterId,
+  );
 
   /// Enable or disable demo mode, updating both the cached flag and persistent
   /// storage. Disabling also drops the in-memory dataset cache.
@@ -84,15 +84,13 @@ class DemoService {
   }
 
   Future<Map<String, dynamic>> _dataset() async {
-    _cache ??= json.decode(await rootBundle.loadString(_assetPath))
-        as Map<String, dynamic>;
+    _cache ??=
+        json.decode(await rootBundle.loadString(_assetPath))
+            as Map<String, dynamic>;
     return _cache!;
   }
 
-  Future<T> _section<T>(
-    String key,
-    T Function(Object? value) parse,
-  ) async {
+  Future<T> _section<T>(String key, T Function(Object? value) parse) async {
     final data = await _dataset();
     return parse(data[key]);
   }
@@ -107,83 +105,83 @@ class DemoService {
   // --- Secondary read-only feature data -------------------------------------
 
   Future<List<AttendanceDetail>> detailedAttendance() => _section(
-        'detailed_attendance',
-        (v) => (v as List<dynamic>)
-            .map((e) => AttendanceDetail.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+    'detailed_attendance',
+    (v) => (v as List<dynamic>)
+        .map((e) => AttendanceDetail.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 
   Future<List<Biometric>> biometric() => _section(
-        'biometric',
-        (v) => (v as List<dynamic>)
-            .map((e) => Biometric.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+    'biometric',
+    (v) => (v as List<dynamic>)
+        .map((e) => Biometric.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 
   Future<List<PendingPayment>> pendingPayments() => _section(
-        'pending_payments',
-        (v) => (v as List<dynamic>)
-            .map((e) => PendingPayment.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+    'pending_payments',
+    (v) => (v as List<dynamic>)
+        .map((e) => PendingPayment.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 
   Future<List<PaymentReceipt>> paymentReceipts() => _section(
-        'payment_receipts',
-        (v) => (v as List<dynamic>)
-            .map((e) => PaymentReceipt.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+    'payment_receipts',
+    (v) => (v as List<dynamic>)
+        .map((e) => PaymentReceipt.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 
   Future<List<GeneralOutingReport>> generalOutingReports() => _section(
-        'general_outing_reports',
-        (v) => (v as List<dynamic>)
-            .map((e) => GeneralOutingReport.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+    'general_outing_reports',
+    (v) => (v as List<dynamic>)
+        .map((e) => GeneralOutingReport.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 
   Future<List<WeekendOutingReport>> weekendOutingReports() => _section(
-        'weekend_outing_reports',
-        (v) => (v as List<dynamic>)
-            .map((e) => WeekendOutingReport.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+    'weekend_outing_reports',
+    (v) => (v as List<dynamic>)
+        .map((e) => WeekendOutingReport.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 
   Future<FacultyDetails> facultyDetails() => _section(
-        'faculty_details',
-        (v) => FacultyDetails.fromJson(v as Map<String, dynamic>),
-      );
+    'faculty_details',
+    (v) => FacultyDetails.fromJson(v as Map<String, dynamic>),
+  );
 
   Future<CoursesResponseModel> courses() => _section(
-        'courses',
-        (v) => CoursesResponseModel.fromJson(v as Map<String, dynamic>),
-      );
+    'courses',
+    (v) => CoursesResponseModel.fromJson(v as Map<String, dynamic>),
+  );
 
   Future<SlotsResponseModel> slots() => _section(
-        'slots',
-        (v) => SlotsResponseModel.fromJson(v as Map<String, dynamic>),
-      );
+    'slots',
+    (v) => SlotsResponseModel.fromJson(v as Map<String, dynamic>),
+  );
 
   Future<CoursePageDetailModel> courseDetail() => _section(
-        'course_detail',
-        (v) => CoursePageDetailModel.fromJson(v as Map<String, dynamic>),
-      );
+    'course_detail',
+    (v) => CoursePageDetailModel.fromJson(v as Map<String, dynamic>),
+  );
 
   Future<List<DigitalAssignment>> digitalAssignments() => _section(
-        'digital_assignments',
-        (v) => (v as List<dynamic>)
-            .map((e) => DigitalAssignment.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+    'digital_assignments',
+    (v) => (v as List<dynamic>)
+        .map((e) => DigitalAssignment.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 
   Future<List<GradeViewCourseModel>> gradeView() => _section(
-        'grade_view',
-        (v) => (v as List<dynamic>)
-            .map((e) => GradeViewCourseModel.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+    'grade_view',
+    (v) => (v as List<dynamic>)
+        .map((e) => GradeViewCourseModel.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 
   Future<GradeViewDetailModel> gradeViewDetail() => _section(
-        'grade_view_detail',
-        (v) => GradeViewDetailModel.fromJson(v as Map<String, dynamic>),
-      );
+    'grade_view_detail',
+    (v) => GradeViewDetailModel.fromJson(v as Map<String, dynamic>),
+  );
 }

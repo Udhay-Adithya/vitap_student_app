@@ -14,9 +14,7 @@ import 'package:vit_ap_student_app/features/home/viewmodel/for_you_viewmodel.dar
 double forYouCardWidth(BuildContext context) {
   final available =
       MediaQuery.sizeOf(context).width - (SectionHeader.gutter * 2);
-  final width = available < 540
-      ? (available - 12) / 2
-      : (available - 24) / 3;
+  final width = available < 540 ? (available - 12) / 2 : (available - 24) / 3;
   return width.clamp(150.0, 220.0);
 }
 
@@ -181,11 +179,11 @@ class _ForYouCardImage extends StatelessWidget {
     final url = imageUrl;
 
     Widget fallback() => ColoredBox(
-          color: colors.surfaceContainerHighest,
-          child: Center(
-            child: Icon(Iconsax.image, size: 40, color: colors.outlineVariant),
-          ),
-        );
+      color: colors.surfaceContainerHighest,
+      child: Center(
+        child: Icon(Iconsax.image, size: 40, color: colors.outlineVariant),
+      ),
+    );
 
     if (url == null || url.isEmpty) return fallback();
 
@@ -193,7 +191,8 @@ class _ForYouCardImage extends StatelessWidget {
       imageUrl: url,
       fit: BoxFit.cover,
       fadeInDuration: const Duration(milliseconds: 150),
-      placeholder: (context, _) => ColoredBox(color: colors.surfaceContainerHighest),
+      placeholder: (context, _) =>
+          ColoredBox(color: colors.surfaceContainerHighest),
       errorWidget: (context, _, _) => fallback(),
     );
   }

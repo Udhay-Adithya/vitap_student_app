@@ -12,9 +12,10 @@ class ThemeSwitch extends ConsumerWidget {
     final notifier = ref.read(themeModeProvider.notifier);
 
     return Switch.adaptive(
-        value: isDark,
-        onChanged: (value) {
-          notifier.toggleTheme();
-        });
+      value: isDark,
+      onChanged: (value) {
+        notifier.toggleTheme();
+      },
+    );
   }
 }

@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:vit_ap_student_app/core/providers/store.dart';
 import 'package:vit_ap_student_app/features/home/model/general_outing_report.dart';
 import 'package:vit_ap_student_app/features/home/model/weekend_outing_report.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
 part 'outing_local_repository.g.dart';
 
 @riverpod
 OutingLocalRepository outingLocalRepository(Ref ref) {
-  final store = serviceLocator<Store>();
+  final store = ref.watch(storeProvider);
   return OutingLocalRepository(
     generalOutingBox: store.box<GeneralOutingReport>(),
     weekendOutingBox: store.box<WeekendOutingReport>(),
@@ -36,7 +36,8 @@ class OutingLocalRepository {
   }
 
   Future<void> saveGeneralOutingReports(
-      List<GeneralOutingReport> reports) async {
+    List<GeneralOutingReport> reports,
+  ) async {
     try {
       // Clear existing data and save new
       generalOutingBox.removeAll();
@@ -66,7 +67,8 @@ class OutingLocalRepository {
   }
 
   Future<void> saveWeekendOutingReports(
-      List<WeekendOutingReport> reports) async {
+    List<WeekendOutingReport> reports,
+  ) async {
     try {
       // Clear existing data and save new
       weekendOutingBox.removeAll();

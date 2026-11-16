@@ -27,7 +27,9 @@ class UploadAssignmentViewModel extends _$UploadAssignmentViewModel {
     final Credentials? credentials = await userNotifier.getSavedCredentials();
     if (credentials == null) {
       state = AsyncValue.error(
-          'User not found. Please Logout and Login.', StackTrace.current);
+        'User not found. Please Logout and Login.',
+        StackTrace.current,
+      );
       return;
     }
 
@@ -54,7 +56,9 @@ class UploadAssignmentViewModel extends _$UploadAssignmentViewModel {
     final Credentials? credentials = await userNotifier.getSavedCredentials();
     if (credentials == null) {
       state = AsyncValue.error(
-          'User not found. Please Logout and Login.', StackTrace.current);
+        'User not found. Please Logout and Login.',
+        StackTrace.current,
+      );
       return;
     }
 

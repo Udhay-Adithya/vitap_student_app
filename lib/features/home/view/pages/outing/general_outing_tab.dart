@@ -131,9 +131,9 @@ class _GeneralOutingTabState extends ConsumerState<GeneralOutingTab> {
           // A task that finished, with nothing left on screen to read — unlike a
           // refresh, where a sheet would cover the very thing you asked for.
           unawaited(
-            const ReviewPromptService().recordHappyMoment(
-              'general_outing_applied',
-            ),
+            ref
+                .read(reviewPromptServiceProvider)
+                .recordHappyMoment('general_outing_applied'),
           );
         },
         loading: () {},

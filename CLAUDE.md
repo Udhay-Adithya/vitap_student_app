@@ -33,6 +33,21 @@ they lock down.
 attached in most sessions, so device verification usually can't happen — say so
 plainly rather than implying something was seen working.
 
+**Install ObjectBox's native library before `flutter test`.** Every view model
+and persistence test opens a real store, and without the library they skip
+while the run still reports "All tests passed". It is gitignored and not part of
+`pub get`, so a fresh checkout or worktree needs it once:
+
+```sh
+gh release download v5.3.2 --repo objectbox/objectbox-c \
+  --pattern "objectbox-macos-universal.zip" --dir /tmp/obx
+unzip -o /tmp/obx/objectbox-macos-universal.zip -d /tmp/obx
+cp /tmp/obx/lib/libobjectbox.dylib lib/libobjectbox.dylib
+```
+
+Check the summary line has no `~N` skip count. The version follows
+`OBJECTBOX_VERSION` in `.github/workflows/flutter.yml`.
+
 **Commits:** conventional, lowercase, single line, no body, no attribution.
 `feat: add persistent update card to account page`
 

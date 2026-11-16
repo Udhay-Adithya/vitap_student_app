@@ -9,26 +9,29 @@ void main() {
     // in-flight guard, so every caller that arrived during a login started its
     // own. VTOP emails a fresh code for each credentials POST from an
     // unverified IP, so two concurrent callers meant two OTP emails.
-    test('concurrent callers for the same key run the operation once', () async {
-      final flight = SingleFlight<String, int>();
-      var invocations = 0;
-      final completer = Completer<int>();
+    test(
+      'concurrent callers for the same key run the operation once',
+      () async {
+        final flight = SingleFlight<String, int>();
+        var invocations = 0;
+        final completer = Completer<int>();
 
-      Future<int> start() {
-        final pending = flight.pendingFor('key');
-        if (pending != null) return pending;
-        return flight.run('key', () {
-          invocations++;
-          return completer.future;
-        });
-      }
+        Future<int> start() {
+          final pending = flight.pendingFor('key');
+          if (pending != null) return pending;
+          return flight.run('key', () {
+            invocations++;
+            return completer.future;
+          });
+        }
 
-      final results = <Future<int>>[start(), start(), start()];
-      completer.complete(7);
+        final results = <Future<int>>[start(), start(), start()];
+        completer.complete(7);
 
-      expect(await Future.wait(results), <int>[7, 7, 7]);
-      expect(invocations, 1);
-    });
+        expect(await Future.wait(results), <int>[7, 7, 7]);
+        expect(invocations, 1);
+      },
+    );
 
     // The losing caller used to be orphaned: a second login overwrote the
     // Completer the first was waiting on, and that first caller hung forever
@@ -86,20 +89,22 @@ void main() {
       expect(await first, 1);
     });
 
-    test('clear() stops new callers joining but still settles the old one',
-        () async {
-      final flight = SingleFlight<String, int>();
-      final completer = Completer<int>();
+    test(
+      'clear() stops new callers joining but still settles the old one',
+      () async {
+        final flight = SingleFlight<String, int>();
+        final completer = Completer<int>();
 
-      final abandoned = flight.run('key', () => completer.future);
-      flight.clear();
+        final abandoned = flight.run('key', () => completer.future);
+        flight.clear();
 
-      expect(flight.pendingFor('key'), isNull);
-      expect(flight.isRunning, isFalse);
+        expect(flight.pendingFor('key'), isNull);
+        expect(flight.isRunning, isFalse);
 
-      completer.complete(1);
-      expect(await abandoned, 1);
-    });
+        completer.complete(1);
+        expect(await abandoned, 1);
+      },
+    );
 
     // Guards the release path: a cleared-then-restarted slot must not be wiped
     // by the abandoned operation finishing afterwards, or the login that

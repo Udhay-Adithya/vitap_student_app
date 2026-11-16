@@ -53,4 +53,4 @@ final class ForYouRepositoryProvider
   }
 }
 
-String _$forYouRepositoryHash() => r'3d2f48cca8f122c336e2071fac5be967ad48258e';
+String _$forYouRepositoryHash() => r'5bd72d8ac0eebd772be1b297598dbde712ddad13';

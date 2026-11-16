@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:vit_ap_student_app/core/common/widget/styled_sheet.dart';
 import 'package:vit_ap_student_app/core/constants/analytics_constants.dart';
@@ -6,9 +7,8 @@ import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/utils/launch_web.dart';
 import 'package:vit_ap_student_app/features/home/model/for_you_item.dart';
 import 'package:vit_ap_student_app/features/home/view/widgets/for_you_meta.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
-class TileDetailPage extends StatefulWidget {
+class TileDetailPage extends ConsumerStatefulWidget {
   /// Takes the whole item rather than four loose strings, so a new field on
   /// [ForYouItem] doesn't need a new constructor argument threaded through
   /// every caller.
@@ -17,14 +17,14 @@ class TileDetailPage extends StatefulWidget {
   const TileDetailPage({super.key, required this.item});
 
   @override
-  State<TileDetailPage> createState() => _TileDetailPageState();
+  ConsumerState<TileDetailPage> createState() => _TileDetailPageState();
 }
 
-class _TileDetailPageState extends State<TileDetailPage> {
+class _TileDetailPageState extends ConsumerState<TileDetailPage> {
   @override
   void initState() {
     super.initState();
-    serviceLocator<AnalyticsService>().logScreen('TileDetailPage');
+    ref.read(analyticsServiceProvider).logScreen('TileDetailPage');
   }
 
   /// Community tools are submitted by students and run by them, not by this
@@ -47,11 +47,12 @@ class _TileDetailPageState extends State<TileDetailPage> {
 
     if (!confirmed || !mounted) return;
 
+    // Read before the launch: the page can be closed while the browser opens.
+    final analytics = ref.read(analyticsServiceProvider);
     await directToWeb(item.url);
-    serviceLocator<AnalyticsService>().logEvent(
-      AnalyticsEvents.tileDetailLinkOpened,
-      {AnalyticsParams.target: item.title},
-    );
+    analytics.logEvent(AnalyticsEvents.tileDetailLinkOpened, {
+      AnalyticsParams.target: item.title,
+    });
   }
 
   @override

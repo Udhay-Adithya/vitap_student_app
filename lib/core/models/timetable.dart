@@ -106,7 +106,7 @@ class _DayRelToManyConverter
   ToMany<Day> fromJson(List<dynamic>? json) {
     final items =
         json?.map((e) => Day.fromJson(e as Map<String, dynamic>)).toList() ??
-            [];
+        [];
     return ToMany<Day>(items: items);
   }
 

@@ -34,11 +34,7 @@ class AppException implements Exception {
   final String? code;
   final dynamic originalError;
 
-  const AppException(
-    this.message, {
-    this.code,
-    this.originalError,
-  });
+  const AppException(this.message, {this.code, this.originalError});
 
   @override
   String toString() {
@@ -54,10 +50,7 @@ class NetworkException implements Exception {
   final String message;
   final int? statusCode;
 
-  const NetworkException(
-    this.message, {
-    this.statusCode,
-  });
+  const NetworkException(this.message, {this.statusCode});
 
   @override
   String toString() {
@@ -73,10 +66,7 @@ class ValidationException implements Exception {
   final String message;
   final Map<String, List<String>>? fieldErrors;
 
-  const ValidationException(
-    this.message, {
-    this.fieldErrors,
-  });
+  const ValidationException(this.message, {this.fieldErrors});
 
   @override
   String toString() => 'ValidationException: $message';

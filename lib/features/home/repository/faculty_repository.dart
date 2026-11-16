@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:fpdart/fpdart.dart';
@@ -8,7 +7,6 @@ import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/home/model/faculty.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/types/faculty.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
@@ -16,7 +14,7 @@ part 'faculty_repository.g.dart';
 
 @riverpod
 FacultyRepository facultyRepository(Ref ref) {
-  final vtopService = serviceLocator<VtopClientService>();
+  final vtopService = ref.watch(vtopClientServiceProvider);
   return FacultyRepository(vtopService);
 }
 

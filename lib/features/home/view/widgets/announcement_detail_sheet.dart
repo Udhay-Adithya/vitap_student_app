@@ -82,9 +82,9 @@ class _AnnouncementDetailSheet extends StatelessWidget {
         uri != null &&
         await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!launched && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Couldn't open that link")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Couldn't open that link")));
     }
   }
 }

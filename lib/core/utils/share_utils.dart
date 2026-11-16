@@ -9,30 +9,24 @@ class ShareUtils {
   static ShareUtils get instance => _instance;
 
   /// Share text content with success feedback
-  Future<void> shareText(String text, BuildContext context,
-      {String? subject}) async {
+  Future<void> shareText(
+    String text,
+    BuildContext context, {
+    String? subject,
+  }) async {
     try {
-      final result = await SharePlus.instance.share(ShareParams(
-        text: text,
-        subject: subject,
-      ));
+      final result = await SharePlus.instance.share(
+        ShareParams(text: text, subject: subject),
+      );
 
       if (result.status == ShareResultStatus.success) {
         if (context.mounted) {
-          showSnackBar(
-            context,
-            'Thanks for sharing ❤️',
-            SnackBarType.success,
-          );
+          showSnackBar(context, 'Thanks for sharing ❤️', SnackBarType.success);
         }
       }
     } catch (e) {
       if (context.mounted) {
-        showSnackBar(
-          context,
-          'Failed to share content',
-          SnackBarType.error,
-        );
+        showSnackBar(context, 'Failed to share content', SnackBarType.error);
       }
     }
   }
@@ -46,10 +40,15 @@ class ShareUtils {
 
   /// Share CGPA calculator URL
   Future<void> shareCgpaCalculator(
-      String calculatorUrl, BuildContext context) async {
+    String calculatorUrl,
+    BuildContext context,
+  ) async {
     const shareMessage =
         '📊 Check out my CGPA! Calculate yours using the VIT-AP CGPA Calculator: ';
-    await shareText('$shareMessage$calculatorUrl', context,
-        subject: '📊 Check out my CGPA');
+    await shareText(
+      '$shareMessage$calculatorUrl',
+      context,
+      subject: '📊 Check out my CGPA',
+    );
   }
 }

@@ -107,8 +107,9 @@ class _OtpBottomSheetState extends ConsumerState<OtpBottomSheet> {
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest
-                  .withValues(alpha: 0.5),
+              color: theme.colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.5,
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -143,8 +144,11 @@ class _OtpBottomSheetState extends ConsumerState<OtpBottomSheet> {
               ),
               child: Row(
                 children: [
-                  Icon(Iconsax.close_circle,
-                      size: 18, color: theme.colorScheme.error),
+                  Icon(
+                    Iconsax.close_circle,
+                    size: 18,
+                    color: theme.colorScheme.error,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -196,10 +200,12 @@ class _OtpBottomSheetState extends ConsumerState<OtpBottomSheet> {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: theme.colorScheme.error,
                     side: BorderSide(
-                        color: theme.colorScheme.error.withValues(alpha: 0.5)),
+                      color: theme.colorScheme.error.withValues(alpha: 0.5),
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -221,7 +227,8 @@ class _OtpBottomSheetState extends ConsumerState<OtpBottomSheet> {
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),

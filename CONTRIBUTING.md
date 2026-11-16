@@ -179,6 +179,8 @@ To set up the project for local development:
 
 - Follow the [Effective Dart](https://dart.dev/guides/language/effective-dart) style guide.
 - Use `flutter analyze` to check for linting issues.
+- Run `dart format lib test` before opening a pull request. CI fails on
+  anything unformatted.
 - Follow the existing project structure and naming conventions.
 - Use meaningful variable and function names.
 - Keep widgets small and focused on a single responsibility.

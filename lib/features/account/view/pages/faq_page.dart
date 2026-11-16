@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/features/account/model/faq_content.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
 /// The FAQ, optionally opened straight at one answer.
 ///
 /// [topic] is a stable key rather than a list index: contextual links live all
 /// over the app now, and a positional link would silently point at the wrong
 /// answer as soon as a question was inserted above it.
-class FAQPage extends StatefulWidget {
+class FAQPage extends ConsumerStatefulWidget {
   const FAQPage({super.key, this.topic});
 
   final FaqTopic? topic;
 
   @override
-  State<FAQPage> createState() => _FAQPageState();
+  ConsumerState<FAQPage> createState() => _FAQPageState();
 }
 
-class _FAQPageState extends State<FAQPage> {
+class _FAQPageState extends ConsumerState<FAQPage> {
   final ScrollController _scrollController = ScrollController();
   final Map<FaqTopic, GlobalKey> _itemKeys = <FaqTopic, GlobalKey>{
     for (final FaqEntry entry in faqEntries) entry.topic: GlobalKey(),
@@ -30,7 +30,7 @@ class _FAQPageState extends State<FAQPage> {
   @override
   void initState() {
     super.initState();
-    serviceLocator<AnalyticsService>().logScreen('FAQPage');
+    ref.read(analyticsServiceProvider).logScreen('FAQPage');
 
     // Expanding an entry that sits below the fold looks like nothing happened,
     // so bring it into view once the list has been laid out.

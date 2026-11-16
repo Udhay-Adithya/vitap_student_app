@@ -26,9 +26,7 @@ class DetailedAttendanceViewmodel extends _$DetailedAttendanceViewmodel {
 
     // Demo mode: serve bundled sample detailed attendance.
     if (DemoService.isDemoMode) {
-      state = AsyncValue.data(
-        await DemoService.instance.detailedAttendance(),
-      );
+      state = AsyncValue.data(await DemoService.instance.detailedAttendance());
       return;
     }
 
@@ -37,7 +35,9 @@ class DetailedAttendanceViewmodel extends _$DetailedAttendanceViewmodel {
 
     if (credentials == null) {
       state = AsyncValue.error(
-          'User not found. Please Logout and Login.', StackTrace.current);
+        'User not found. Please Logout and Login.',
+        StackTrace.current,
+      );
       return;
     }
 

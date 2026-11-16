@@ -40,8 +40,10 @@ class PendingPaymentsViewModel extends _$PendingPaymentsViewModel {
     );
 
     state = switch (res) {
-      Left(value: final failure) =>
-        AsyncValue.error(failure.message, StackTrace.current),
+      Left(value: final failure) => AsyncValue.error(
+        failure.message,
+        StackTrace.current,
+      ),
       Right(value: final pendingPayments) => AsyncValue.data(pendingPayments),
     };
   }

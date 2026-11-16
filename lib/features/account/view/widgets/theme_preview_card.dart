@@ -54,12 +54,18 @@ class ThemePreviewCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _buildIconBox(colorScheme.primaryContainer,
-                            colorScheme.onPrimaryContainer),
-                        _buildIconBox(colorScheme.secondaryContainer,
-                            colorScheme.onSecondaryContainer),
-                        _buildIconBox(colorScheme.tertiaryContainer,
-                            colorScheme.onTertiaryContainer),
+                        _buildIconBox(
+                          colorScheme.primaryContainer,
+                          colorScheme.onPrimaryContainer,
+                        ),
+                        _buildIconBox(
+                          colorScheme.secondaryContainer,
+                          colorScheme.onSecondaryContainer,
+                        ),
+                        _buildIconBox(
+                          colorScheme.tertiaryContainer,
+                          colorScheme.onTertiaryContainer,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -67,10 +73,14 @@ class ThemePreviewCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _buildIconBox(colorScheme.primaryContainer,
-                            colorScheme.onPrimaryContainer),
-                        _buildIconBox(colorScheme.secondaryContainer,
-                            colorScheme.onSecondaryContainer),
+                        _buildIconBox(
+                          colorScheme.primaryContainer,
+                          colorScheme.onPrimaryContainer,
+                        ),
+                        _buildIconBox(
+                          colorScheme.secondaryContainer,
+                          colorScheme.onSecondaryContainer,
+                        ),
                         Container(
                           width: 32,
                           height: 32,
@@ -125,11 +135,7 @@ class ThemePreviewCard extends StatelessWidget {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Icon(
-        Icons.circle,
-        color: iconColor,
-        size: 16,
-      ),
+      child: Icon(Icons.circle, color: iconColor, size: 16),
     );
   }
 }

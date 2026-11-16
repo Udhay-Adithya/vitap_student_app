@@ -2,11 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:vit_ap_student_app/core/common/widget/auth_field.dart';
 import 'package:vit_ap_student_app/core/common/widget/bottom_navigation_bar.dart';
 import 'package:vit_ap_student_app/core/constants/analytics_constants.dart';
-import 'package:vit_ap_student_app/core/network/connection_checker.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/utils/launch_web.dart';
@@ -108,26 +106,6 @@ class LoginPageState extends ConsumerState<LoginPage> {
           .logError(
             'validation_error',
             'Login form validation failed',
-            location: 'login_page',
-          );
-      return;
-    }
-
-    final connectivityResult = await ConnectionCheckerImpl(
-      InternetConnection(),
-    ).isConnected;
-    if (!mounted) return;
-    if (!connectivityResult) {
-      showSnackBar(
-        context,
-        'Please check your internet connection',
-        SnackBarType.error,
-      );
-      ref
-          .read(analyticsServiceProvider)
-          .logError(
-            'connectivity_error',
-            'No internet connection during login',
             location: 'login_page',
           );
       return;

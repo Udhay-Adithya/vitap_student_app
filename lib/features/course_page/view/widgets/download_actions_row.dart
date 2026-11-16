@@ -106,9 +106,7 @@ class DownloadActionsRow extends StatelessWidget {
         foregroundColor: color,
         side: BorderSide(color: color.withValues(alpha: 0.5)),
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }

@@ -55,4 +55,4 @@ final class AnnouncementRepositoryProvider
 }
 
 String _$announcementRepositoryHash() =>
-    r'4efba67614cd4c7c3bd5199a682237a9a7c0e589';
+    r'3ecaea0738fde3bc72bc2db2161f40289933bb7a';

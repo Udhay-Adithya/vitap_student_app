@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:http/http.dart' as http;
@@ -6,18 +7,18 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
+import 'package:vit_ap_student_app/core/providers/http_client.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/home/model/general_outing_report.dart';
 import 'package:vit_ap_student_app/features/home/model/weekend_outing_report.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'outing_remote_repository.g.dart';
 
 @riverpod
 OutingRemoteRepository outingRemoteRepository(Ref ref) {
-  final client = serviceLocator<http.Client>();
-  final vtopService = serviceLocator<VtopClientService>();
+  final client = ref.watch(httpClientProvider);
+  final vtopService = ref.watch(vtopClientServiceProvider);
   return OutingRemoteRepository(client, vtopService);
 }
 
@@ -41,9 +42,7 @@ class OutingRemoteRepository {
       // Use the new executeWithRetry method for robust session handling
       final generalOutingRecords = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.fetchGeneralOutingReports(
-          client: client,
-        ),
+        operation: (client) => vtop.fetchGeneralOutingReports(client: client),
       );
 
       return Right(generalOutingReportFromJson(generalOutingRecords));
@@ -66,9 +65,7 @@ class OutingRemoteRepository {
       // Use the new executeWithRetry method for robust session handling
       final generalOutingRecords = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.fetchWeekendOutingReports(
-          client: client,
-        ),
+        operation: (client) => vtop.fetchWeekendOutingReports(client: client),
       );
 
       log(generalOutingRecords);
@@ -94,10 +91,8 @@ class OutingRemoteRepository {
       // Use the new executeWithRetry method for robust session handling
       final weekendOutingReport = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.fetchWeekendOutingPdf(
-          client: client,
-          bookingId: leaveId,
-        ),
+        operation: (client) =>
+            vtop.fetchWeekendOutingPdf(client: client, bookingId: leaveId),
       );
 
       return Right(weekendOutingReport);
@@ -121,10 +116,8 @@ class OutingRemoteRepository {
       // Use the new executeWithRetry method for robust session handling
       final generalOutingReport = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.fetchGeneralOutingPdf(
-          client: client,
-          leaveId: leaveId,
-        ),
+        operation: (client) =>
+            vtop.fetchGeneralOutingPdf(client: client, leaveId: leaveId),
       );
 
       return Right(generalOutingReport);
@@ -217,10 +210,8 @@ class OutingRemoteRepository {
 
       final response = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.deleteGeneralOuting(
-          client: client,
-          leaveId: leaveId,
-        ),
+        operation: (client) =>
+            vtop.deleteGeneralOuting(client: client, leaveId: leaveId),
       );
 
       return Right(response);
@@ -243,10 +234,8 @@ class OutingRemoteRepository {
 
       final response = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.deleteWeekendOuting(
-          client: client,
-          bookingId: bookingId,
-        ),
+        operation: (client) =>
+            vtop.deleteWeekendOuting(client: client, bookingId: bookingId),
       );
 
       return Right(response);

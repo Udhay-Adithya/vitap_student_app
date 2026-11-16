@@ -29,7 +29,10 @@ void main() {
     test('rejects a blank registration number or password', () {
       // A partially written or restored entry deserializes fine but is just as
       // unusable as having no entry at all.
-      expect(areCredentialsUsable(credentials(registrationNumber: '')), isFalse);
+      expect(
+        areCredentialsUsable(credentials(registrationNumber: '')),
+        isFalse,
+      );
       expect(areCredentialsUsable(credentials(password: '')), isFalse);
       expect(
         areCredentialsUsable(credentials(registrationNumber: '   ')),

@@ -35,9 +35,7 @@ class _LeadingIconState extends State<UserIcon> {
         child: Container(
           height: 50,
           width: 50,
-          decoration: BoxDecoration(
-            color: colors[randomObj.nextInt(11)],
-          ),
+          decoration: BoxDecoration(color: colors[randomObj.nextInt(11)]),
           child: Center(
             child: Text(
               firstLetter,
@@ -51,9 +49,7 @@ class _LeadingIconState extends State<UserIcon> {
         ),
       );
     } else {
-      return const CircleAvatar(
-        child: Text('N/A'),
-      );
+      return const CircleAvatar(child: Text('N/A'));
     }
   }
 }

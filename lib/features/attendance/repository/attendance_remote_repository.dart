@@ -10,7 +10,6 @@ import 'package:vit_ap_student_app/core/models/capstone_attendance.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/attendance/model/attendance_detail.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'attendance_remote_repository.g.dart';
@@ -27,7 +26,7 @@ typedef AttendanceFetch = ({
 
 @riverpod
 AttendanceRemoteRepository attendanceRemoteRepository(Ref ref) {
-  final vtopService = serviceLocator<VtopClientService>();
+  final vtopService = ref.watch(vtopClientServiceProvider);
   return AttendanceRemoteRepository(vtopService);
 }
 
@@ -67,8 +66,9 @@ class AttendanceRemoteRepository {
             .map((dynamic e) => Attendance.fromJson(e as Map<String, dynamic>))
             .toList(),
         // Null for the majority of students, who have no capstone registration.
-        capstone:
-            capstone == null ? null : CapstoneAttendance.fromJson(capstone),
+        capstone: capstone == null
+            ? null
+            : CapstoneAttendance.fromJson(capstone),
       ));
     } catch (e) {
       return Left(
@@ -136,10 +136,8 @@ class AttendanceRemoteRepository {
       // Use the new executeWithRetry method for robust session handling
       final attendanceRecords = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.fetchAttendance(
-          client: client,
-          semesterId: semSubId,
-        ),
+        operation: (client) =>
+            vtop.fetchAttendance(client: client, semesterId: semSubId),
       );
       return Right(attendanceFromJson(attendanceRecords));
     } catch (e) {

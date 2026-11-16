@@ -67,8 +67,10 @@ class _MyExamScheduleState extends ConsumerState<ExamSchedulePage>
     await ref
         .read(examScheduleViewModelProvider.notifier)
         .refreshExamSchedule();
-    ref.read(analyticsServiceProvider).logEvent(AnalyticsEvents.refreshInitiated,
-        {AnalyticsParams.dataType: 'exam_schedule'});
+    ref.read(analyticsServiceProvider).logEvent(
+      AnalyticsEvents.refreshInitiated,
+      {AnalyticsParams.dataType: 'exam_schedule'},
+    );
     // Only stamp "last synced" when the refresh actually succeeded.
     final state = ref.read(examScheduleViewModelProvider);
     if (state != null && !state.hasError) {

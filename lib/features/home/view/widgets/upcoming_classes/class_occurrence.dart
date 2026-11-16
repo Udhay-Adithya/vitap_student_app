@@ -43,8 +43,7 @@ class ClassOccurrence {
 
   /// Minutes past midnight, used purely to order a day's slots. Slots VTOP gave
   /// us no usable time for sort last instead of jumping to the top of the list.
-  int get sortKey =>
-      start == null ? 1 << 30 : start!.hour * 60 + start!.minute;
+  int get sortKey => start == null ? 1 << 30 : start!.hour * 60 + start!.minute;
 
   ClassPhase phaseAt(DateTime now) {
     // A slot with no usable time can never be "done" — VTOP simply didn't emit
@@ -85,11 +84,13 @@ class ClassOccurrence {
 /// order, so sorting here is what keeps the stack reading top-to-bottom as a day.
 List<ClassOccurrence> classesOn(Timetable timetable, DateTime date) {
   final String weekday = DateFormat('EEEE').format(date);
-  final List<ClassOccurrence> classes = getClassesForDay(timetable, weekday)
-      .map((Day day) => ClassOccurrence.on(date, day))
-      .toList();
-  classes.sort((ClassOccurrence a, ClassOccurrence b) =>
-      a.sortKey.compareTo(b.sortKey));
+  final List<ClassOccurrence> classes = getClassesForDay(
+    timetable,
+    weekday,
+  ).map((Day day) => ClassOccurrence.on(date, day)).toList();
+  classes.sort(
+    (ClassOccurrence a, ClassOccurrence b) => a.sortKey.compareTo(b.sortKey),
+  );
   return classes;
 }
 

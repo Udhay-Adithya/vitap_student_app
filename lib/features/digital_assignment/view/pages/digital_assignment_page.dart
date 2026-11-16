@@ -67,8 +67,10 @@ class _DigitalAssignmentPageState extends ConsumerState<DigitalAssignmentPage>
       );
 
   Future<void> _refreshData({bool silentRefresh = false}) async {
-    ref.read(analyticsServiceProvider).logEvent(AnalyticsEvents.refreshInitiated,
-        {AnalyticsParams.dataType: 'digital_assignment'});
+    ref.read(analyticsServiceProvider).logEvent(
+      AnalyticsEvents.refreshInitiated,
+      {AnalyticsParams.dataType: 'digital_assignment'},
+    );
     await ref
         .read(digitalAssignmentViewModelProvider.notifier)
         .refreshDigitalAssignments(silentRefresh: silentRefresh);
@@ -102,10 +104,9 @@ class _DigitalAssignmentPageState extends ConsumerState<DigitalAssignmentPage>
           children: [
             Text(
               'Digital Assignments',
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.w500),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w500),
             ),
             if (lastSynced != null)
               Text(
@@ -167,7 +168,9 @@ class _DigitalAssignmentPageState extends ConsumerState<DigitalAssignmentPage>
         final filtered = assignments.where((a) {
           if (courseTypeFilter.isEmpty) return true;
           return CourseTypeHelper.matchesCategory(
-              a.courseType, courseTypeFilter);
+            a.courseType,
+            courseTypeFilter,
+          );
         }).toList();
 
         if (filtered.isEmpty) {

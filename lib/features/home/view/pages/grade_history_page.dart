@@ -92,7 +92,10 @@ class _GradeHistoryPageState extends ConsumerState<GradeHistoryPage> {
           ? FloatingActionButton.extended(
               onPressed: () {
                 try {
-                  openCgpaCalculator(gradeHistory);
+                  openCgpaCalculator(
+                    gradeHistory,
+                    ref.read(analyticsServiceProvider),
+                  );
                 } catch (e) {
                   if (mounted) {
                     showSnackBar(

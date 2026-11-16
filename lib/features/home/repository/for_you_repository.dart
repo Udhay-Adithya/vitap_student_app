@@ -8,15 +8,15 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vit_ap_student_app/core/constants/server_constants.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
+import 'package:vit_ap_student_app/core/providers/http_client.dart';
 import 'package:vit_ap_student_app/features/home/model/for_you_item.dart';
 import 'package:vit_ap_student_app/features/home/repository/for_you_feed.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
 part 'for_you_repository.g.dart';
 
 @riverpod
 ForYouRepository forYouRepository(Ref ref) {
-  final client = serviceLocator<http.Client>();
+  final client = ref.watch(httpClientProvider);
   return ForYouRepository(client);
 }
 

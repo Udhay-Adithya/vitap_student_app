@@ -53,12 +53,13 @@ void main() {
       bool signedIn = true,
       String? failure,
     }) async {
-      await registerTestDependencies(
+      final deps = testDependencies(
         credentials: signedIn ? testCredentials() : null,
       );
       repository = _FakeAttendanceRepository(failure: failure);
       final container = ProviderContainer(
         overrides: [
+          ...deps.overrides,
           attendanceRemoteRepositoryProvider.overrideWithValue(repository),
         ],
       );

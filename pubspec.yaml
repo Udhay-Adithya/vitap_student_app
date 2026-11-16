@@ -30,14 +30,12 @@ dependencies:
   flutter_secure_storage: ^10.3.1
   fpdart: ^1.1.1
   freezed_annotation: ^3.1.0
-  get_it: ^8.0.3
   google_fonts: ^8.2.0
   home_widget: ^0.9.3
   html: ^0.15.6
   http: ^1.2.1
   iconsax_flutter: ^1.0.0
   in_app_review: ^2.0.12
-  internet_connection_checker_plus: ^2.7.2
   intl: ^0.20.0
   json_annotation: ^4.9.0
   lib_vtop:

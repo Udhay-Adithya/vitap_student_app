@@ -1,11 +1,11 @@
 /// Shared setup for tests that drive a real provider graph.
 ///
-/// The view models reach for ObjectBox, the keychain and analytics through
-/// `serviceLocator` rather than through Riverpod, so overriding providers alone
-/// is not enough to stand one up. This registers throwaway stand-ins for the
-/// three, so a test only has to override the repository it cares about.
+/// Most of the graph hangs off ObjectBox, the keychain and analytics. This
+/// builds throwaway stand-ins for the three and the overrides that plug them
+/// in, so a test only has to add the repository it cares about.
 library;
 
+import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:objectbox/objectbox.dart';
@@ -17,9 +17,9 @@ import 'package:vit_ap_student_app/core/models/mark.dart';
 import 'package:vit_ap_student_app/core/models/profile.dart';
 import 'package:vit_ap_student_app/core/models/timetable.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
+import 'package:vit_ap_student_app/core/providers/store.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/services/secure_store_service.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
 import 'object_box_test_store.dart';
 
@@ -54,28 +54,29 @@ typedef TestDependencies = ({
   TestStore store,
   FakeSecureStorageService secureStorage,
   RecordingAnalyticsService analytics,
+  List<Override> overrides,
 });
 
-/// Registers a throwaway store, keychain and analytics for one test.
+/// A throwaway store, keychain and analytics for one test.
 ///
 /// Pass [credentials] for a test that needs a signed-in student; leave it off
-/// to exercise the "no saved credentials" path.
-Future<TestDependencies> registerTestDependencies({
-  Credentials? credentials,
-}) async {
+/// to exercise the "no saved credentials" path. Spread `overrides` into every
+/// `ProviderContainer` the test builds, so they all share the same three.
+TestDependencies testDependencies({Credentials? credentials}) {
   final store = TestStore.open();
   final secureStorage = FakeSecureStorageService(saved: credentials);
   final analytics = RecordingAnalyticsService();
 
-  // get_it's reset is asynchronous; registering without awaiting it first
-  // leaves the registrations to be wiped by the reset that follows.
-  await serviceLocator.reset();
-  serviceLocator.registerSingleton<Store>(store.store);
-  serviceLocator.registerSingleton<SecureStorageService>(secureStorage);
-  serviceLocator.registerSingleton<AnalyticsService>(analytics);
-  addTearDown(serviceLocator.reset);
-
-  return (store: store, secureStorage: secureStorage, analytics: analytics);
+  return (
+    store: store,
+    secureStorage: secureStorage,
+    analytics: analytics,
+    overrides: [
+      storeProvider.overrideWithValue(store.store),
+      secureStorageServiceProvider.overrideWithValue(secureStorage),
+      analyticsServiceProvider.overrideWithValue(analytics),
+    ],
+  );
 }
 
 Credentials testCredentials({String semSubId = 'AP2026272'}) => Credentials(

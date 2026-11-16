@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/error/exceptions.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/services/demo_service.dart';
@@ -11,6 +12,13 @@ import 'package:vit_ap_student_app/core/utils/single_flight.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/vtop_client.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/vtop_errors.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart';
+
+part 'vtop_service.g.dart';
+
+/// The app's one VTOP session. [VtopClientService.instance] is already a
+/// process-wide singleton; this is how the rest of the app reaches it.
+@Riverpod(keepAlive: true)
+VtopClientService vtopClientService(Ref ref) => VtopClientService.instance;
 
 /// The bridge calls this service depends on, named so tests can substitute
 /// them. Their shapes mirror the generated functions in `vtop_get_client.dart`
@@ -23,9 +31,11 @@ typedef VtopClientFactory =
     });
 typedef VtopLoginCall = Future<void> Function({required VtopClient client});
 typedef VtopOtpSubmitCall =
-    Future<void> Function({required VtopClient client, required String otpCode});
-typedef VtopOtpResendCall =
-    Future<void> Function({required VtopClient client});
+    Future<void> Function({
+      required VtopClient client,
+      required String otpCode,
+    });
+typedef VtopOtpResendCall = Future<void> Function({required VtopClient client});
 
 /// Singleton service for managing VTOP client instances
 /// Maintains a single VtopClient instance per session and persists login state
@@ -101,7 +111,7 @@ class VtopClientService {
     return _instance!;
   }
 
-  // Factory constructor for service locator compatibility
+  /// Same as [instance].
   factory VtopClientService() {
     return instance;
   }

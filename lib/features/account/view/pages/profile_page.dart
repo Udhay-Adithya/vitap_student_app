@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vit_ap_student_app/core/common/widget/user_info_tile.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/profile_card.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends ConsumerStatefulWidget {
   final User? user;
   const ProfilePage(this.user, {super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    serviceLocator<AnalyticsService>().logScreen('ProfilePage');
+    ref.read(analyticsServiceProvider).logScreen('ProfilePage');
   }
 
   /// Profiles cached before the registration number was scraped store an empty

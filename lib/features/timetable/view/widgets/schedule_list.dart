@@ -75,17 +75,15 @@ class EmptySchedule extends StatelessWidget {
           Text(
             'No classes found',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
-          const SizedBox(
-            height: 2,
-          ),
+          const SizedBox(height: 2),
           Text(
             'Seems like a day off 😪',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),

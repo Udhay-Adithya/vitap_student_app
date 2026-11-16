@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vit_ap_student_app/core/constants/analytics_constants.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/features/account/model/faq_content.dart';
 import 'package:vit_ap_student_app/features/account/view/pages/faq_page.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
 /// A short explanation with a way through to the full answer.
 ///
@@ -12,7 +12,7 @@ import 'package:vit_ap_student_app/init_dependencies.dart';
 /// app demanding an OTP like a bank?") and act on that theory; they do not go
 /// looking for a reference page. So the answer has to be at the point of
 /// friction, with the depth one tap away.
-class FaqLink extends StatelessWidget {
+class FaqLink extends ConsumerWidget {
   const FaqLink({
     super.key,
     required this.topic,
@@ -31,8 +31,8 @@ class FaqLink extends StatelessWidget {
   final String linkText;
   final IconData? icon;
 
-  void _open(BuildContext context) {
-    serviceLocator<AnalyticsService>().logEvent(
+  void _open(BuildContext context, WidgetRef ref) {
+    ref.read(analyticsServiceProvider).logEvent(
       AnalyticsEvents.faqTopicOpened,
       <String, Object?>{AnalyticsParams.topic: topic.name},
     );
@@ -43,7 +43,7 @@ class FaqLink extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final ColorScheme cs = Theme.of(context).colorScheme;
     final TextTheme tt = Theme.of(context).textTheme;
 
@@ -74,7 +74,7 @@ class FaqLink extends StatelessWidget {
                 const SizedBox(height: 2),
                 InkWell(
                   borderRadius: BorderRadius.circular(6),
-                  onTap: () => _open(context),
+                  onTap: () => _open(context, ref),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(

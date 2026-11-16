@@ -87,7 +87,7 @@ class _CourseRelToManyConverter
   ToMany<Course> fromJson(List<dynamic>? json) {
     final items =
         json?.map((e) => Course.fromJson(e as Map<String, dynamic>)).toList() ??
-            [];
+        [];
     return ToMany<Course>(items: items);
   }
 

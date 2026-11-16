@@ -20,10 +20,7 @@ class _ToastWidget extends StatefulWidget {
   final String message;
   final Duration duration;
 
-  const _ToastWidget({
-    required this.message,
-    required this.duration,
-  });
+  const _ToastWidget({required this.message, required this.duration});
 
   @override
   State<_ToastWidget> createState() => _ToastWidgetState();
@@ -43,9 +40,10 @@ class _ToastWidgetState extends State<_ToastWidget>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.5),
@@ -55,11 +53,14 @@ class _ToastWidgetState extends State<_ToastWidget>
     _controller.forward();
 
     // Start fade out before removal
-    Future<void>.delayed(widget.duration - const Duration(milliseconds: 300), () {
-      if (mounted) {
-        _controller.reverse();
-      }
-    });
+    Future<void>.delayed(
+      widget.duration - const Duration(milliseconds: 300),
+      () {
+        if (mounted) {
+          _controller.reverse();
+        }
+      },
+    );
   }
 
   @override
@@ -82,8 +83,10 @@ class _ToastWidgetState extends State<_ToastWidget>
             color: Colors.transparent,
             child: Center(
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.inverseSurface,
                   borderRadius: BorderRadius.circular(24),

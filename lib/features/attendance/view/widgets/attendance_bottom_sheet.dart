@@ -7,7 +7,6 @@ import 'package:vit_ap_student_app/core/models/attendance.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/features/attendance/model/attendance_detail.dart';
 import 'package:vit_ap_student_app/features/attendance/viewmodel/detailed_attendance_viewmodel.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:wave/wave.dart';
 
 void showAttendanceBottomSheet(BuildContext context, Attendance subjectInfo) {
@@ -15,7 +14,8 @@ void showAttendanceBottomSheet(BuildContext context, Attendance subjectInfo) {
   final double attendancePercentage = double.tryParse(attendanceStr) ?? 0.0;
 
   // Analytics tracking
-  serviceLocator<AnalyticsService>()
+  ProviderScope.containerOf(context, listen: false)
+      .read(analyticsServiceProvider)
       .logEvent(AnalyticsEvents.attendanceDetailOpened, {
         AnalyticsParams.courseCode: subjectInfo.courseCode,
         AnalyticsParams.courseType: subjectInfo.courseType,
@@ -342,7 +342,8 @@ Widget _buildDetailedTab(
 
                 return IconButton.filled(
                   onPressed: () {
-                    serviceLocator<AnalyticsService>()
+                    ref
+                        .read(analyticsServiceProvider)
                         .logEvent(AnalyticsEvents.refreshInitiated, {
                           AnalyticsParams.dataType: 'attendance_detail',
                           AnalyticsParams.courseType:

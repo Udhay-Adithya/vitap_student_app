@@ -8,10 +8,7 @@ import 'package:vit_ap_student_app/features/home/view/widgets/outing/utils.dart'
 class GeneralOutingCard extends StatelessWidget {
   final GeneralOutingReport outing;
 
-  const GeneralOutingCard({
-    super.key,
-    required this.outing,
-  });
+  const GeneralOutingCard({super.key, required this.outing});
 
   bool _isToday() {
     try {
@@ -20,11 +17,14 @@ class GeneralOutingCard extends StatelessWidget {
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
       return (today.isAtSameMomentAs(
-                  DateTime(fromDate.year, fromDate.month, fromDate.day)) ||
+                DateTime(fromDate.year, fromDate.month, fromDate.day),
+              ) ||
               today.isAfter(
-                  DateTime(fromDate.year, fromDate.month, fromDate.day))) &&
+                DateTime(fromDate.year, fromDate.month, fromDate.day),
+              )) &&
           (today.isAtSameMomentAs(
-                  DateTime(toDate.year, toDate.month, toDate.day)) ||
+                DateTime(toDate.year, toDate.month, toDate.day),
+              ) ||
               today.isBefore(DateTime(toDate.year, toDate.month, toDate.day)));
     } catch (e) {
       return false;
@@ -209,7 +209,9 @@ class GeneralOutingCard extends StatelessWidget {
                                 const SizedBox(width: 8),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 2),
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: colorScheme.surfaceContainerHigh,
                                     borderRadius: BorderRadius.circular(12),
@@ -248,10 +250,14 @@ class GeneralOutingCard extends StatelessWidget {
               if (outing.canDownload) ...[
                 const SizedBox(height: 12),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
-                    color: colorScheme.secondaryContainer.withValues(alpha: 0.3),
+                    color: colorScheme.secondaryContainer.withValues(
+                      alpha: 0.3,
+                    ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -317,8 +323,9 @@ class _DurationBadge extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color:
-                  isToday ? colorScheme.primary : colorScheme.onSurfaceVariant,
+              color: isToday
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -331,10 +338,7 @@ class _StatusBadge extends StatelessWidget {
   final String label;
   final Color color;
 
-  const _StatusBadge({
-    required this.label,
-    required this.color,
-  });
+  const _StatusBadge({required this.label, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -350,10 +354,7 @@ class _StatusBadge extends StatelessWidget {
           Container(
             width: 6,
             height: 6,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 6),
           Text(
@@ -374,10 +375,7 @@ class _TimeBadge extends StatelessWidget {
   final String label;
   final Color color;
 
-  const _TimeBadge({
-    required this.label,
-    required this.color,
-  });
+  const _TimeBadge({required this.label, required this.color});
 
   @override
   Widget build(BuildContext context) {

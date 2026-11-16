@@ -55,7 +55,10 @@ void main() {
   group('preparePdf', () {
     test('adds the extension to a bare name', () {
       expect(
-        FileSaver.preparePdf(bytes: pdf, fileName: 'general_outing_42').fileName,
+        FileSaver.preparePdf(
+          bytes: pdf,
+          fileName: 'general_outing_42',
+        ).fileName,
         'general_outing_42.pdf',
       );
     });

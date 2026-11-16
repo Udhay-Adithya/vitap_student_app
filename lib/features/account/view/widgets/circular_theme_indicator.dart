@@ -54,9 +54,7 @@ class CircularThemeIndicator extends StatelessWidget {
                     children: [
                       // Top half - Primary color
                       Expanded(
-                        child: Container(
-                          color: colorScheme.primaryContainer,
-                        ),
+                        child: Container(color: colorScheme.primaryContainer),
                       ),
                       // Bottom half split vertically
                       Expanded(
@@ -70,9 +68,7 @@ class CircularThemeIndicator extends StatelessWidget {
                             ),
                             // Bottom right - Tertiary color
                             Expanded(
-                              child: Container(
-                                color: colorScheme.primary,
-                              ),
+                              child: Container(color: colorScheme.primary),
                             ),
                           ],
                         ),

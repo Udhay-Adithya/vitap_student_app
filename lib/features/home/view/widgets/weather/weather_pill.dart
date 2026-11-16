@@ -81,9 +81,7 @@ class _WeatherMenu extends StatelessWidget {
       style: MenuStyle(
         alignment: Alignment.bottomLeft,
         padding: const WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.zero),
-        backgroundColor: WidgetStatePropertyAll<Color>(
-          cs.surfaceContainerHigh,
-        ),
+        backgroundColor: WidgetStatePropertyAll<Color>(cs.surfaceContainerHigh),
         shape: WidgetStatePropertyAll<OutlinedBorder>(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         ),

@@ -24,7 +24,9 @@ class MaterialDownloadViewmodel extends _$MaterialDownloadViewmodel {
 
     if (credentials == null) {
       state = AsyncValue.error(
-          'User not found. Please Logout and Login.', StackTrace.current);
+        'User not found. Please Logout and Login.',
+        StackTrace.current,
+      );
       return null;
     }
 
@@ -45,15 +47,18 @@ class MaterialDownloadViewmodel extends _$MaterialDownloadViewmodel {
     return null;
   }
 
-  Future<Uint8List?> downloadAllMaterials(
-      {required String downloadPath}) async {
+  Future<Uint8List?> downloadAllMaterials({
+    required String downloadPath,
+  }) async {
     state = const AsyncValue.loading();
     final userNotifier = ref.read(currentUserProvider.notifier);
     final Credentials? credentials = await userNotifier.getSavedCredentials();
 
     if (credentials == null) {
       state = AsyncValue.error(
-          'User not found. Please Logout and Login.', StackTrace.current);
+        'User not found. Please Logout and Login.',
+        StackTrace.current,
+      );
       return null;
     }
 
@@ -84,7 +89,9 @@ class MaterialDownloadViewmodel extends _$MaterialDownloadViewmodel {
 
     if (credentials == null) {
       state = AsyncValue.error(
-          'User not found. Please Logout and Login.', StackTrace.current);
+        'User not found. Please Logout and Login.',
+        StackTrace.current,
+      );
       return null;
     }
 

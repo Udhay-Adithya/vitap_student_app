@@ -55,4 +55,4 @@ final class HomeRemoteRepositoryProvider
 }
 
 String _$homeRemoteRepositoryHash() =>
-    r'5bff3aee5c921e6687db240a0738530394a0ac54';
+    r'7dc9cdcb1f724a479f112654588c7975c66c4f63';

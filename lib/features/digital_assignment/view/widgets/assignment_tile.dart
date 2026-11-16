@@ -120,8 +120,8 @@ class _AssignmentTileState extends ConsumerState<AssignmentTile> {
                   _DownloadAction(
                     label: 'Question paper',
                     busy: _downloadingLabel == 'QP',
-                    blocked: _downloadingLabel != null &&
-                        _downloadingLabel != 'QP',
+                    blocked:
+                        _downloadingLabel != null && _downloadingLabel != 'QP',
                     onPressed: () => _downloadFile(
                       'QP',
                       detail.qpDownloadUrl,
@@ -132,8 +132,8 @@ class _AssignmentTileState extends ConsumerState<AssignmentTile> {
                   _DownloadAction(
                     label: 'My submission',
                     busy: _downloadingLabel == 'DA',
-                    blocked: _downloadingLabel != null &&
-                        _downloadingLabel != 'DA',
+                    blocked:
+                        _downloadingLabel != null && _downloadingLabel != 'DA',
                     onPressed: () => _downloadFile(
                       'DA',
                       detail.daDownloadUrl,
@@ -242,11 +242,10 @@ class _AssignmentTileState extends ConsumerState<AssignmentTile> {
 
     int? progressId;
     try {
-      ref
-          .read(analyticsServiceProvider)
-          .logEvent(AnalyticsEvents.digitalAssignmentDownload, {
-            AnalyticsParams.courseCode: widget.courseCode,
-          });
+      ref.read(analyticsServiceProvider).logEvent(
+        AnalyticsEvents.digitalAssignmentDownload,
+        {AnalyticsParams.courseCode: widget.courseCode},
+      );
 
       progressId = await NotificationService.showDownloadProgressIndeterminate(
         downloadType: DownloadType.digitalAssignment,
@@ -273,7 +272,11 @@ class _AssignmentTileState extends ConsumerState<AssignmentTile> {
             fileName: '${widget.courseCode} - $fileLabel',
           );
           if (mounted) {
-            showSnackBar(context, 'File saved successfully', SnackBarType.success);
+            showSnackBar(
+              context,
+              'File saved successfully',
+              SnackBarType.success,
+            );
           }
         }
       }
@@ -350,9 +353,7 @@ class _DownloadAction extends StatelessWidget {
       label: Text(busy ? 'Downloading…' : label),
       style: OutlinedButton.styleFrom(
         shape: const StadiumBorder(),
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.outlineVariant,
-        ),
+        side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
       ),
     );
   }

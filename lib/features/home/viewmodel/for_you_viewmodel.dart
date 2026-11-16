@@ -126,26 +126,23 @@ class ForYouViewModel extends _$ForYouViewModel {
     final repository = ref.read(forYouRepositoryProvider);
     final result = await repository.likeItem(itemId);
 
-    result.fold(
-      (failure) => null,
-      (updatedItem) {
-        likedSession.addLike(itemId);
+    result.fold((failure) => null, (updatedItem) {
+      likedSession.addLike(itemId);
 
-        // Update in _allItems
-        _allItems = _allItems.map((item) {
+      // Update in _allItems
+      _allItems = _allItems.map((item) {
+        if (item.id == itemId) return updatedItem;
+        return item;
+      }).toList();
+
+      // Update current state
+      state = state.whenData((items) {
+        return items.map((item) {
           if (item.id == itemId) return updatedItem;
           return item;
         }).toList();
-
-        // Update current state
-        state = state.whenData((items) {
-          return items.map((item) {
-            if (item.id == itemId) return updatedItem;
-            return item;
-          }).toList();
-        });
-      },
-    );
+      });
+    });
   }
 }
 
@@ -154,8 +151,9 @@ class ForYouViewModel extends _$ForYouViewModel {
 List<ForYouItem> featuredItems(Ref ref) {
   final itemsAsync = ref.watch(forYouViewModelProvider);
   return itemsAsync.maybeWhen(
-    data: (items) => items.where((item) => item.isFeatured).toList()
-      ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder)),
+    data: (items) =>
+        items.where((item) => item.isFeatured).toList()
+          ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder)),
     orElse: () => [],
   );
 }

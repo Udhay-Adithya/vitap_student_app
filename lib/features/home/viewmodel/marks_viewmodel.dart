@@ -64,10 +64,7 @@ class MarksViewModel extends _$MarksViewModel {
         password: credentials.password,
         semSubId: credentials.semSubId,
       );
-      gradeRes.match(
-        (_) => null,
-        (courses) => _mergeGrades(newMarks, courses),
-      );
+      gradeRes.match((_) => null, (courses) => _mergeGrades(newMarks, courses));
 
       state = AsyncValue.data(newMarks);
       if (user != null) {

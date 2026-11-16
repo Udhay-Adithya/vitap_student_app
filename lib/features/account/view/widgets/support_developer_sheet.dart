@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_m3shapes_extended/flutter_m3shapes_extended.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:vit_ap_student_app/core/constants/analytics_constants.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/utils/launch_web.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
 /// Ways to back the app, in one place.
 ///
@@ -36,9 +36,10 @@ import 'package:vit_ap_student_app/init_dependencies.dart';
 /// "unlock", "premium", "plan", and nothing implying payment is needed to use
 /// the app.
 void showSupportDeveloperSheet(BuildContext context) {
-  serviceLocator<AnalyticsService>().logEvent(
-    AnalyticsEvents.supportSheetOpened,
-  );
+  ProviderScope.containerOf(
+    context,
+    listen: false,
+  ).read(analyticsServiceProvider).logEvent(AnalyticsEvents.supportSheetOpened);
   showModalBottomSheet<void>(
     context: context,
     showDragHandle: true,
@@ -48,7 +49,7 @@ void showSupportDeveloperSheet(BuildContext context) {
   );
 }
 
-class _SupportDeveloperSheet extends StatelessWidget {
+class _SupportDeveloperSheet extends ConsumerWidget {
   const _SupportDeveloperSheet();
 
   static const String _repoUrl =
@@ -68,7 +69,7 @@ class _SupportDeveloperSheet extends StatelessWidget {
   static bool get _canContribute => _upiId.isNotEmpty;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final ColorScheme cs = Theme.of(context).colorScheme;
     final TextTheme tt = Theme.of(context).textTheme;
 
@@ -114,7 +115,7 @@ class _SupportDeveloperSheet extends StatelessWidget {
               title: 'Star it on GitHub',
               subtitle: 'Free, takes a second, and helps others find it',
               onTap: () {
-                serviceLocator<AnalyticsService>().logEvent(
+                ref.read(analyticsServiceProvider).logEvent(
                   AnalyticsEvents.supportActionTapped,
                   <String, Object?>{AnalyticsParams.method: 'github_star'},
                 );
@@ -127,7 +128,7 @@ class _SupportDeveloperSheet extends StatelessWidget {
               title: 'Contribute',
               subtitle: 'Report a bug, suggest a feature, or send a fix',
               onTap: () {
-                serviceLocator<AnalyticsService>().logEvent(
+                ref.read(analyticsServiceProvider).logEvent(
                   AnalyticsEvents.supportActionTapped,
                   <String, Object?>{AnalyticsParams.method: 'contribute'},
                 );
@@ -141,7 +142,7 @@ class _SupportDeveloperSheet extends StatelessWidget {
                 title: 'Send a coffee',
                 subtitle: 'Any amount, through your usual UPI app',
                 onTap: () {
-                  serviceLocator<AnalyticsService>().logEvent(
+                  ref.read(analyticsServiceProvider).logEvent(
                     AnalyticsEvents.supportActionTapped,
                     <String, Object?>{
                       AnalyticsParams.method: Platform.isAndroid

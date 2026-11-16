@@ -32,17 +32,14 @@ void showSnackBar(BuildContext context, String content, SnackBarType type) {
         closeIconColor: Colors.black,
         content: Row(
           children: [
-            Icon(
-              prefixIcon,
-              color: Colors.black,
-            ),
+            Icon(prefixIcon, color: Colors.black),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 content,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.black,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: Colors.black),
               ),
             ),
           ],

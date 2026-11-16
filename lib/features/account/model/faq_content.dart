@@ -23,7 +23,11 @@ enum FaqTopic {
 }
 
 class FaqEntry {
-  const FaqEntry({required this.topic, required this.question, required this.answer});
+  const FaqEntry({
+    required this.topic,
+    required this.question,
+    required this.answer,
+  });
 
   final FaqTopic topic;
   final String question;
@@ -112,7 +116,8 @@ const List<FaqEntry> faqEntries = <FaqEntry>[
   ),
   FaqEntry(
     topic: FaqTopic.otherStudentsData,
-    question: "Why can't the app show class averages, ranks or other students' marks?",
+    question:
+        "Why can't the app show class averages, ranks or other students' marks?",
     answer:
         'Because the app has no access to anyone but you. It works by signing '
         'in to VTOP with your own credentials and reading the pages you would '

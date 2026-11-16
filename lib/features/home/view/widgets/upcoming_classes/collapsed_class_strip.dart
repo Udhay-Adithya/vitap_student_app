@@ -68,7 +68,11 @@ class CollapsedClassStrip extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             trailing: isCompleted
-                ? Icon(Icons.check_rounded, size: 18, color: cs.onSurfaceVariant)
+                ? Icon(
+                    Icons.check_rounded,
+                    size: 18,
+                    color: cs.onSurfaceVariant,
+                  )
                 : venue.isEmpty
                 ? null
                 : ConstrainedBox(

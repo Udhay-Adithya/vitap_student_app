@@ -13,7 +13,6 @@ import 'package:vit_ap_student_app/core/providers/user_preferences_notifier.dart
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/services/app_upgrader.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
-import 'package:vit_ap_student_app/core/utils/app_licenses.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/app_upgrade_alert.dart';
 import 'package:vit_ap_student_app/features/auth/view/widgets/auth_failure_bottom_sheet.dart';
 import 'package:vit_ap_student_app/features/auth/view/widgets/login_otp_bottom_sheet.dart';
@@ -23,10 +22,9 @@ import 'package:wiredash/wiredash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  registerAppLicenses();
-  await initDependencies();
+  final container = await initDependencies();
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -37,9 +35,7 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-  final AnalyticsRouteObserver _routeObserver = AnalyticsRouteObserver(
-    serviceLocator<AnalyticsService>(),
-  );
+  late final AnalyticsRouteObserver _routeObserver;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   StreamSubscription<void>? _otpSubscription;
   StreamSubscription<String>? _authFailureSubscription;
@@ -49,11 +45,14 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
-    _otpSubscription = serviceLocator<VtopClientService>().onOtpRequired.listen(
+    _routeObserver = AnalyticsRouteObserver(ref.read(analyticsServiceProvider));
+    final vtopService = ref.read(vtopClientServiceProvider);
+    _otpSubscription = vtopService.onOtpRequired.listen(
       (_) => _showGlobalOtpSheet(),
     );
-    _authFailureSubscription = serviceLocator<VtopClientService>().onAuthFailure
-        .listen((message) => _showGlobalAuthFailureSheet(message));
+    _authFailureSubscription = vtopService.onAuthFailure.listen(
+      (message) => _showGlobalAuthFailureSheet(message),
+    );
   }
 
   @override
@@ -76,7 +75,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       // Safety net: if the sheet closed without resolving OTP
       // (e.g. unexpected dismissal), cancel the pending completer
       // so the blocked operation doesn't hang forever.
-      final vtopService = serviceLocator<VtopClientService>();
+      final vtopService = ref.read(vtopClientServiceProvider);
       if (vtopService.isOtpPending) {
         vtopService.cancelOtp();
       }
