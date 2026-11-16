@@ -47,7 +47,7 @@ final class GradeViewViewmodelProvider
 }
 
 String _$gradeViewViewmodelHash() =>
-    r'012be2caad008f800016eac8817d59c8fe29b384';
+    r'bb309e3a0084fd7e76f13b3ff0809072e26d3e58';
 
 abstract class _$GradeViewViewmodel
     extends $Notifier<AsyncValue<List<GradeViewCourseModel>>?> {

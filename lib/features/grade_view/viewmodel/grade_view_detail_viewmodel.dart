@@ -2,7 +2,6 @@ import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
-import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/grade_view/model/grade_view_detail.dart';
 import 'package:vit_ap_student_app/features/grade_view/repository/grade_view_remote_repository.dart';
 
@@ -25,12 +24,6 @@ class GradeViewDetailViewmodel extends _$GradeViewDetailViewmodel {
     required String courseId,
   }) async {
     state = const AsyncValue.loading();
-
-    // Demo mode: serve bundled sample detail.
-    if (DemoService.isDemoMode) {
-      state = AsyncValue.data(await DemoService.instance.gradeViewDetail());
-      return;
-    }
 
     final userNotifier = ref.read(currentUserProvider.notifier);
     final Credentials? credentials = await userNotifier.getSavedCredentials();
