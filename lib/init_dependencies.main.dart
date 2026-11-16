@@ -22,7 +22,7 @@ Future<ProviderContainer> initDependencies() async {
 
   await HomeWidget.setAppGroupId('group.com.udhay.vitapstudentapp');
 
-  await NotificationService.initialize();
+  await container.read(notificationServiceProvider).initialize();
 
   // Block Landscape View
   await SystemChrome.setPreferredOrientations([

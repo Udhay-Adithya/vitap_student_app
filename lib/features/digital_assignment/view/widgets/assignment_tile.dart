@@ -237,6 +237,7 @@ class _AssignmentTileState extends ConsumerState<AssignmentTile> {
     String downloadUrl,
     String fileLabel,
   ) async {
+    final notifications = ref.read(notificationServiceProvider);
     if (_downloadingLabel != null) return;
     setState(() => _downloadingLabel = key);
 
@@ -247,7 +248,7 @@ class _AssignmentTileState extends ConsumerState<AssignmentTile> {
         {AnalyticsParams.courseCode: widget.courseCode},
       );
 
-      progressId = await NotificationService.showDownloadProgressIndeterminate(
+      progressId = await notifications.showDownloadProgressIndeterminate(
         downloadType: DownloadType.digitalAssignment,
         fileName: '${widget.courseCode} - $fileLabel',
       );
@@ -263,11 +264,11 @@ class _AssignmentTileState extends ConsumerState<AssignmentTile> {
           FileSaver.prepare(bytes: bytes, baseName: fileLabel),
         );
 
-        await NotificationService.cancelDownloadProgress(progressId);
+        await notifications.cancelDownloadProgress(progressId);
         progressId = null;
 
         if (savedPath != null && mounted) {
-          await NotificationService.showDownloadCompleteNotification(
+          await notifications.showDownloadCompleteNotification(
             downloadType: DownloadType.digitalAssignment,
             fileName: '${widget.courseCode} - $fileLabel',
           );
@@ -286,7 +287,7 @@ class _AssignmentTileState extends ConsumerState<AssignmentTile> {
       }
     } finally {
       if (progressId != null) {
-        await NotificationService.cancelDownloadProgress(progressId);
+        await notifications.cancelDownloadProgress(progressId);
       }
       if (mounted) setState(() => _downloadingLabel = null);
     }

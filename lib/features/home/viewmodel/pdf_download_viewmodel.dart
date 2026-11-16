@@ -112,6 +112,7 @@ class GeneralOutingPdfDownloadViewModel
     String leaveId,
     String? customFileName,
   ) async {
+    final notifications = ref.read(notificationServiceProvider);
     try {
       final fileName = customFileName ?? 'general_outing_$leaveId';
 
@@ -122,7 +123,7 @@ class GeneralOutingPdfDownloadViewModel
       );
 
       if (savedPath != null) {
-        await NotificationService.showDownloadCompleteNotification(
+        await notifications.showDownloadCompleteNotification(
           downloadType: DownloadType.generalOuting,
           fileName: 'General Outing Pass ($leaveId)',
         );
@@ -242,6 +243,7 @@ class WeekendOutingPdfDownloadViewModel
     String leaveId,
     String? customFileName,
   ) async {
+    final notifications = ref.read(notificationServiceProvider);
     try {
       final fileName = customFileName ?? 'weekend_outing_$leaveId';
 
@@ -252,7 +254,7 @@ class WeekendOutingPdfDownloadViewModel
       );
 
       if (savedPath != null) {
-        await NotificationService.showDownloadCompleteNotification(
+        await notifications.showDownloadCompleteNotification(
           downloadType: DownloadType.weekendOuting,
           fileName: 'Weekend Outing Pass ($leaveId)',
         );
