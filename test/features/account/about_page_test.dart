@@ -17,18 +17,20 @@ void main() {
 
   // The licenses screen is where NOTICE requires the attribution to be
   // reachable from, so the button must open it, not ripple and do nothing.
-  testWidgets('the licenses tile opens the licenses page with the attribution',
-      (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: AboutPage()));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'the licenses tile opens the licenses page with the attribution',
+    (tester) async {
+      await tester.pumpWidget(const MaterialApp(home: AboutPage()));
+      await tester.pumpAndSettle();
 
-    final tile = find.text('Open Source Licenses');
-    await tester.scrollUntilVisible(tile, 100);
-    await tester.tap(tile);
-    await tester.pumpAndSettle();
+      final tile = find.text('Open Source Licenses');
+      await tester.scrollUntilVisible(tile, 100);
+      await tester.tap(tile);
+      await tester.pumpAndSettle();
 
-    expect(find.byType(LicensePage), findsOneWidget);
-    expect(find.textContaining('Based on VITAP Student'), findsOneWidget);
-    expect(find.text(appLicensePackage), findsWidgets);
-  });
+      expect(find.byType(LicensePage), findsOneWidget);
+      expect(find.textContaining('Based on VITAP Student'), findsOneWidget);
+      expect(find.text(appLicensePackage), findsWidgets);
+    },
+  );
 }

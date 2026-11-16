@@ -34,33 +34,26 @@ void registerAppLicenses({AssetBundle? bundle}) {
   final AssetBundle assets = bundle ?? rootBundle;
 
   LicenseRegistry.addLicense(() async* {
-    yield LicenseEntryWithLineBreaks(
-      const [appLicensePackage],
-      await assets.loadString('NOTICE'),
-    );
-    yield LicenseEntryWithLineBreaks(
-      const [appLicensePackage],
-      await assets.loadString('LICENSE'),
-    );
-    yield LicenseEntryWithLineBreaks(
-      const [rustLicensePackage],
-      await assets.loadString('rust/NOTICE'),
-    );
-    yield LicenseEntryWithLineBreaks(
-      const [rustLicensePackage],
-      await assets.loadString('rust/LICENSE'),
-    );
-    yield LicenseEntryWithLineBreaks(
-      const ['Google Sans'],
-      await assets.loadString('assets/fonts/OFL.txt'),
-    );
-    yield LicenseEntryWithLineBreaks(
-      const [weatherIconsLicensePackage],
-      await assets.loadString('assets/licenses/meteocons.txt'),
-    );
-    yield LicenseEntryWithLineBreaks(
-      const [appIconLicensePackage],
-      await assets.loadString('assets/licenses/mortarboard.txt'),
-    );
+    yield LicenseEntryWithLineBreaks(const [
+      appLicensePackage,
+    ], await assets.loadString('NOTICE'));
+    yield LicenseEntryWithLineBreaks(const [
+      appLicensePackage,
+    ], await assets.loadString('LICENSE'));
+    yield LicenseEntryWithLineBreaks(const [
+      rustLicensePackage,
+    ], await assets.loadString('rust/NOTICE'));
+    yield LicenseEntryWithLineBreaks(const [
+      rustLicensePackage,
+    ], await assets.loadString('rust/LICENSE'));
+    yield LicenseEntryWithLineBreaks(const [
+      'Google Sans',
+    ], await assets.loadString('assets/fonts/OFL.txt'));
+    yield LicenseEntryWithLineBreaks(const [
+      weatherIconsLicensePackage,
+    ], await assets.loadString('assets/licenses/meteocons.txt'));
+    yield LicenseEntryWithLineBreaks(const [
+      appIconLicensePackage,
+    ], await assets.loadString('assets/licenses/mortarboard.txt'));
   });
 }
