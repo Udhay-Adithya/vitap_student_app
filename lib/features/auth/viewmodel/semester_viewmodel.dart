@@ -1,9 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:vit_ap_student_app/core/network/connection_checker.dart';
 import 'package:vit_ap_student_app/features/auth/repository/auth_local_repository.dart';
 import 'package:vit_ap_student_app/features/auth/repository/auth_remote_repository.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/types/semester.dart';
 
 part 'semester_viewmodel.g.dart';
@@ -12,13 +10,11 @@ part 'semester_viewmodel.g.dart';
 class SemesterViewModel extends _$SemesterViewModel {
   late AuthRemoteRepository _authRemoteRepository;
   late AuthLocalRepository _authLocalRepository;
-  late ConnectionChecker _connectionChecker;
 
   @override
   AsyncValue<List<SemesterInfo>>? build() {
     _authRemoteRepository = ref.watch(authRemoteRepositoryProvider);
     _authLocalRepository = ref.watch(authLocalRepositoryProvider);
-    _connectionChecker = serviceLocator<ConnectionChecker>();
     return null;
   }
 
@@ -29,22 +25,8 @@ class SemesterViewModel extends _$SemesterViewModel {
   }) async {
     state = const AsyncValue.loading();
 
-    // Check internet connectivity
-    final hasInternet = await _connectionChecker.isConnected;
-
-    // If no internet, return cached data
-    if (!hasInternet) {
-      final cachedResult = await _authLocalRepository.getSemesters();
-      switch (cachedResult) {
-        case Left(value: final l):
-          state = AsyncValue.error(l.message, StackTrace.current);
-        case Right(value: final r):
-          state = AsyncValue.data(r);
-      }
-      return;
-    }
-
-    // If internet is available, check for local data
+    // No connectivity probe up front: offline shows up as the remote fetch
+    // failing, which keeps the cache on screen below.
     final hasCachedData = _authLocalRepository.hasCachedSemesters();
 
     if (hasCachedData) {
