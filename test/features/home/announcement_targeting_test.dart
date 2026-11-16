@@ -58,8 +58,10 @@ void main() {
     // A typo in importance should not bury the announcement at the quietest
     // level — it falls back to medium.
     test('falls back on unknown enum values', () {
-      expect(parse(raw(importance: 'crticial')).importance,
-          AnnouncementImportance.medium);
+      expect(
+        parse(raw(importance: 'crticial')).importance,
+        AnnouncementImportance.medium,
+      );
       expect(parse(raw(type: 'weather')).type, AnnouncementType.general);
     });
 
@@ -115,8 +117,10 @@ void main() {
 
     test('degrades to empty on a malformed body', () {
       expect(AnnouncementResponse.parse(null).announcements, isEmpty);
-      expect(AnnouncementResponse.parse(<String, dynamic>{}).announcements,
-          isEmpty);
+      expect(
+        AnnouncementResponse.parse(<String, dynamic>{}).announcements,
+        isEmpty,
+      );
     });
   });
 
@@ -134,7 +138,11 @@ void main() {
 
     test('platform gate', () {
       final Announcement a = parse(
-        raw(targets: <String, dynamic>{'platforms': <String>['ios']}),
+        raw(
+          targets: <String, dynamic>{
+            'platforms': <String>['ios'],
+          },
+        ),
       );
       expect(
         matchesAudience(a, audience(platform: AnnouncementPlatform.ios)),
@@ -164,12 +172,15 @@ void main() {
       expect(matchesAudience(a, audience(version: '2.8.9')), isFalse);
     });
 
-    test('holds back a version-gated notice when the version is unreadable', () {
-      final Announcement a = parse(
-        raw(targets: <String, dynamic>{'maxAppVersion': '2.3.3'}),
-      );
-      expect(matchesAudience(a, audience(version: null)), isFalse);
-    });
+    test(
+      'holds back a version-gated notice when the version is unreadable',
+      () {
+        final Announcement a = parse(
+          raw(targets: <String, dynamic>{'maxAppVersion': '2.3.3'}),
+        );
+        expect(matchesAudience(a, audience(version: null)), isFalse);
+      },
+    );
 
     test('cohort gates', () {
       final Announcement a = parse(
@@ -190,7 +201,11 @@ void main() {
     test('a malformed block skips the announcement entirely', () {
       expect(
         Announcement.tryParse(
-          raw(targets: <String, dynamic>{'platforms': <String>['windows']}),
+          raw(
+            targets: <String, dynamic>{
+              'platforms': <String>['windows'],
+            },
+          ),
         ),
         isNull,
       );
@@ -200,10 +215,7 @@ void main() {
         ),
         isNull,
       );
-      expect(
-        Announcement.tryParse(raw(targets: 'android')),
-        isNull,
-      );
+      expect(Announcement.tryParse(raw(targets: 'android')), isNull);
     });
   });
 
@@ -233,15 +245,28 @@ void main() {
     test('sorts by importance then recency', () {
       final List<Announcement> feed = <Announcement>[
         parse(raw(id: 'low', importance: 'low')),
-        parse(raw(id: 'old-critical', importance: 'critical',
-            createdAt: '2026-07-01T00:00:00Z')),
-        parse(raw(id: 'new-critical', importance: 'critical',
-            createdAt: '2026-08-05T00:00:00Z')),
+        parse(
+          raw(
+            id: 'old-critical',
+            importance: 'critical',
+            createdAt: '2026-07-01T00:00:00Z',
+          ),
+        ),
+        parse(
+          raw(
+            id: 'new-critical',
+            importance: 'critical',
+            createdAt: '2026-08-05T00:00:00Z',
+          ),
+        ),
       ];
 
       expect(
-        visibleAnnouncements(feed, audience: audience(), now: now)
-            .map((Announcement a) => a.id),
+        visibleAnnouncements(
+          feed,
+          audience: audience(),
+          now: now,
+        ).map((Announcement a) => a.id),
         <String>['new-critical', 'old-critical', 'low'],
       );
     });
@@ -267,9 +292,10 @@ void main() {
   group('prunedDismissedIds', () {
     test('forgets ids that have left the feed', () {
       expect(
-        prunedDismissedIds(<String>{'a', 'gone'}, <Announcement>[
-          parse(raw(id: 'a')),
-        ]),
+        prunedDismissedIds(
+          <String>{'a', 'gone'},
+          <Announcement>[parse(raw(id: 'a'))],
+        ),
         <String>{'a'},
       );
     });

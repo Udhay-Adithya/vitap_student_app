@@ -46,21 +46,22 @@ class CommonTimePicker extends StatelessWidget {
           onTap: () => _pick(context, state),
           child: InputDecorator(
             isEmpty: selectedTime == null,
-            decoration: appInputDecoration(
-              context,
-              labelText: label,
-              suffixIcon: const Icon(Icons.schedule_rounded, size: 20),
-            ).copyWith(
-              errorText: state.errorText,
-              // The icon is decoration — the whole field is the tap target — so
-              // it doesn't need the 48px minimum a real icon button gets. That
-              // floor was costing this column a third of its text width when it
-              // sits beside another field.
-              suffixIconConstraints: const BoxConstraints(
-                minWidth: 36,
-                minHeight: 36,
-              ),
-            ),
+            decoration:
+                appInputDecoration(
+                  context,
+                  labelText: label,
+                  suffixIcon: const Icon(Icons.schedule_rounded, size: 20),
+                ).copyWith(
+                  errorText: state.errorText,
+                  // The icon is decoration — the whole field is the tap target — so
+                  // it doesn't need the 48px minimum a real icon button gets. That
+                  // floor was costing this column a third of its text width when it
+                  // sits beside another field.
+                  suffixIconConstraints: const BoxConstraints(
+                    minWidth: 36,
+                    minHeight: 36,
+                  ),
+                ),
             child: Text(
               selectedTime == null ? '' : formatTo12Hour(selectedTime),
               maxLines: 1,
@@ -74,10 +75,7 @@ class CommonTimePicker extends StatelessWidget {
     );
   }
 
-  Future<void> _pick(
-    BuildContext context,
-    FormFieldState<String> state,
-  ) async {
+  Future<void> _pick(BuildContext context, FormFieldState<String> state) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: initialTime ?? _asTimeOfDay(selectedTime) ?? TimeOfDay.now(),

@@ -92,9 +92,7 @@ class MenuTile extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           subtitle!,
-                          style: tt.bodyMedium?.copyWith(
-                            color: accessoryColor,
-                          ),
+                          style: tt.bodyMedium?.copyWith(color: accessoryColor),
                         ),
                       ],
                     ],

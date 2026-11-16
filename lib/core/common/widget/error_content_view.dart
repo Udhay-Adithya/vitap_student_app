@@ -21,34 +21,23 @@ class ErrorContentView extends StatelessWidget {
               width: MediaQuery.sizeOf(context).width / 1.5,
             ),
           ),
-          const SizedBox(
-            height: 24,
-          ),
+          const SizedBox(height: 24),
           Column(
             children: [
-              const Text(
-                'Oops!',
-                style: TextStyle(fontSize: 32),
-              ),
-              const SizedBox(
-                height: 12,
-              ),
+              const Text('Oops!', style: TextStyle(fontSize: 32)),
+              const SizedBox(height: 12),
               Text(
                 textAlign: TextAlign.center,
                 error,
                 style: const TextStyle(fontSize: 14),
               ),
-              const SizedBox(
-                height: 4,
-              ),
+              const SizedBox(height: 4),
               const Text(
                 textAlign: TextAlign.center,
                 'Please consider reporting this error now to prevent this behaviour in the future.',
                 style: TextStyle(fontSize: 14),
               ),
-              const SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 12),
               TextButton(
                 onPressed: () {
                   AppFeedback.compose(context);

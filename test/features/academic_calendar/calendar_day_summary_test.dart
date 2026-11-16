@@ -7,11 +7,11 @@ CalendarEvent event(String description, [String label = '']) =>
     CalendarEvent(description: description, label: label);
 
 CalendarDay day(List<CalendarEvent> events) => CalendarDay(
-      date: '2026-08-01',
-      day: 1,
-      weekday: 'Saturday',
-      events: ToMany<CalendarEvent>(items: [...events]),
-    );
+  date: '2026-08-01',
+  day: 1,
+  weekday: 'Saturday',
+  events: ToMany<CalendarEvent>(items: [...events]),
+);
 
 void main() {
   group('summariseCalendarEvent', () {
@@ -61,8 +61,10 @@ void main() {
 
     test('reads a no-instruction day', () {
       final summary = summariseCalendarEvent(
-        event('No Instructional Day - General (Semester)',
-            'No Instructional Day'),
+        event(
+          'No Instructional Day - General (Semester)',
+          'No Instructional Day',
+        ),
       );
 
       expect(summary.headline, 'No Instructional Day');
@@ -77,8 +79,10 @@ void main() {
     });
 
     test('leaves a description with no class group suffix alone', () {
-      expect(summariseCalendarEvent(event('Convocation Day')).headline,
-          'Convocation Day');
+      expect(
+        summariseCalendarEvent(event('Convocation Day')).headline,
+        'Convocation Day',
+      );
       expect(summariseCalendarEvent(event('CAT - I')).headline, 'CAT - I');
     });
   });
@@ -86,7 +90,9 @@ void main() {
   group('calendarDayKind', () {
     test('is the kind of the only entry', () {
       expect(
-        calendarDayKind(day([event('Holiday - General (Semester)', 'Holiday')])),
+        calendarDayKind(
+          day([event('Holiday - General (Semester)', 'Holiday')]),
+        ),
         CalendarDayKind.holiday,
       );
     });

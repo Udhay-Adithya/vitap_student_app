@@ -30,7 +30,10 @@ void main() {
 
       final tamil = await delegate.load(const Locale('ta'));
       final english = await delegate.load(const Locale('en'));
-      expect(tamil.feedbackStep1MessageTitle, english.feedbackStep1MessageTitle);
+      expect(
+        tamil.feedbackStep1MessageTitle,
+        english.feedbackStep1MessageTitle,
+      );
     });
 
     test('says who actually receives the feedback', () async {

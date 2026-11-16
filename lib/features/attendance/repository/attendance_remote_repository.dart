@@ -67,8 +67,9 @@ class AttendanceRemoteRepository {
             .map((dynamic e) => Attendance.fromJson(e as Map<String, dynamic>))
             .toList(),
         // Null for the majority of students, who have no capstone registration.
-        capstone:
-            capstone == null ? null : CapstoneAttendance.fromJson(capstone),
+        capstone: capstone == null
+            ? null
+            : CapstoneAttendance.fromJson(capstone),
       ));
     } catch (e) {
       return Left(
@@ -136,10 +137,8 @@ class AttendanceRemoteRepository {
       // Use the new executeWithRetry method for robust session handling
       final attendanceRecords = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.fetchAttendance(
-          client: client,
-          semesterId: semSubId,
-        ),
+        operation: (client) =>
+            vtop.fetchAttendance(client: client, semesterId: semSubId),
       );
       return Right(attendanceFromJson(attendanceRecords));
     } catch (e) {

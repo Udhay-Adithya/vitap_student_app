@@ -20,8 +20,10 @@ class WeatherViewModel extends _$WeatherViewModel {
     final res = await _homeRemoteRepository.fetchWeather();
 
     state = switch (res) {
-      Left(value: final failure) =>
-        AsyncValue.error(failure.message, StackTrace.current),
+      Left(value: final failure) => AsyncValue.error(
+        failure.message,
+        StackTrace.current,
+      ),
       Right(value: final weather) => AsyncValue.data(weather),
     };
   }

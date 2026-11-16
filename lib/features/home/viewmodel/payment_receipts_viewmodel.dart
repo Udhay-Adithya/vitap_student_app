@@ -40,8 +40,10 @@ class PaymentReceiptsViewModel extends _$PaymentReceiptsViewModel {
     );
 
     state = switch (res) {
-      Left(value: final failure) =>
-        AsyncValue.error(failure.message, StackTrace.current),
+      Left(value: final failure) => AsyncValue.error(
+        failure.message,
+        StackTrace.current,
+      ),
       Right(value: final paymentReceipts) => AsyncValue.data(paymentReceipts),
     };
   }

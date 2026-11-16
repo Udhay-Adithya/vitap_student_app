@@ -49,21 +49,25 @@ class CommonDatePicker extends StatelessWidget {
           onTap: () => _pick(context, state),
           child: InputDecorator(
             isEmpty: selectedDate == null,
-            decoration: appInputDecoration(
-              context,
-              labelText: label,
-              suffixIcon: const Icon(Icons.calendar_month_outlined, size: 20),
-            ).copyWith(
-              errorText: state.errorText,
-              // The icon is decoration — the whole field is the tap target — so
-              // it doesn't need the 48px minimum a real icon button gets. That
-              // floor was costing this column a third of its text width when it
-              // sits beside another field.
-              suffixIconConstraints: const BoxConstraints(
-                minWidth: 36,
-                minHeight: 36,
-              ),
-            ),
+            decoration:
+                appInputDecoration(
+                  context,
+                  labelText: label,
+                  suffixIcon: const Icon(
+                    Icons.calendar_month_outlined,
+                    size: 20,
+                  ),
+                ).copyWith(
+                  errorText: state.errorText,
+                  // The icon is decoration — the whole field is the tap target — so
+                  // it doesn't need the 48px minimum a real icon button gets. That
+                  // floor was costing this column a third of its text width when it
+                  // sits beside another field.
+                  suffixIconConstraints: const BoxConstraints(
+                    minWidth: 36,
+                    minHeight: 36,
+                  ),
+                ),
             child: Text(
               selectedDate == null
                   ? ''
@@ -82,9 +86,7 @@ class CommonDatePicker extends StatelessWidget {
   ) async {
     final DateTime now = DateTime.now();
     final DateTime start = _dayOf(firstDate ?? now);
-    final DateTime end = _dayOf(
-      lastDate ?? now.add(const Duration(days: 720)),
-    );
+    final DateTime end = _dayOf(lastDate ?? now.add(const Duration(days: 720)));
 
     final DateTime? initialDate = _firstSelectable(start, end);
     if (initialDate == null) {
@@ -118,8 +120,7 @@ class CommonDatePicker extends StatelessWidget {
   /// Replaces three chained 30-and-60 iteration search loops that could still
   /// fall through and silently refuse to open.
   DateTime? _firstSelectable(DateTime start, DateTime end) {
-    bool allowed(DateTime date) =>
-        selectableDayPredicate?.call(date) ?? true;
+    bool allowed(DateTime date) => selectableDayPredicate?.call(date) ?? true;
 
     final DateTime? current = selectedDate;
     if (current != null &&
@@ -129,9 +130,11 @@ class CommonDatePicker extends StatelessWidget {
       return current;
     }
 
-    for (DateTime day = start;
-        !day.isAfter(end);
-        day = DateTime(day.year, day.month, day.day + 1)) {
+    for (
+      DateTime day = start;
+      !day.isAfter(end);
+      day = DateTime(day.year, day.month, day.day + 1)
+    ) {
       if (allowed(day)) return day;
     }
     return null;

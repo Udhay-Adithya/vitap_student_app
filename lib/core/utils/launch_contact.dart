@@ -13,8 +13,7 @@ Future<bool> launchPhone(String number) =>
 
 /// VTOP hands back numbers with spaces and dashes in them, which `tel:` will
 /// not accept.
-String _dialable(String number) =>
-    number.replaceAll(RegExp(r'[^\d+]'), '');
+String _dialable(String number) => number.replaceAll(RegExp(r'[^\d+]'), '');
 
 Future<bool> _launch(Uri uri) async {
   try {

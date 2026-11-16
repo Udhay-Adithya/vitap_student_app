@@ -55,10 +55,7 @@ int? daysUntilDue(String? rawDueDate, {DateTime? now}) {
   return _dayOf(due).difference(today).inDays;
 }
 
-DueUrgency assignmentUrgency(
-  AssignmentDetail detail, {
-  DateTime? now,
-}) {
+DueUrgency assignmentUrgency(AssignmentDetail detail, {DateTime? now}) {
   switch (getSubmissionState(detail.submissionStatus)) {
     case SubmissionState.submitted:
       return DueUrgency.done;
@@ -131,13 +128,15 @@ List<AssignmentDetail> sortedForDisplay(List<AssignmentDetail> details) {
 /// This is what a course card should lead with — the counts alone told you *how
 /// many* were outstanding but never *when*.
 AssignmentDetail? nextActionable(List<AssignmentDetail> details) {
-  final List<AssignmentDetail> pending = details
-      .where(
-        (AssignmentDetail d) =>
-            getSubmissionState(d.submissionStatus) == SubmissionState.pending,
-      )
-      .toList()
-    ..sort(compareByDueDate);
+  final List<AssignmentDetail> pending =
+      details
+          .where(
+            (AssignmentDetail d) =>
+                getSubmissionState(d.submissionStatus) ==
+                SubmissionState.pending,
+          )
+          .toList()
+        ..sort(compareByDueDate);
   return pending.isEmpty ? null : pending.first;
 }
 

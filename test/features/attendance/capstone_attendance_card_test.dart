@@ -10,17 +10,16 @@ CapstoneAttendance capstone({
   String onDuty = '4',
   String absent = '12',
   String percentage = '60',
-}) =>
-    CapstoneAttendance(
-      title: title,
-      guideEvaluationStatus: 'Registered, Invoice Generated,',
-      dateOfRegistration: '2026-07-06 00:00:00.0',
-      present: present,
-      onDuty: onDuty,
-      absent: absent,
-      percentage: percentage,
-      punches: ToMany<CapstonePunch>(items: []),
-    );
+}) => CapstoneAttendance(
+  title: title,
+  guideEvaluationStatus: 'Registered, Invoice Generated,',
+  dateOfRegistration: '2026-07-06 00:00:00.0',
+  present: present,
+  onDuty: onDuty,
+  absent: absent,
+  percentage: percentage,
+  punches: ToMany<CapstonePunch>(items: []),
+);
 
 Future<void> pumpCard(WidgetTester tester, CapstoneAttendance value) async {
   await tester.pumpWidget(
@@ -40,8 +39,9 @@ void main() {
     expect(find.text('0%'), findsNothing);
   });
 
-  testWidgets('warns when attendance is below the 75% threshold',
-      (tester) async {
+  testWidgets('warns when attendance is below the 75% threshold', (
+    tester,
+  ) async {
     await pumpCard(tester, capstone(percentage: '61'));
 
     expect(find.text('61%'), findsOneWidget);
@@ -50,8 +50,9 @@ void main() {
     expect(find.text('-14%'), findsOneWidget);
   });
 
-  testWidgets('says so plainly when there is no usable percentage',
-      (tester) async {
+  testWidgets('says so plainly when there is no usable percentage', (
+    tester,
+  ) async {
     await pumpCard(tester, capstone(percentage: ''));
 
     expect(find.text('No percentage'), findsOneWidget);
@@ -74,8 +75,9 @@ void main() {
     expect(find.text('SDP'), findsOneWidget);
   });
 
-  testWidgets('falls back to a neutral label when VTOP sends no title',
-      (tester) async {
+  testWidgets('falls back to a neutral label when VTOP sends no title', (
+    tester,
+  ) async {
     await pumpCard(tester, capstone(title: ''));
 
     expect(find.text('Capstone / SDP'), findsOneWidget);

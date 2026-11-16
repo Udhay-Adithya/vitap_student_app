@@ -40,10 +40,7 @@ class EngagementStore {
 
   Future<void> markReviewPrompted() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      _reviewPromptedKey,
-      DateTime.now().toIso8601String(),
-    );
+    await prefs.setString(_reviewPromptedKey, DateTime.now().toIso8601String());
   }
 
   Future<void> markSupportCardDismissed() async {

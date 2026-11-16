@@ -1,0 +1,9 @@
+# Revisions that only reformatted code. Skipped by `git blame` so it keeps
+# pointing at the change that actually wrote a line.
+#
+# Locally, teach git to use this file once:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+# GitHub reads it without any setup.
+
+# style: format lib and test with dart format
+9b9794abf707c8b82e540c1486e27fae536da164

@@ -40,10 +40,8 @@ class DigitalAssignmentRemoteRepository {
 
       final jsonString = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.fetchDigitalAssignments(
-          client: client,
-          semesterId: semSubId,
-        ),
+        operation: (client) =>
+            vtop.fetchDigitalAssignments(client: client, semesterId: semSubId),
       );
 
       log(jsonString);

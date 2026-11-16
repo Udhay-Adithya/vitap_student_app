@@ -23,9 +23,11 @@ typedef VtopClientFactory =
     });
 typedef VtopLoginCall = Future<void> Function({required VtopClient client});
 typedef VtopOtpSubmitCall =
-    Future<void> Function({required VtopClient client, required String otpCode});
-typedef VtopOtpResendCall =
-    Future<void> Function({required VtopClient client});
+    Future<void> Function({
+      required VtopClient client,
+      required String otpCode,
+    });
+typedef VtopOtpResendCall = Future<void> Function({required VtopClient client});
 
 /// Singleton service for managing VTOP client instances
 /// Maintains a single VtopClient instance per session and persists login state

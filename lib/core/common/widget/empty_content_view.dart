@@ -4,8 +4,11 @@ import 'package:lottie/lottie.dart';
 class EmptyContentView extends StatelessWidget {
   final String primaryText;
   final String secondaryText;
-  const EmptyContentView(
-      {super.key, required this.primaryText, required this.secondaryText});
+  const EmptyContentView({
+    super.key,
+    required this.primaryText,
+    required this.secondaryText,
+  });
 
   @override
   Widget build(BuildContext context) {

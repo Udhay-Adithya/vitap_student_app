@@ -199,7 +199,8 @@ class Announcement {
   final AnnouncementTargets targets;
 
   bool get hasAction =>
-      (actionUrl ?? '').trim().isNotEmpty && (actionText ?? '').trim().isNotEmpty;
+      (actionUrl ?? '').trim().isNotEmpty &&
+      (actionText ?? '').trim().isNotEmpty;
 
   /// Reads one entry, or returns `null` when it cannot be trusted.
   ///
@@ -232,8 +233,9 @@ class Announcement {
       type: AnnouncementType.parse(raw['type']),
       importance: AnnouncementImportance.parse(raw['importance']),
       isActive: raw['isActive'] is bool ? raw['isActive'] as bool : true,
-      dismissible:
-          raw['dismissible'] is bool ? raw['dismissible'] as bool : true,
+      dismissible: raw['dismissible'] is bool
+          ? raw['dismissible'] as bool
+          : true,
       createdAt: parseIsoDate(raw['createdAt']),
       startsAt: parseIsoDate(raw['startsAt']),
       expiresAt: parseIsoDate(raw['expiresAt']),

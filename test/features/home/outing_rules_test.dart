@@ -11,13 +11,22 @@ void main() {
   group('isOutingTimeAllowed', () {
     test('accepts the window and its boundaries', () {
       expect(isOutingTimeAllowed(const TimeOfDay(hour: 6, minute: 0)), isTrue);
-      expect(isOutingTimeAllowed(const TimeOfDay(hour: 13, minute: 30)), isTrue);
+      expect(
+        isOutingTimeAllowed(const TimeOfDay(hour: 13, minute: 30)),
+        isTrue,
+      );
       expect(isOutingTimeAllowed(const TimeOfDay(hour: 22, minute: 0)), isTrue);
     });
 
     test('rejects outside the window', () {
-      expect(isOutingTimeAllowed(const TimeOfDay(hour: 5, minute: 59)), isFalse);
-      expect(isOutingTimeAllowed(const TimeOfDay(hour: 22, minute: 1)), isFalse);
+      expect(
+        isOutingTimeAllowed(const TimeOfDay(hour: 5, minute: 59)),
+        isFalse,
+      );
+      expect(
+        isOutingTimeAllowed(const TimeOfDay(hour: 22, minute: 1)),
+        isFalse,
+      );
       expect(isOutingTimeAllowed(const TimeOfDay(hour: 0, minute: 0)), isFalse);
     });
   });
@@ -39,10 +48,7 @@ void main() {
         isWeekendOutingOpen(sunday, now: DateTime(2026, 8, 7, 23, 59, 59)),
         isTrue,
       );
-      expect(
-        isWeekendOutingOpen(sunday, now: DateTime(2026, 8, 5, 9)),
-        isTrue,
-      );
+      expect(isWeekendOutingOpen(sunday, now: DateTime(2026, 8, 5, 9)), isTrue);
     });
 
     test('is closed once the deadline passes', () {
@@ -129,10 +135,7 @@ void main() {
         nextWeekendOutingFormOpening(now: DateTime(2026, 8, 8, 14)),
         DateTime(2026, 8, 11),
       );
-      expect(
-        nextWeekendOutingFormOpening(now: monday),
-        DateTime(2026, 8, 11),
-      );
+      expect(nextWeekendOutingFormOpening(now: monday), DateTime(2026, 8, 11));
     });
 
     test('skips to next week when already Tuesday', () {

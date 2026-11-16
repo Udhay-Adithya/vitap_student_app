@@ -41,8 +41,10 @@ class BiometricViewModel extends _$BiometricViewModel {
     );
 
     state = switch (res) {
-      Left(value: final failure) =>
-        AsyncValue.error(failure.message, StackTrace.current),
+      Left(value: final failure) => AsyncValue.error(
+        failure.message,
+        StackTrace.current,
+      ),
       Right(value: final weather) => AsyncValue.data(weather),
     };
   }

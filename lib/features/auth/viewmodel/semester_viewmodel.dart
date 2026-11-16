@@ -96,10 +96,7 @@ class SemesterViewModel extends _$SemesterViewModel {
   /// Get selected semester from cache
   Future<SemesterInfo?> getSelectedSemester() async {
     final result = await _authLocalRepository.getSelectedSemester();
-    return result.fold(
-      (l) => null,
-      (r) => r,
-    );
+    return result.fold((l) => null, (r) => r);
   }
 
   /// Set selected semester in cache

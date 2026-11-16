@@ -26,10 +26,7 @@ class AnnouncementAudience {
 ///
 /// An absent target is no restriction, so announcements written before
 /// targeting existed reach everyone unchanged.
-bool matchesAudience(
-  Announcement announcement,
-  AnnouncementAudience audience,
-) {
+bool matchesAudience(Announcement announcement, AnnouncementAudience audience) {
   final AnnouncementTargets targets = announcement.targets;
 
   if (targets.platforms.isNotEmpty &&

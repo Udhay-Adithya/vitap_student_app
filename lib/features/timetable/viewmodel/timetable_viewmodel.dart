@@ -37,7 +37,9 @@ class TimetableViewModel extends _$TimetableViewModel {
     final Credentials? credentials = await userNotifier.getSavedCredentials();
     if (credentials == null) {
       state = AsyncValue.error(
-          'User not found. Please Logout and Login.', StackTrace.current);
+        'User not found. Please Logout and Login.',
+        StackTrace.current,
+      );
       return;
     }
     final res = await _timetableRemoteRepository.fetchTimetable(
@@ -52,7 +54,8 @@ class TimetableViewModel extends _$TimetableViewModel {
       state = AsyncValue.data(newTimetable);
       if (user != null) {
         await userNotifier.updateUser(
-            user.copyWith(timetable: ToOne<Timetable>(target: newTimetable)));
+          user.copyWith(timetable: ToOne<Timetable>(target: newTimetable)),
+        );
       }
     }
   }

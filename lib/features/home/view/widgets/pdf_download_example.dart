@@ -11,15 +11,15 @@ class PdfDownloadExample extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Watch the view model states
-    final generalPdfState =
-        ref.watch(generalOutingPdfDownloadViewModelProvider);
-    final weekendPdfState =
-        ref.watch(weekendOutingPdfDownloadViewModelProvider);
+    final generalPdfState = ref.watch(
+      generalOutingPdfDownloadViewModelProvider,
+    );
+    final weekendPdfState = ref.watch(
+      weekendOutingPdfDownloadViewModelProvider,
+    );
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('PDF Download Example'),
-      ),
+      appBar: AppBar(title: const Text('PDF Download Example')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -42,8 +42,10 @@ class PdfDownloadExample extends ConsumerWidget {
                     ElevatedButton(
                       onPressed: () {
                         ref
-                            .read(generalOutingPdfDownloadViewModelProvider
-                                .notifier)
+                            .read(
+                              generalOutingPdfDownloadViewModelProvider
+                                  .notifier,
+                            )
                             .downloadGeneralOutingPdf(
                               leaveId:
                                   'LEAVE001', // Replace with actual leave ID
@@ -126,8 +128,10 @@ class PdfDownloadExample extends ConsumerWidget {
                     ElevatedButton(
                       onPressed: () {
                         ref
-                            .read(weekendOutingPdfDownloadViewModelProvider
-                                .notifier)
+                            .read(
+                              weekendOutingPdfDownloadViewModelProvider
+                                  .notifier,
+                            )
                             .downloadWeekendOutingPdf(
                               leaveId:
                                   'WEEKEND001', // Replace with actual booking ID

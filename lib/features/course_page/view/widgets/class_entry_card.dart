@@ -5,11 +5,7 @@ class ClassEntryCard extends StatelessWidget {
   final CourseClassEntryModel entry;
   final VoidCallback onTap;
 
-  const ClassEntryCard({
-    super.key,
-    required this.entry,
-    required this.onTap,
-  });
+  const ClassEntryCard({super.key, required this.entry, required this.onTap});
 
   String _extractFacultyName(String faculty) {
     // Faculty format: "70735 - Shaik Subhani - SCOPE"
@@ -27,15 +23,10 @@ class ClassEntryCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: ListTile(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         tileColor: Theme.of(context).colorScheme.surfaceContainerLow,
         onTap: onTap,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         title: Text(
           facultyName,
           maxLines: 1,

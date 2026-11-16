@@ -9,8 +9,9 @@ part 'digital_assignment_model.g.dart';
 
 List<DigitalAssignment> digitalAssignmentsFromJson(String str) =>
     List<DigitalAssignment>.from(
-      (json.decode(str) as List)
-          .map((x) => DigitalAssignment.fromJson(x as Map<String, dynamic>)),
+      (json.decode(str) as List).map(
+        (x) => DigitalAssignment.fromJson(x as Map<String, dynamic>),
+      ),
     );
 
 String digitalAssignmentsToJson(List<DigitalAssignment> data) =>

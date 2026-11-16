@@ -5,20 +5,14 @@ class GradeCard extends StatelessWidget {
   final Course course;
   final Color gradeColor;
 
-  const GradeCard({
-    super.key,
-    required this.course,
-    required this.gradeColor,
-  });
+  const GradeCard({super.key, required this.course, required this.gradeColor});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
       color: Theme.of(context).colorScheme.surfaceContainerLow,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -56,9 +50,9 @@ class GradeCard extends StatelessWidget {
             Text(
               course.courseTitle,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
