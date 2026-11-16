@@ -213,6 +213,13 @@ Apache License 2.0. See `rust/LICENSE` and `rust/NOTICE`.
 
 Releases up to and including 2.5.2 were published under the MIT License.
 
+## 🙏 Credits
+
+- Weather icons: [Meteocons](https://github.com/basmilius/meteocons) by
+  Bas Milius, MIT License.
+- App icon: [Mortarboard icons created by Magnific - Flaticon](https://www.flaticon.com/free-icon/mortarboard_3845897),
+  used under the [Flaticon license](https://www.flaticon.com/legal).
+
 ## 📢 Disclaimer
 
 > ***Note : This app is not an official application from VIT-AP University; it is developed by a fellow student for the benefit of other students. The app aims to provide a convenient tool for accessing academic information only.***

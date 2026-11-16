@@ -20,9 +20,10 @@ modified version as this app. A fork must not be published as
 
 ## The logo and icons
 
-The app icon is built on third-party graduation cap artwork. The GPL in
-this repository does not cover it, and this project cannot license it to
-anyone else. This applies to:
+The app icon is built on "Mortarboard icons created by Magnific -
+Flaticon" (https://www.flaticon.com/free-icon/mortarboard_3845897), used
+under the Flaticon license. The GPL in this repository does not cover it,
+and this project cannot license it to anyone else. This applies to:
 
 - `assets/images/logo/`
 - the launcher icons generated from it, in `android/app/src/main/res/mipmap-*/`

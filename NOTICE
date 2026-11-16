@@ -61,8 +61,13 @@ Components under other licenses
 -------------------------------
 
 - assets/images/logo/ and the launcher icons generated from it: built on
-  third-party icon artwork that this license does not cover. See
-  BRANDING.md.
+  "Mortarboard icons created by Magnific - Flaticon"
+  (https://www.flaticon.com/free-icon/mortarboard_3845897), used under
+  the Flaticon license, which this license does not override. See
+  assets/licenses/mortarboard.txt and BRANDING.md.
+- assets/weather_icons/: Meteocons by Bas Milius
+  (https://github.com/basmilius/meteocons), MIT License. See
+  assets/licenses/meteocons.txt.
 - rust/ (lib_vtop): Apache License 2.0. See rust/LICENSE and
   rust/NOTICE.
 - rust_builder/cargokit/: its own license, in that directory.
