@@ -1,5 +1,4 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
 import 'package:vit_ap_student_app/core/services/demo_service.dart';
@@ -37,62 +36,50 @@ class GeneralOutingReportsViewModel extends _$GeneralOutingReportsViewModel {
       return true;
     }
 
-    // Check internet connectivity
-    final isConnected = await InternetConnection().hasInternetAccess;
-
-    if (isConnected) {
-      // If connected, load cached data first (if not silent refresh and cache exists)
-      if (!silentRefresh) {
-        final cachedReports = _outingLocalRepository.getGeneralOutingReports();
-        if (cachedReports.isNotEmpty) {
-          state = AsyncValue.data(cachedReports);
-        } else {
-          state = const AsyncValue.loading();
-        }
-      }
-
-      // Fetch from remote
-      final credentials = await ref
-          .read(currentUserProvider.notifier)
-          .getSavedCredentials();
-      if (credentials == null) {
-        state = AsyncValue.error(
-          'User credentials not found. Please login again.',
-          StackTrace.current,
-        );
-        return false;
-      }
-
-      final res = await _outingRemoteRepository.fetchGeneralOutingReports(
-        registrationNumber: credentials.registrationNumber,
-        password: credentials.password,
-      );
-
-      switch (res) {
-        case Left(value: final failure):
-          // Only show error if we don't have cached data
-          if (state?.value == null || state!.value!.isEmpty) {
-            state = AsyncValue.error(failure.message, StackTrace.current);
-          }
-          return false;
-        case Right(value: final reports):
-          // Save to cache and update state
-          await _outingLocalRepository.saveGeneralOutingReports(reports);
-          state = AsyncValue.data(reports);
-          return true;
-      }
-    } else {
-      // No internet - load from cache
+    // Show the cache while fetching, unless this is a silent refresh.
+    if (!silentRefresh) {
       final cachedReports = _outingLocalRepository.getGeneralOutingReports();
       if (cachedReports.isNotEmpty) {
         state = AsyncValue.data(cachedReports);
       } else {
-        state = AsyncValue.error(
-          'No internet connection and no cached data available.',
-          StackTrace.current,
-        );
+        state = const AsyncValue.loading();
       }
+    }
+
+    // Fetch from remote
+    final credentials = await ref
+        .read(currentUserProvider.notifier)
+        .getSavedCredentials();
+    if (credentials == null) {
+      state = AsyncValue.error(
+        'User credentials not found. Please login again.',
+        StackTrace.current,
+      );
       return false;
+    }
+
+    final res = await _outingRemoteRepository.fetchGeneralOutingReports(
+      registrationNumber: credentials.registrationNumber,
+      password: credentials.password,
+    );
+
+    switch (res) {
+      case Left(value: final failure):
+        // Being offline lands here too. Keep what is on screen, or fall back
+        // to the cache when a silent refresh had nothing loaded yet.
+        if (state?.value == null || state!.value!.isEmpty) {
+          final cachedReports = _outingLocalRepository
+              .getGeneralOutingReports();
+          state = cachedReports.isNotEmpty
+              ? AsyncValue.data(cachedReports)
+              : AsyncValue.error(failure.message, StackTrace.current);
+        }
+        return false;
+      case Right(value: final reports):
+        // Save to cache and update state
+        await _outingLocalRepository.saveGeneralOutingReports(reports);
+        state = AsyncValue.data(reports);
+        return true;
     }
   }
 }
@@ -120,62 +107,50 @@ class WeekendOutingReportsViewModel extends _$WeekendOutingReportsViewModel {
       return true;
     }
 
-    // Check internet connectivity
-    final isConnected = await InternetConnection().hasInternetAccess;
-
-    if (isConnected) {
-      // If connected, load cached data first (if not silent refresh and cache exists)
-      if (!silentRefresh) {
-        final cachedReports = _outingLocalRepository.getWeekendOutingReports();
-        if (cachedReports.isNotEmpty) {
-          state = AsyncValue.data(cachedReports);
-        } else {
-          state = const AsyncValue.loading();
-        }
-      }
-
-      // Fetch from remote
-      final credentials = await ref
-          .read(currentUserProvider.notifier)
-          .getSavedCredentials();
-      if (credentials == null) {
-        state = AsyncValue.error(
-          'User credentials not found. Please login again.',
-          StackTrace.current,
-        );
-        return false;
-      }
-
-      final res = await _outingRemoteRepository.fetchWeekendOutingReports(
-        registrationNumber: credentials.registrationNumber,
-        password: credentials.password,
-      );
-
-      switch (res) {
-        case Left(value: final failure):
-          // Only show error if we don't have cached data
-          if (state?.value == null || state!.value!.isEmpty) {
-            state = AsyncValue.error(failure.message, StackTrace.current);
-          }
-          return false;
-        case Right(value: final reports):
-          // Save to cache and update state
-          await _outingLocalRepository.saveWeekendOutingReports(reports);
-          state = AsyncValue.data(reports);
-          return true;
-      }
-    } else {
-      // No internet - load from cache
+    // Show the cache while fetching, unless this is a silent refresh.
+    if (!silentRefresh) {
       final cachedReports = _outingLocalRepository.getWeekendOutingReports();
       if (cachedReports.isNotEmpty) {
         state = AsyncValue.data(cachedReports);
       } else {
-        state = AsyncValue.error(
-          'No internet connection and no cached data available.',
-          StackTrace.current,
-        );
+        state = const AsyncValue.loading();
       }
+    }
+
+    // Fetch from remote
+    final credentials = await ref
+        .read(currentUserProvider.notifier)
+        .getSavedCredentials();
+    if (credentials == null) {
+      state = AsyncValue.error(
+        'User credentials not found. Please login again.',
+        StackTrace.current,
+      );
       return false;
+    }
+
+    final res = await _outingRemoteRepository.fetchWeekendOutingReports(
+      registrationNumber: credentials.registrationNumber,
+      password: credentials.password,
+    );
+
+    switch (res) {
+      case Left(value: final failure):
+        // Being offline lands here too. Keep what is on screen, or fall back
+        // to the cache when a silent refresh had nothing loaded yet.
+        if (state?.value == null || state!.value!.isEmpty) {
+          final cachedReports = _outingLocalRepository
+              .getWeekendOutingReports();
+          state = cachedReports.isNotEmpty
+              ? AsyncValue.data(cachedReports)
+              : AsyncValue.error(failure.message, StackTrace.current);
+        }
+        return false;
+      case Right(value: final reports):
+        // Save to cache and update state
+        await _outingLocalRepository.saveWeekendOutingReports(reports);
+        state = AsyncValue.data(reports);
+        return true;
     }
   }
 }
