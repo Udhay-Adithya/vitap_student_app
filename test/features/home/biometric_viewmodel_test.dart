@@ -41,12 +41,15 @@ void main() {
       bool signedIn = true,
       String? failure,
     }) async {
-      await registerTestDependencies(
+      final deps = testDependencies(
         credentials: signedIn ? testCredentials() : null,
       );
       repository = _FakeHomeRepository(failure: failure);
       final container = ProviderContainer(
-        overrides: [homeRemoteRepositoryProvider.overrideWithValue(repository)],
+        overrides: [
+          ...deps.overrides,
+          homeRemoteRepositoryProvider.overrideWithValue(repository),
+        ],
       );
       addTearDown(container.dispose);
       // Auto-disposed: without a listener the notifier is torn down between

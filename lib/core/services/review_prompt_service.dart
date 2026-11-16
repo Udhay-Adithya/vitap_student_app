@@ -1,11 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/constants/analytics_constants.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/engagement_store.dart';
 import 'package:vit_ap_student_app/core/services/review_prompt_policy.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
+
+part 'review_prompt_service.g.dart';
+
+@riverpod
+ReviewPromptService reviewPromptService(Ref ref) =>
+    ReviewPromptService(ref.watch(analyticsServiceProvider));
 
 /// Asks for a store rating after something has just gone right.
 ///
@@ -19,7 +25,9 @@ import 'package:vit_ap_student_app/init_dependencies.dart';
 /// legitimately show nothing. [reviewPromptCooldown] is what stops the app
 /// retrying a silently-ignored prompt forever.
 class ReviewPromptService {
-  const ReviewPromptService();
+  const ReviewPromptService(this._analytics);
+
+  final AnalyticsService _analytics;
 
   static const EngagementStore _store = EngagementStore();
 
@@ -50,10 +58,9 @@ class ReviewPromptService {
 
       // Records that we asked, not that anyone rated — neither store tells us
       // the outcome, by design.
-      serviceLocator<AnalyticsService>().logEvent(
-        AnalyticsEvents.reviewPromptShown,
-        <String, Object?>{AnalyticsParams.source: source},
-      );
+      _analytics.logEvent(AnalyticsEvents.reviewPromptShown, <String, Object?>{
+        AnalyticsParams.source: source,
+      });
     } catch (e) {
       debugPrint('Review prompt skipped: $e');
     }

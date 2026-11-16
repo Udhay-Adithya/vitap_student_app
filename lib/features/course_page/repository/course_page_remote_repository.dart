@@ -9,14 +9,13 @@ import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/course_page/model/course_page_detail.dart';
 import 'package:vit_ap_student_app/features/course_page/model/courses_response.dart';
 import 'package:vit_ap_student_app/features/course_page/model/slots_response.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'course_page_remote_repository.g.dart';
 
 @riverpod
 CoursePageRemoteRepository coursePageRemoteRepository(Ref ref) {
-  final vtopService = serviceLocator<VtopClientService>();
+  final vtopService = ref.watch(vtopClientServiceProvider);
   return CoursePageRemoteRepository(vtopService);
 }
 

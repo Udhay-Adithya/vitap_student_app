@@ -48,7 +48,9 @@ class _AssignmentDetailPageState extends ConsumerState<AssignmentDetailPage> {
           // An upload that went through — a genuinely stressful task the app
           // just made easier.
           unawaited(
-            const ReviewPromptService().recordHappyMoment('assignment_upload'),
+            ref
+                .read(reviewPromptServiceProvider)
+                .recordHappyMoment('assignment_upload'),
           );
 
           // Pop back to the list page so it auto-refreshes with the

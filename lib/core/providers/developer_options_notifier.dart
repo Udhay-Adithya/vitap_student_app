@@ -5,9 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:vit_ap_student_app/core/providers/store.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
-import 'package:vit_ap_student_app/objectbox.g.dart';
 
 part 'developer_options_notifier.g.dart';
 
@@ -126,7 +125,7 @@ class DeveloperOptionsNotifier extends _$DeveloperOptionsNotifier {
 
   Future<String> _loadVtopSessionInfo() async {
     try {
-      final vtopService = serviceLocator.get<VtopClientService>();
+      final vtopService = ref.read(vtopClientServiceProvider);
       final sessionInfo = vtopService.getSessionInfo();
 
       if (sessionInfo['isInitialized'] == true) {
@@ -197,7 +196,7 @@ class DeveloperOptionsNotifier extends _$DeveloperOptionsNotifier {
 
   Future<void> forceSessionReset() async {
     try {
-      final vtopService = serviceLocator.get<VtopClientService>();
+      final vtopService = ref.read(vtopClientServiceProvider);
       vtopService.resetClient();
       await refreshVtopSession();
     } catch (e) {
@@ -208,10 +207,10 @@ class DeveloperOptionsNotifier extends _$DeveloperOptionsNotifier {
 
   Future<void> clearAllLocalData() async {
     try {
-      final store = serviceLocator.get<Store>();
+      final store = ref.read(storeProvider);
       store.close();
 
-      final vtopService = serviceLocator.get<VtopClientService>();
+      final vtopService = ref.read(vtopClientServiceProvider);
       vtopService.resetClient();
 
       // Refresh storage info after clearing

@@ -4,7 +4,6 @@ import 'package:vit_ap_student_app/core/constants/analytics_constants.dart';
 import 'package:vit_ap_student_app/core/constants/server_constants.dart';
 import 'package:vit_ap_student_app/core/models/grade_history.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
 import 'launch_web.dart';
 
@@ -20,13 +19,15 @@ String generateCgpaCalculatorUrl(GradeHistory gradeHistory) {
   return url;
 }
 
-void openCgpaCalculator(GradeHistory gradeHistory) async {
+void openCgpaCalculator(
+  GradeHistory gradeHistory,
+  AnalyticsService analytics,
+) async {
   final url = generateCgpaCalculatorUrl(gradeHistory);
 
   await directToWeb(url);
 
-  serviceLocator<AnalyticsService>().logEvent(
-    AnalyticsEvents.cgpaCalculatorOpened,
-    {AnalyticsParams.sizeBytes: url.length},
-  );
+  analytics.logEvent(AnalyticsEvents.cgpaCalculatorOpened, {
+    AnalyticsParams.sizeBytes: url.length,
+  });
 }

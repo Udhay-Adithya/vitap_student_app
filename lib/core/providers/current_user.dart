@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
+import 'package:vit_ap_student_app/core/providers/store.dart';
 import 'package:vit_ap_student_app/core/providers/user_persistence.dart';
 import 'package:vit_ap_student_app/core/providers/user_preferences_notifier.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
@@ -9,7 +10,6 @@ import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/notification_service.dart';
 import 'package:vit_ap_student_app/core/services/secure_store_service.dart';
 import 'package:vit_ap_student_app/core/utils/avatar_image.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/objectbox.g.dart';
 
 part 'current_user.g.dart';
@@ -19,7 +19,7 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
   @override
   User? build() {
     // Load cached user from ObjectBox with proper ordering
-    final store = serviceLocator.get<Store>();
+    final store = ref.watch(storeProvider);
     return store.box<User>().query().order(User_.id).build().findFirst();
   }
 
@@ -30,9 +30,7 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
       _saveUserToObjectBox(user);
 
       // Save credentials
-      await serviceLocator.get<SecureStorageService>().saveCredentials(
-        credentials,
-      );
+      await ref.read(secureStorageServiceProvider).saveCredentials(credentials);
     } catch (e) {
       // Only a failure to *store* the account rolls it back. Anything after
       // this point has the student signed in already.
@@ -102,7 +100,7 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
       await DemoService.instance.setDemoMode(false);
 
       // Remove credentials
-      await serviceLocator.get<SecureStorageService>().clearCredentials();
+      await ref.read(secureStorageServiceProvider).clearCredentials();
 
       // Drop the analytics identity so the next account on a shared device
       // does not inherit this student's cohort properties.
@@ -126,20 +124,20 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
   }
 
   Future<Credentials?> getSavedCredentials() async {
-    return await serviceLocator.get<SecureStorageService>().getCredentials();
+    return await ref.read(secureStorageServiceProvider).getCredentials();
   }
 
   Future<void> updateSavedCredentials({
     required Credentials newCredentials,
   }) async {
-    return await serviceLocator.get<SecureStorageService>().saveCredentials(
-      newCredentials,
-    );
+    return await ref
+        .read(secureStorageServiceProvider)
+        .saveCredentials(newCredentials);
   }
 
   // Manually save user
   void _saveUserToObjectBox(User user) {
-    final newId = saveUser(serviceLocator.get<Store>(), user);
+    final newId = saveUser(ref.read(storeProvider), user);
     debugPrint('Saved user with ID: $newId');
 
     // A fresh sign-in has no id until it is written.
@@ -150,7 +148,7 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
 
   // Manually clear user data
   void _clearUserDataObjectBox() {
-    removeAllUserData(serviceLocator.get<Store>());
+    removeAllUserData(ref.read(storeProvider));
   }
 
   bool get isLoggedIn => state != null;

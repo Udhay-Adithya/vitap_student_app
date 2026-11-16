@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:http/http.dart' as http;
@@ -6,18 +7,18 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
+import 'package:vit_ap_student_app/core/providers/http_client.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/home/model/general_outing_report.dart';
 import 'package:vit_ap_student_app/features/home/model/weekend_outing_report.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'outing_remote_repository.g.dart';
 
 @riverpod
 OutingRemoteRepository outingRemoteRepository(Ref ref) {
-  final client = serviceLocator<http.Client>();
-  final vtopService = serviceLocator<VtopClientService>();
+  final client = ref.watch(httpClientProvider);
+  final vtopService = ref.watch(vtopClientServiceProvider);
   return OutingRemoteRepository(client, vtopService);
 }
 

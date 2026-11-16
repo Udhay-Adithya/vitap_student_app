@@ -1,18 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/constants/server_constants.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
+import 'package:vit_ap_student_app/core/providers/http_client.dart';
 import 'package:vit_ap_student_app/features/home/model/announcement.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
 part 'announcement_repository.g.dart';
 
 @riverpod
 AnnouncementRepository announcementRepository(Ref ref) {
-  final client = serviceLocator<http.Client>();
+  final client = ref.watch(httpClientProvider);
   return AnnouncementRepository(client);
 }
 

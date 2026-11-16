@@ -2,7 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/models/semester_cache.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
+import 'package:vit_ap_student_app/core/providers/store.dart';
 import 'package:vit_ap_student_app/objectbox.g.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/types/semester.dart';
 
@@ -10,7 +10,7 @@ part 'auth_local_repository.g.dart';
 
 @riverpod
 AuthLocalRepository authLocalRepository(Ref ref) {
-  final store = serviceLocator<Store>();
+  final store = ref.watch(storeProvider);
   return AuthLocalRepository(store);
 }
 

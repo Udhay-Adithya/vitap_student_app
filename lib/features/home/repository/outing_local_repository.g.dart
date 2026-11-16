@@ -55,4 +55,4 @@ final class OutingLocalRepositoryProvider
 }
 
 String _$outingLocalRepositoryHash() =>
-    r'7e1bcc1d19c9f9df749a361c8b63c9b8a8530b55';
+    r'19108af6649a4643f4abd12b14b818be07b04e98';

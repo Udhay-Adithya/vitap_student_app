@@ -8,14 +8,13 @@ import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'account_remote_repository.g.dart';
 
 @riverpod
 AccountRemoteRepository accountRemoteRepository(Ref ref) {
-  final vtopService = serviceLocator<VtopClientService>();
+  final vtopService = ref.watch(vtopClientServiceProvider);
   return AccountRemoteRepository(vtopService);
 }
 

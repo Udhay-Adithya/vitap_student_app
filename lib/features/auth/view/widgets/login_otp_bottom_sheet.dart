@@ -9,7 +9,6 @@ import 'package:vit_ap_student_app/core/common/widget/loader.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/account/model/faq_content.dart';
 import 'package:vit_ap_student_app/features/auth/viewmodel/login_otp_viewmodel.dart';
-import 'package:vit_ap_student_app/init_dependencies.dart';
 
 Future<void> showLoginOtpBottomSheet({required BuildContext context}) {
   return showModalBottomSheet<void>(
@@ -131,7 +130,7 @@ class _LoginOtpSheetState extends ConsumerState<_LoginOtpSheet>
       ),
     );
     if (confirmed == true && mounted) {
-      serviceLocator<VtopClientService>().cancelOtp();
+      ref.read(vtopClientServiceProvider).cancelOtp();
       Navigator.of(context).pop();
     }
   }
