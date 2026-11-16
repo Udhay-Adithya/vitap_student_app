@@ -24,7 +24,7 @@ void main() {
     final entries = await entriesFor(appLicensePackage);
 
     expect(entries, hasLength(2));
-    expect(textOf(entries.first), contains('Based on VIT-AP Student App'));
+    expect(textOf(entries.first), contains('Based on VITAP Student'));
     expect(textOf(entries.last), contains('GNU GENERAL PUBLIC LICENSE'));
   });
 
@@ -39,7 +39,7 @@ void main() {
   });
 
   test('the legalese carries the attribution NOTICE requires', () {
-    expect(appLegalese, contains('Based on VIT-AP Student App'));
+    expect(appLegalese, contains('Based on VITAP Student'));
     expect(
       appLegalese,
       contains('https://github.com/Udhay-Adithya/vitap_student_app'),

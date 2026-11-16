@@ -28,7 +28,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(LicensePage), findsOneWidget);
-    expect(find.textContaining('Based on VIT-AP Student App'), findsOneWidget);
+    expect(find.textContaining('Based on VITAP Student'), findsOneWidget);
     expect(find.text(appLicensePackage), findsWidgets);
   });
 }

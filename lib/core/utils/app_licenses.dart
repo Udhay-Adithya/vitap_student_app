@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 /// Name the app's own license is listed under on the licenses page.
-const String appLicensePackage = 'VIT-AP Student App';
+const String appLicensePackage = 'VITAP Student';
 
 /// Name the bundled Rust crate's license is listed under.
 const String rustLicensePackage = 'lib_vtop';
@@ -10,7 +10,7 @@ const String rustLicensePackage = 'lib_vtop';
 /// Shown at the top of the licenses page. This is the attribution that
 /// NOTICE requires every distributed version to keep.
 const String appLegalese =
-    'Based on VIT-AP Student App\n'
+    'Based on VITAP Student\n'
     'https://github.com/Udhay-Adithya/vitap_student_app\n'
     'Licensed under the GNU General Public License, version 3';
 
