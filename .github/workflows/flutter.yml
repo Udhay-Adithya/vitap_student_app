@@ -45,6 +45,11 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      # Generated files come out of codegen already formatted, and the Bindings
+      # workflow fails if they drift, so they need no exclusion here.
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed lib test
+
       - name: Analyze
         run: flutter analyze
 
