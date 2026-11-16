@@ -13,6 +13,7 @@ import 'package:vit_ap_student_app/core/providers/user_preferences_notifier.dart
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/services/app_upgrader.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
+import 'package:vit_ap_student_app/core/utils/app_licenses.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/app_upgrade_alert.dart';
 import 'package:vit_ap_student_app/features/auth/view/widgets/auth_failure_bottom_sheet.dart';
 import 'package:vit_ap_student_app/features/auth/view/widgets/login_otp_bottom_sheet.dart';
@@ -22,6 +23,7 @@ import 'package:wiredash/wiredash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  registerAppLicenses();
   await initDependencies();
 
   runApp(const ProviderScope(child: MyApp()));

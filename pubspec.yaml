@@ -84,6 +84,11 @@ flutter:
   uses-material-design: true
   assets:
     - .env
+    - LICENSE
+    - NOTICE
+    - rust/LICENSE
+    - rust/NOTICE
+    - assets/fonts/OFL.txt
     - assets/
     - assets/lottie/
     - assets/images/
