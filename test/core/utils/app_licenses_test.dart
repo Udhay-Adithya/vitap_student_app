@@ -38,6 +38,31 @@ void main() {
     expect(textOf(entries.last), contains('Apache License'));
   });
 
+  // Both licenses require attribution inside the app; dropping either entry
+  // puts the published app out of compliance.
+  test('credits Meteocons with its MIT license', () async {
+    registerAppLicenses();
+
+    final entries = await entriesFor(weatherIconsLicensePackage);
+
+    expect(entries, hasLength(1));
+    expect(textOf(entries.single), contains('Bas Milius'));
+    expect(textOf(entries.single), contains('MIT License'));
+  });
+
+  test('credits the mortarboard icon in the form Flaticon asks for', () async {
+    registerAppLicenses();
+
+    final entries = await entriesFor(appIconLicensePackage);
+
+    expect(entries, hasLength(1));
+    expect(
+      textOf(entries.single),
+      contains('Mortarboard icons created by Magnific - Flaticon'),
+    );
+    expect(textOf(entries.single), contains('mortarboard_3845897'));
+  });
+
   test('the legalese carries the attribution NOTICE requires', () {
     expect(appLegalese, contains('Based on VITAP Student'));
     expect(

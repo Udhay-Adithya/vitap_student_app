@@ -7,6 +7,12 @@ const String appLicensePackage = 'VITAP Student';
 /// Name the bundled Rust crate's license is listed under.
 const String rustLicensePackage = 'lib_vtop';
 
+/// Animated weather icons, MIT licensed.
+const String weatherIconsLicensePackage = 'Meteocons';
+
+/// Artwork the app icon is built on, used under Flaticon's license.
+const String appIconLicensePackage = 'Mortarboard icon (Flaticon)';
+
 /// Shown at the top of the licenses page. This is the attribution that
 /// NOTICE requires every distributed version to keep.
 const String appLegalese =
@@ -17,8 +23,10 @@ const String appLegalese =
 /// Adds the licenses Flutter can't discover on its own to [LicenseRegistry].
 ///
 /// Flutter's licenses page lists the LICENSE of every dependency, but not
-/// the app's own license, the Rust crate (built by cargokit, not pub), or
-/// the bundled font. Each NOTICE comes first so its attribution and
+/// the app's own license, the Rust crate (built by cargokit, not pub), the
+/// bundled font, or bundled third-party artwork. Both artwork licenses
+/// require attribution in the app, and this page is where it lives. Each
+/// NOTICE comes first so its attribution and
 /// additional terms are read before the long license text.
 ///
 /// The files are read lazily, only when the licenses page is opened.
@@ -45,6 +53,14 @@ void registerAppLicenses({AssetBundle? bundle}) {
     yield LicenseEntryWithLineBreaks(
       const ['Google Sans'],
       await assets.loadString('assets/fonts/OFL.txt'),
+    );
+    yield LicenseEntryWithLineBreaks(
+      const [weatherIconsLicensePackage],
+      await assets.loadString('assets/licenses/meteocons.txt'),
+    );
+    yield LicenseEntryWithLineBreaks(
+      const [appIconLicensePackage],
+      await assets.loadString('assets/licenses/mortarboard.txt'),
     );
   });
 }

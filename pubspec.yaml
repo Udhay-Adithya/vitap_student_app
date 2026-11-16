@@ -89,6 +89,7 @@ flutter:
     - rust/LICENSE
     - rust/NOTICE
     - assets/fonts/OFL.txt
+    - assets/licenses/
     - assets/
     - assets/lottie/
     - assets/images/
