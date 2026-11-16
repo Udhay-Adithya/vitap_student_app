@@ -19,7 +19,7 @@ FacultyRepository facultyRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
   final live = VtopFacultyRepository(vtopService);
   return ref.watch(demoModeProvider)
-      ? DemoFacultyRepository(DemoService.instance, live)
+      ? DemoFacultyRepository(ref.watch(demoServiceProvider), live)
       : live;
 }
 

@@ -54,4 +54,4 @@ final class FacultyRepositoryProvider
   }
 }
 
-String _$facultyRepositoryHash() => r'1487ef92a70b152ceaf383977ed583414cf6848b';
+String _$facultyRepositoryHash() => r'b0fab76e8b088607a8893dde70aad5e761df8c01';

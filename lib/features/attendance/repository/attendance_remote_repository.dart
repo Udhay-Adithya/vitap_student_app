@@ -31,7 +31,7 @@ typedef AttendanceFetch = ({
 AttendanceRemoteRepository attendanceRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
   if (ref.watch(demoModeProvider)) {
-    return DemoAttendanceRepository(DemoService.instance);
+    return DemoAttendanceRepository(ref.watch(demoServiceProvider));
   }
   return VtopAttendanceRepository(vtopService);
 }

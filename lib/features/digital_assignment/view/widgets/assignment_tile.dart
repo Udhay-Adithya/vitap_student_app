@@ -55,7 +55,7 @@ class _AssignmentTileState extends ConsumerState<AssignmentTile> {
     final SubmissionState state = getSubmissionState(detail.submissionStatus);
 
     final bool canUpload =
-        !DemoService.isDemoMode &&
+        !ref.watch(demoModeProvider) &&
         (state == SubmissionState.pending ||
             (state == SubmissionState.submitted && detail.canUpdate));
 

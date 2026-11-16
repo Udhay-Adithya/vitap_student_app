@@ -20,7 +20,7 @@ part 'course_page_remote_repository.g.dart';
 CoursePageRemoteRepository coursePageRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
   if (ref.watch(demoModeProvider)) {
-    return DemoCoursePageRepository(DemoService.instance);
+    return DemoCoursePageRepository(ref.watch(demoServiceProvider));
   }
   return VtopCoursePageRepository(vtopService);
 }

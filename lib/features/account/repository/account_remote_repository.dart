@@ -19,7 +19,7 @@ part 'account_remote_repository.g.dart';
 AccountRemoteRepository accountRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
   if (ref.watch(demoModeProvider)) {
-    return DemoAccountRepository(DemoService.instance);
+    return DemoAccountRepository(ref.watch(demoServiceProvider));
   }
   return VtopAccountRepository(vtopService);
 }
