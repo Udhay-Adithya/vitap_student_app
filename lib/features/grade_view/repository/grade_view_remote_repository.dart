@@ -14,18 +14,35 @@ part 'grade_view_remote_repository.g.dart';
 @riverpod
 GradeViewRemoteRepository gradeViewRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
-  return GradeViewRemoteRepository(vtopService);
+  return VtopGradeViewRepository(vtopService);
 }
 
-class GradeViewRemoteRepository {
-  final VtopClientService vtopService;
-
-  GradeViewRemoteRepository(this.vtopService);
-
+abstract interface class GradeViewRemoteRepository {
   /// Fetches the graded courses for a semester.
   ///
   /// Grades appear only once a semester has ended; the current semester
   /// returns an empty list until results are published.
+  Future<Either<Failure, List<GradeViewCourseModel>>> fetchGradeView({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+
+  /// Fetches the mark breakdown and class statistics for a single course.
+  Future<Either<Failure, GradeViewDetailModel>> fetchGradeViewDetail({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+    required String courseId,
+  });
+}
+
+class VtopGradeViewRepository implements GradeViewRemoteRepository {
+  final VtopClientService vtopService;
+
+  VtopGradeViewRepository(this.vtopService);
+
+  @override
   Future<Either<Failure, List<GradeViewCourseModel>>> fetchGradeView({
     required String registrationNumber,
     required String password,
@@ -52,7 +69,7 @@ class GradeViewRemoteRepository {
     }
   }
 
-  /// Fetches the mark breakdown and class statistics for a single course.
+  @override
   Future<Either<Failure, GradeViewDetailModel>> fetchGradeViewDetail({
     required String registrationNumber,
     required String password,

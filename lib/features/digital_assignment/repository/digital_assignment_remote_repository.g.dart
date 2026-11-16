@@ -59,4 +59,4 @@ final class DigitalAssignmentRemoteRepositoryProvider
 }
 
 String _$digitalAssignmentRemoteRepositoryHash() =>
-    r'eac6a638f2f66b97f00c28190a7c338cb6041e44';
+    r'4d86d00f4e87b26c51b0416a89216bba0ab5a9e0';

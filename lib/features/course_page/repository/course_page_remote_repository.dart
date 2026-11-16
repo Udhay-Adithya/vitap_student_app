@@ -16,15 +16,66 @@ part 'course_page_remote_repository.g.dart';
 @riverpod
 CoursePageRemoteRepository coursePageRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
-  return CoursePageRemoteRepository(vtopService);
+  return VtopCoursePageRepository(vtopService);
 }
 
-class CoursePageRemoteRepository {
+abstract interface class CoursePageRemoteRepository {
+  /// Fetch courses available for course page
+  Future<Either<Failure, CoursesResponseModel>> fetchCoursesForCoursePage({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+
+  /// Fetch slots/class entries for a specific course
+  Future<Either<Failure, SlotsResponseModel>> fetchSlotsForCoursePage({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+    required String classId,
+  });
+
+  /// Fetch course detail with lectures and materials
+  Future<Either<Failure, CoursePageDetailModel>> fetchCourseDetail({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+    required String erpId,
+    required String classId,
+  });
+
+  /// Download course material (PDF, document, etc.)
+  Future<Either<Failure, Uint8List>> downloadCourseMaterial({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+    required String downloadPath,
+  });
+
+  /// Download all course materials as ZIP
+  Future<Either<Failure, Uint8List>> downloadAllCourseMaterials({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+    required String downloadPath,
+  });
+
+  /// Download course syllabus
+  Future<Either<Failure, Uint8List>> downloadCourseSyllabus({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+    required String courseId,
+    required String courseType,
+  });
+}
+
+class VtopCoursePageRepository implements CoursePageRemoteRepository {
   final VtopClientService vtopService;
 
-  CoursePageRemoteRepository(this.vtopService);
+  VtopCoursePageRepository(this.vtopService);
 
-  /// Fetch courses available for course page
+  @override
   Future<Either<Failure, CoursesResponseModel>> fetchCoursesForCoursePage({
     required String registrationNumber,
     required String password,
@@ -56,7 +107,7 @@ class CoursePageRemoteRepository {
     }
   }
 
-  /// Fetch slots/class entries for a specific course
+  @override
   Future<Either<Failure, SlotsResponseModel>> fetchSlotsForCoursePage({
     required String registrationNumber,
     required String password,
@@ -87,7 +138,7 @@ class CoursePageRemoteRepository {
     }
   }
 
-  /// Fetch course detail with lectures and materials
+  @override
   Future<Either<Failure, CoursePageDetailModel>> fetchCourseDetail({
     required String registrationNumber,
     required String password,
@@ -123,7 +174,7 @@ class CoursePageRemoteRepository {
     }
   }
 
-  /// Download course material (PDF, document, etc.)
+  @override
   Future<Either<Failure, Uint8List>> downloadCourseMaterial({
     required String registrationNumber,
     required String password,
@@ -156,7 +207,7 @@ class CoursePageRemoteRepository {
     }
   }
 
-  /// Download all course materials as ZIP
+  @override
   Future<Either<Failure, Uint8List>> downloadAllCourseMaterials({
     required String registrationNumber,
     required String password,
@@ -189,7 +240,7 @@ class CoursePageRemoteRepository {
     }
   }
 
-  /// Download course syllabus
+  @override
   Future<Either<Failure, Uint8List>> downloadCourseSyllabus({
     required String registrationNumber,
     required String password,

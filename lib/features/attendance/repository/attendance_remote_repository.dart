@@ -27,16 +27,40 @@ typedef AttendanceFetch = ({
 @riverpod
 AttendanceRemoteRepository attendanceRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
-  return AttendanceRemoteRepository(vtopService);
+  return VtopAttendanceRepository(vtopService);
 }
 
-class AttendanceRemoteRepository {
-  final VtopClientService vtopService;
-
-  AttendanceRemoteRepository(this.vtopService);
-
+abstract interface class AttendanceRemoteRepository {
   /// Fetch attendance data with automatic session management and retry
   /// This method demonstrates the new robust approach to handling VTOP requests
+  Future<Either<Failure, AttendanceFetch>> fetchAttendance({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+
+  /// Fetch detailed attendance with automatic session management and retry
+  Future<Either<Failure, List<AttendanceDetail>>> fetchDetailedAttendance({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+    required String courseId,
+    required String courseType,
+  });
+
+  Future<Either<Failure, List<Attendance>>> fetchAttendanceLegacy({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+}
+
+class VtopAttendanceRepository implements AttendanceRemoteRepository {
+  final VtopClientService vtopService;
+
+  VtopAttendanceRepository(this.vtopService);
+
+  @override
   Future<Either<Failure, AttendanceFetch>> fetchAttendance({
     required String registrationNumber,
     required String password,
@@ -80,7 +104,7 @@ class AttendanceRemoteRepository {
     }
   }
 
-  /// Fetch detailed attendance with automatic session management and retry
+  @override
   Future<Either<Failure, List<AttendanceDetail>>> fetchDetailedAttendance({
     required String registrationNumber,
     required String password,
@@ -121,6 +145,7 @@ class AttendanceRemoteRepository {
   /// Legacy method - kept for backward compatibility but marked for migration
   /// @deprecated Use fetchAttendance instead which has better session handling
   @Deprecated('Use fetchAttendance with the new session management')
+  @override
   Future<Either<Failure, List<Attendance>>> fetchAttendanceLegacy({
     required String registrationNumber,
     required String password,
