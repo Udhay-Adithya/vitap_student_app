@@ -204,7 +204,7 @@ In short, a fork or modified version that is distributed, including on an
 app store, must:
 
 - publish its complete source code under the same license
-- keep the attribution "Based on VIT-AP Student App" with a link to this
+- keep the attribution "Based on VITAP Student" with a link to this
   repository, both inside the app and in its README
 - use its own name and icon, as described in `TRADEMARKS.md`
 
