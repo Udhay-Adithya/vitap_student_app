@@ -11,14 +11,14 @@
 
 <p align="center">
     <a href="https://github.com/Udhay-Adithya/vit_ap_student_app">
-    <img src="https://img.shields.io/github/stars/Udhay-Adithya/vit_ap_student_app?style=social" alt="License: MIT">
+    <img src="https://img.shields.io/github/stars/Udhay-Adithya/vit_ap_student_app?style=social" alt="GitHub stars">
     </a>
-    <a href="https://opensource.org/licenses/MIT">
-    <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
+    <a href="https://www.gnu.org/licenses/gpl-3.0">
+    <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL-3.0">
     </a>
     <img src="https://img.shields.io/badge/Version-2.5.2-blue.svg" alt="Version 2.5.2">
     <a href="https://github.com/Udhay-Adithya/vit_ap_student_app/issues">
-    <img src="https://img.shields.io/github/issues/Udhay-Adithya/vit_ap_student_app" alt="License: MIT">
+    <img src="https://img.shields.io/github/issues/Udhay-Adithya/vit_ap_student_app" alt="GitHub issues">
     </a>
     <h1 align="center">VITAP Student</h1>
     <p align="center">The VITAP Student App is a comprehensive mobile application designed to revolutionize the student experience at VIT-AP University. Built with Flutter, this app provides a seamless, user-friendly platform for students to access academic information, and stay informed.
@@ -196,8 +196,22 @@ Your encouragement goes a long way in motivating student-led projects like this 
 
 ## 📄 License
 
-Distributed under MIT License.
-See `LICENSE` for more information.
+The app is licensed under the GNU General Public License, version 3 only
+(GPL-3.0-only), with additional terms under section 7 of that license.
+See `LICENSE` for the license text and `NOTICE` for the additional terms.
+
+In short, a fork or modified version that is distributed, including on an
+app store, must:
+
+- publish its complete source code under the same license
+- keep the attribution "Based on VIT-AP Student App" with a link to this
+  repository, both inside the app and in its README
+- use its own name and icon, as described in `TRADEMARKS.md`
+
+The Rust crate in `rust/` (`lib_vtop`) is licensed separately under the
+Apache License 2.0. See `rust/LICENSE` and `rust/NOTICE`.
+
+Releases up to and including 2.5.2 were published under the MIT License.
 
 ## 📢 Disclaimer
 
