@@ -119,8 +119,4 @@ Future<void> initServices() async {
 
   // Hydrate the demo-mode flag so it can be read synchronously everywhere.
   await DemoService.init();
-
-  serviceLocator.registerSingleton<ConnectionChecker>(
-    ConnectionCheckerImpl(InternetConnection()),
-  );
 }
