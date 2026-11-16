@@ -20,14 +20,16 @@ modified version as this app. A fork must not be published as
 
 ## The logo and icons
 
-The logo and app icon artwork is not licensed under the GPL. All rights
-reserved. This covers:
+The app icon is built on third-party graduation cap artwork. The GPL in
+this repository does not cover it, and this project cannot license it to
+anyone else. This applies to:
 
 - `assets/images/logo/`
 - the launcher icons generated from it, in `android/app/src/main/res/mipmap-*/`
   and `ios/Runner/Assets.xcassets/AppIcon.appiconset/`
 
-Forks must replace all of these with their own artwork.
+Section 7(c) of the GPL terms in `NOTICE` requires forks to use a
+different icon, so these files must be replaced in any fork.
 
 ## Allowed without asking
 
