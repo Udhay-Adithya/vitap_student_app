@@ -150,7 +150,8 @@ class CalendarEvent {
   Map<String, dynamic> toJson() => _$CalendarEventToJson(this);
 
   @override
-  String toString() => 'CalendarEvent(description: $description, label: $label)';
+  String toString() =>
+      'CalendarEvent(description: $description, label: $label)';
 }
 
 class _CalendarMonthRelToManyConverter

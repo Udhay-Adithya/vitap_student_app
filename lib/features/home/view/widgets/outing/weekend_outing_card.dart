@@ -9,10 +9,7 @@ import 'utils.dart';
 class WeekendOutingCard extends StatelessWidget {
   final WeekendOutingReport outing;
 
-  const WeekendOutingCard({
-    super.key,
-    required this.outing,
-  });
+  const WeekendOutingCard({super.key, required this.outing});
 
   bool _isToday() {
     final now = DateTime.now();
@@ -24,8 +21,11 @@ class WeekendOutingCard extends StatelessWidget {
   bool _isUpcoming() {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final outingDay =
-        DateTime(outing.date.year, outing.date.month, outing.date.day);
+    final outingDay = DateTime(
+      outing.date.year,
+      outing.date.month,
+      outing.date.day,
+    );
     return outingDay.isAfter(today) && outingDay.difference(today).inDays <= 7;
   }
 
@@ -143,10 +143,14 @@ class WeekendOutingCard extends StatelessWidget {
               if (outing.canDownload) ...[
                 const SizedBox(height: 12),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
-                    color: colorScheme.secondaryContainer.withValues(alpha: 0.3),
+                    color: colorScheme.secondaryContainer.withValues(
+                      alpha: 0.3,
+                    ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -213,8 +217,9 @@ class _DateChip extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color:
-                  isToday ? colorScheme.primary : colorScheme.onSurfaceVariant,
+              color: isToday
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -227,10 +232,7 @@ class _StatusBadge extends StatelessWidget {
   final String label;
   final Color color;
 
-  const _StatusBadge({
-    required this.label,
-    required this.color,
-  });
+  const _StatusBadge({required this.label, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -246,10 +248,7 @@ class _StatusBadge extends StatelessWidget {
           Container(
             width: 6,
             height: 6,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 6),
           Text(
@@ -270,10 +269,7 @@ class _TimeBadge extends StatelessWidget {
   final String label;
   final Color color;
 
-  const _TimeBadge({
-    required this.label,
-    required this.color,
-  });
+  const _TimeBadge({required this.label, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -318,11 +314,7 @@ class _DetailItem extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 18,
-            color: colorScheme.onSurfaceVariant,
-          ),
+          Icon(icon, size: 18, color: colorScheme.onSurfaceVariant),
           const SizedBox(width: 10),
           Expanded(
             child: Column(

@@ -81,28 +81,32 @@ void main() {
   });
 
   test('faculty details parse', () {
-    final details =
-        FacultyDetails.fromJson(data['faculty_details'] as Map<String, dynamic>);
+    final details = FacultyDetails.fromJson(
+      data['faculty_details'] as Map<String, dynamic>,
+    );
     expect(details.name, isNotEmpty);
     expect(details.officeHours, isNotEmpty);
   });
 
   test('courses parse', () {
-    final res =
-        CoursesResponseModel.fromJson(data['courses'] as Map<String, dynamic>);
+    final res = CoursesResponseModel.fromJson(
+      data['courses'] as Map<String, dynamic>,
+    );
     expect(res.courses, isNotEmpty);
   });
 
   test('slots parse', () {
-    final res =
-        SlotsResponseModel.fromJson(data['slots'] as Map<String, dynamic>);
+    final res = SlotsResponseModel.fromJson(
+      data['slots'] as Map<String, dynamic>,
+    );
     expect(res.slots, isNotEmpty);
     expect(res.classEntries, isNotEmpty);
   });
 
   test('course detail parses', () {
     final detail = CoursePageDetailModel.fromJson(
-        data['course_detail'] as Map<String, dynamic>);
+      data['course_detail'] as Map<String, dynamic>,
+    );
     expect(detail.courseInfo.courseCode, isNotEmpty);
     expect(detail.lectures, isNotEmpty);
   });

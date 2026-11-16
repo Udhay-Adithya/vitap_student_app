@@ -43,8 +43,10 @@ class _MyExamScheduleState extends ConsumerState<PaymentsPage>
     await ref
         .read(pendingPaymentsViewModelProvider.notifier)
         .fetchPendingPayments();
-    ref.read(analyticsServiceProvider).logEvent(AnalyticsEvents.refreshInitiated,
-        {AnalyticsParams.dataType: 'pending_payments'});
+    ref.read(analyticsServiceProvider).logEvent(
+      AnalyticsEvents.refreshInitiated,
+      {AnalyticsParams.dataType: 'pending_payments'},
+    );
   }
 
   @override

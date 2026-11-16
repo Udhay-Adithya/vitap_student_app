@@ -27,9 +27,10 @@ class _FacultiesPageState extends ConsumerState<FacultiesPage> {
       if (q != _query) {
         setState(() => _query = q);
         if (q.isNotEmpty) {
-          ref.read(analyticsServiceProvider).logEvent(AnalyticsEvents.facultySearch, {
-            AnalyticsParams.queryLength: q.length,
-          });
+          ref.read(analyticsServiceProvider).logEvent(
+            AnalyticsEvents.facultySearch,
+            {AnalyticsParams.queryLength: q.length},
+          );
         }
       }
     });
@@ -151,9 +152,10 @@ class _FacultyList extends ConsumerWidget {
           onTap: () {
             // The employee id, not the name: analytics must not carry a
             // person's name.
-            ref.read(analyticsServiceProvider).logEvent(AnalyticsEvents.facultyOpened, {
-              AnalyticsParams.target: faculty.empId,
-            });
+            ref.read(analyticsServiceProvider).logEvent(
+              AnalyticsEvents.facultyOpened,
+              {AnalyticsParams.target: faculty.empId},
+            );
             // Reset details state before opening the sheet so stale data isn't shown.
             ref.invalidate(facultyDetailsViewModelProvider);
 

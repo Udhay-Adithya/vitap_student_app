@@ -38,10 +38,13 @@ class ThemeModeNotifier extends _$ThemeModeNotifier {
     final currentPreferences = ref.read(userPreferencesProvider);
     final newThemeMode = !currentPreferences.isDarkModeEnabled;
 
-    ref.read(analyticsServiceProvider).logEvent(AnalyticsEvents.settingChanged, {
-      AnalyticsParams.setting: 'dark_mode',
-      AnalyticsParams.value: newThemeMode,
-    });
+    ref.read(analyticsServiceProvider).logEvent(
+      AnalyticsEvents.settingChanged,
+      {
+        AnalyticsParams.setting: 'dark_mode',
+        AnalyticsParams.value: newThemeMode,
+      },
+    );
 
     final updatedPreferences = currentPreferences.copyWith(
       isDarkModeEnabled: newThemeMode,
@@ -57,10 +60,10 @@ class ThemeModeNotifier extends _$ThemeModeNotifier {
   Future<void> setAppTheme(AppTheme theme) async {
     final currentPreferences = ref.read(userPreferencesProvider);
 
-    ref.read(analyticsServiceProvider).logEvent(AnalyticsEvents.settingChanged, {
-      AnalyticsParams.setting: 'app_theme',
-      AnalyticsParams.value: theme.name,
-    });
+    ref.read(analyticsServiceProvider).logEvent(
+      AnalyticsEvents.settingChanged,
+      {AnalyticsParams.setting: 'app_theme', AnalyticsParams.value: theme.name},
+    );
 
     final updatedPreferences = currentPreferences.copyWith(
       appTheme: theme.name,

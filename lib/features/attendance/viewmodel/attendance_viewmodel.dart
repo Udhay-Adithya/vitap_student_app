@@ -39,7 +39,9 @@ class AttendanceViewMode extends _$AttendanceViewMode {
     final Credentials? credentials = await userNotifier.getSavedCredentials();
     if (credentials == null) {
       state = AsyncValue.error(
-          'User not found. Please Logout and Login.', StackTrace.current);
+        'User not found. Please Logout and Login.',
+        StackTrace.current,
+      );
       return;
     }
     final res = await _attendanceRemoteRepository.fetchAttendance(
@@ -59,8 +61,9 @@ class AttendanceViewMode extends _$AttendanceViewMode {
             // Always written, including when it is null: a capstone that came
             // back empty this time should disappear rather than linger as a
             // stale card. It returns on the next successful refresh.
-            capstoneAttendance:
-                ToOne<CapstoneAttendance>(target: fetch.capstone),
+            capstoneAttendance: ToOne<CapstoneAttendance>(
+              target: fetch.capstone,
+            ),
           ),
         );
       }

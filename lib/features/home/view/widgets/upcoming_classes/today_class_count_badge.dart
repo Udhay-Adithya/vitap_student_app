@@ -16,8 +16,10 @@ class TodayClassCountBadge extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final DateTime now = watchScheduleNow(ref);
-    final Timetable? timetable =
-        ref.watch(currentUserProvider)?.timetable.target;
+    final Timetable? timetable = ref
+        .watch(currentUserProvider)
+        ?.timetable
+        .target;
     if (timetable == null) return const SizedBox.shrink();
 
     final List<ClassOccurrence> today = classesOn(timetable, now);

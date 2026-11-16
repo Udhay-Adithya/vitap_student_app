@@ -9,26 +9,28 @@ CalendarDay day({
   String date = '2026-08-15',
   int number = 15,
   String weekday = 'SATURDAY',
-}) =>
-    CalendarDay(
-      date: date,
-      day: number,
-      weekday: weekday,
-      events: ToMany<CalendarEvent>(items: [...events]),
-    );
+}) => CalendarDay(
+  date: date,
+  day: number,
+  weekday: weekday,
+  events: ToMany<CalendarEvent>(items: [...events]),
+);
 
 CalendarEvent event(String description, String label) =>
     CalendarEvent(description: description, label: label);
 
 Future<void> pumpTile(WidgetTester tester, CalendarDay value) async {
   await tester.pumpWidget(
-    MaterialApp(home: Scaffold(body: CalendarDayTile(day: value))),
+    MaterialApp(
+      home: Scaffold(body: CalendarDayTile(day: value)),
+    ),
   );
 }
 
 void main() {
-  testWidgets('shows an exam by name, not by its generic label',
-      (tester) async {
+  testWidgets('shows an exam by name, not by its generic label', (
+    tester,
+  ) async {
     await pumpTile(
       tester,
       day(events: [event('CAT - I - General (Semester)', 'Exam Days')]),
@@ -42,9 +44,7 @@ void main() {
   testWidgets('names a named holiday', (tester) async {
     await pumpTile(
       tester,
-      day(events: [
-        event('Holiday - General (Semester)', 'Independence Day'),
-      ]),
+      day(events: [event('Holiday - General (Semester)', 'Independence Day')]),
     );
 
     expect(find.text('Independence Day'), findsOneWidget);
@@ -53,16 +53,13 @@ void main() {
   testWidgets('never shows the class group suffix', (tester) async {
     await pumpTile(
       tester,
-      day(events: [
-        event('Instructional Day - General (Semester)', 'WorkingDay'),
-      ]),
+      day(
+        events: [event('Instructional Day - General (Semester)', 'WorkingDay')],
+      ),
     );
 
     expect(find.text('Instructional Day'), findsOneWidget);
-    expect(
-      find.textContaining('General (Semester)'),
-      findsNothing,
-    );
+    expect(find.textContaining('General (Semester)'), findsNothing);
   });
 
   testWidgets('shows the day number and a short weekday', (tester) async {
@@ -82,14 +79,17 @@ void main() {
     expect(find.text('Nothing listed'), findsOneWidget);
   });
 
-  testWidgets('shows every entry on a day that has more than one',
-      (tester) async {
+  testWidgets('shows every entry on a day that has more than one', (
+    tester,
+  ) async {
     await pumpTile(
       tester,
-      day(events: [
-        event('Instructional Day - General (Semester)', 'WorkingDay'),
-        event('CAT - I - General (Semester)', 'Exam Days'),
-      ]),
+      day(
+        events: [
+          event('Instructional Day - General (Semester)', 'WorkingDay'),
+          event('CAT - I - General (Semester)', 'Exam Days'),
+        ],
+      ),
     );
 
     expect(find.text('Instructional Day'), findsOneWidget);

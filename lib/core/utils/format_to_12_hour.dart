@@ -10,8 +10,13 @@ String formatTo12Hour(String? timeString) {
     if (timeParts.length != 2) return timeString;
 
     final now = DateTime.now();
-    final dateTime =
-        DateTime(now.year, now.month, now.day, timeParts[0], timeParts[1]);
+    final dateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      timeParts[0],
+      timeParts[1],
+    );
 
     return DateFormat('h:mm a').format(dateTime);
   } catch (e) {

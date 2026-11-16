@@ -49,15 +49,15 @@ class GeneralOutingSubmission extends _$GeneralOutingSubmission {
     );
 
     state = switch (res) {
-      Left(value: final failure) =>
-        AsyncValue.error(failure.message, StackTrace.current),
+      Left(value: final failure) => AsyncValue.error(
+        failure.message,
+        StackTrace.current,
+      ),
       Right(value: final response) => AsyncValue.data(response),
     };
   }
 
-  Future<void> deleteGeneralOuting({
-    required String leaveId,
-  }) async {
+  Future<void> deleteGeneralOuting({required String leaveId}) async {
     state = const AsyncValue.loading();
 
     final credentials = await ref
@@ -79,8 +79,10 @@ class GeneralOutingSubmission extends _$GeneralOutingSubmission {
     );
 
     state = switch (res) {
-      Left(value: final failure) =>
-        AsyncValue.error(failure.message, StackTrace.current),
+      Left(value: final failure) => AsyncValue.error(
+        failure.message,
+        StackTrace.current,
+      ),
       Right(value: final response) => AsyncValue.data(response),
     };
   }
@@ -128,15 +130,15 @@ class WeekendOutingSubmission extends _$WeekendOutingSubmission {
     );
 
     state = switch (res) {
-      Left(value: final failure) =>
-        AsyncValue.error(failure.message, StackTrace.current),
+      Left(value: final failure) => AsyncValue.error(
+        failure.message,
+        StackTrace.current,
+      ),
       Right(value: final response) => AsyncValue.data(response),
     };
   }
 
-  Future<void> deleteWeekendOuting({
-    required String bookingId,
-  }) async {
+  Future<void> deleteWeekendOuting({required String bookingId}) async {
     state = const AsyncValue.loading();
 
     final credentials = await ref
@@ -158,8 +160,10 @@ class WeekendOutingSubmission extends _$WeekendOutingSubmission {
     );
 
     state = switch (res) {
-      Left(value: final failure) =>
-        AsyncValue.error(failure.message, StackTrace.current),
+      Left(value: final failure) => AsyncValue.error(
+        failure.message,
+        StackTrace.current,
+      ),
       Right(value: final response) => AsyncValue.data(response),
     };
   }

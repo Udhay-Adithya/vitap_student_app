@@ -7,11 +7,7 @@ class ExamCard extends StatelessWidget {
   final Subject exam;
   final VoidCallback? onTap;
 
-  const ExamCard({
-    super.key,
-    required this.exam,
-    this.onTap,
-  });
+  const ExamCard({super.key, required this.exam, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +142,9 @@ class ExamCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: colorScheme.secondaryContainer.withValues(alpha: 0.3),
+                    color: colorScheme.secondaryContainer.withValues(
+                      alpha: 0.3,
+                    ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -236,7 +234,7 @@ class ExamCard extends StatelessWidget {
         'Sep': 9,
         'Oct': 10,
         'Nov': 11,
-        'Dec': 12
+        'Dec': 12,
       };
 
       final day = int.tryParse(dateParts[0]);
@@ -277,8 +275,8 @@ class _DateTimeChip extends StatelessWidget {
         color: isToday
             ? colorScheme.primary.withValues(alpha: 0.1)
             : isCompleted
-                ? colorScheme.surfaceContainerHighest
-                : colorScheme.surfaceContainerHigh,
+            ? colorScheme.surfaceContainerHighest
+            : colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -297,10 +295,7 @@ class _StatusBadge extends StatelessWidget {
   final String label;
   final Color color;
 
-  const _StatusBadge({
-    required this.label,
-    required this.color,
-  });
+  const _StatusBadge({required this.label, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -316,10 +311,7 @@ class _StatusBadge extends StatelessWidget {
           Container(
             width: 6,
             height: 6,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 6),
           Text(
@@ -354,11 +346,7 @@ class _DetailSection extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: colorScheme.onSurfaceVariant,
-        ),
+        Icon(icon, size: 16, color: colorScheme.onSurfaceVariant),
         const SizedBox(width: 8),
         Expanded(
           child: Column(

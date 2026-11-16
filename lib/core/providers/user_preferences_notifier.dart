@@ -57,9 +57,7 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
 
   // Toggle bypass weekend outing restriction
   Future<void> toggleBypassWeekendOutingRestriction(bool value) async {
-    final updatedPrefs = state.copyWith(
-      bypassWeekendOutingRestriction: value,
-    );
+    final updatedPrefs = state.copyWith(bypassWeekendOutingRestriction: value);
     await updatePreferences(updatedPrefs);
   }
 
@@ -78,8 +76,9 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
   /// data already buffered on the device.
   Future<void> toggleAnalytics(bool value) async {
     await updatePreferences(state.copyWith(isAnalyticsEnabled: value));
-    await serviceLocator<AnalyticsService>()
-        .setCollectionEnabled(enabled: value);
+    await serviceLocator<AnalyticsService>().setCollectionEnabled(
+      enabled: value,
+    );
   }
 
   // Manually clear user preferences

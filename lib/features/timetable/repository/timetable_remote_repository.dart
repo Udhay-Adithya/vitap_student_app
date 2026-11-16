@@ -39,10 +39,8 @@ class TimetableRemoteRepository {
       // Use the new executeWithRetry method for robust session handling
       final timetableRecords = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.fetchTimetable(
-          client: client,
-          semesterId: semSubId,
-        ),
+        operation: (client) =>
+            vtop.fetchTimetable(client: client, semesterId: semSubId),
       );
 
       final resBodyMap = jsonDecode(timetableRecords) as Map<String, dynamic>;

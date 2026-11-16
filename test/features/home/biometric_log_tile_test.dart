@@ -20,14 +20,8 @@ void main() {
     });
 
     test('reads capstone face attendance', () {
-      expect(
-        scanLocationKind('SDP-CAPSTONE-1'),
-        ScanLocationKind.capstone,
-      );
-      expect(
-        scanLocationKind('SDP-CAPSTONE-2'),
-        ScanLocationKind.capstone,
-      );
+      expect(scanLocationKind('SDP-CAPSTONE-1'), ScanLocationKind.capstone);
+      expect(scanLocationKind('SDP-CAPSTONE-2'), ScanLocationKind.capstone);
     });
 
     test('falls back to academic for block codes', () {

@@ -74,9 +74,7 @@ class ForYouCarousel extends ConsumerWidget {
   void _navigateToDetail(BuildContext context, ForYouItem item) {
     Navigator.push(
       context,
-      MaterialPageRoute<void>(
-        builder: (context) => TileDetailPage(item: item),
-      ),
+      MaterialPageRoute<void>(builder: (context) => TileDetailPage(item: item)),
     );
   }
 

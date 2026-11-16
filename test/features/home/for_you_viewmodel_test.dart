@@ -7,19 +7,19 @@ import 'package:vit_ap_student_app/features/home/repository/for_you_repository.d
 import 'package:vit_ap_student_app/features/home/viewmodel/for_you_viewmodel.dart';
 
 ForYouItem item(String id) => ForYouItem(
-      id: id,
-      title: 'Tool $id',
-      author: 'Someone',
-      authorEmail: 'someone@vitapstudent.ac.in',
-      type: 'tools',
-      description: 'Does a thing',
-      url: 'https://example.com',
-      isApproved: true,
-      isFeatured: true,
-      displayOrder: 0,
-      likes: 0,
-      createdAt: '2026-01-01T00:00:00Z',
-    );
+  id: id,
+  title: 'Tool $id',
+  author: 'Someone',
+  authorEmail: 'someone@vitapstudent.ac.in',
+  type: 'tools',
+  description: 'Does a thing',
+  url: 'https://example.com',
+  isApproved: true,
+  isFeatured: true,
+  displayOrder: 0,
+  likes: 0,
+  createdAt: '2026-01-01T00:00:00Z',
+);
 
 /// Answers without touching SharedPreferences or the network, and records how
 /// often it was asked.
@@ -38,8 +38,9 @@ class StubRepository implements ForYouRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> submitItem(ForYouItemSubmission submission) async =>
-      const Right(unit);
+  Future<Either<Failure, Unit>> submitItem(
+    ForYouItemSubmission submission,
+  ) async => const Right(unit);
 
   @override
   Future<Either<Failure, ForYouItem>> likeItem(String itemId) async =>
@@ -98,7 +99,11 @@ void main() {
       final repository = StubRepository(Right([item('a')]));
       final container = containerWith(repository);
 
-      container.listen(forYouViewModelProvider, (_, _) {}, fireImmediately: true);
+      container.listen(
+        forYouViewModelProvider,
+        (_, _) {},
+        fireImmediately: true,
+      );
       await tester.pump(Duration.zero);
 
       await container.read(forYouViewModelProvider.notifier).refresh();

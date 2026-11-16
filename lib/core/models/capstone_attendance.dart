@@ -138,7 +138,8 @@ class _CapstonePunchRelToManyConverter
 
   @override
   ToMany<CapstonePunch> fromJson(List<dynamic>? json) {
-    final items = json
+    final items =
+        json
             ?.map((e) => CapstonePunch.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [];

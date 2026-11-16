@@ -26,9 +26,7 @@ class ProfilePicturePage extends ConsumerWidget {
     final ColorScheme cs = Theme.of(context).colorScheme;
     final userPrefs = ref.watch(userPreferencesProvider);
     final String? base64Pfp = ref.watch(
-      currentUserProvider.select(
-        (user) => user?.profile.target?.base64Pfp,
-      ),
+      currentUserProvider.select((user) => user?.profile.target?.base64Pfp),
     );
     final List<String> imagePaths = avatarChoices(base64Pfp);
 

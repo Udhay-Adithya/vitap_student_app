@@ -10,56 +10,57 @@ import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/providers/user_persistence.dart';
 
 Attendance attendance(String courseCode) => Attendance(
-      classNumber: '1',
-      faculty: 'Someone',
-      courseId: 'AM_$courseCode',
-      courseCode: courseCode,
-      courseName: 'A course',
-      courseType: 'Theory Only',
-      courseTypeCode: 'TH',
-      courseSlot: 'A1',
-      attendedClasses: '10',
-      totalClasses: '10',
-      attendancePercentage: '100',
-      betweenAttendancePercentage: '100',
-      debarStatus: '',
-    );
+  classNumber: '1',
+  faculty: 'Someone',
+  courseId: 'AM_$courseCode',
+  courseCode: courseCode,
+  courseName: 'A course',
+  courseType: 'Theory Only',
+  courseTypeCode: 'TH',
+  courseSlot: 'A1',
+  attendedClasses: '10',
+  totalClasses: '10',
+  attendancePercentage: '100',
+  betweenAttendancePercentage: '100',
+  debarStatus: '',
+);
 
 CapstoneAttendance capstone({String title = 'Capstone'}) => CapstoneAttendance(
-      title: title,
-      guideEvaluationStatus: 'Registered',
-      dateOfRegistration: '2026-07-06 00:00:00.0',
-      present: '14',
-      onDuty: '4',
-      absent: '12',
-      percentage: '60',
-      punches: ToMany<CapstonePunch>(items: [
-        CapstonePunch(
-          serial: '1',
-          date: '17-07-2026',
-          day: 'FRIDAY',
-          dayType: 'Instructional',
-          status: 'Absent',
-          punchTime: '',
-        ),
-      ]),
-    );
+  title: title,
+  guideEvaluationStatus: 'Registered',
+  dateOfRegistration: '2026-07-06 00:00:00.0',
+  present: '14',
+  onDuty: '4',
+  absent: '12',
+  percentage: '60',
+  punches: ToMany<CapstonePunch>(
+    items: [
+      CapstonePunch(
+        serial: '1',
+        date: '17-07-2026',
+        day: 'FRIDAY',
+        dayType: 'Instructional',
+        status: 'Absent',
+        punchTime: '',
+      ),
+    ],
+  ),
+);
 
 User user({
   List<Attendance> attendances = const [],
   CapstoneAttendance? capstoneAttendance,
   int? id,
-}) =>
-    User(
-      id: id,
-      profile: ToOne<Profile>(),
-      // Copied into a growable list: a const list makes ToMany unmodifiable.
-      attendance: ToMany<Attendance>(items: [...attendances]),
-      timetable: ToOne<Timetable>(),
-      examSchedule: ToMany<ExamSchedule>(items: []),
-      marks: ToMany<Mark>(items: []),
-      capstoneAttendance: ToOne<CapstoneAttendance>(target: capstoneAttendance),
-    );
+}) => User(
+  id: id,
+  profile: ToOne<Profile>(),
+  // Copied into a growable list: a const list makes ToMany unmodifiable.
+  attendance: ToMany<Attendance>(items: [...attendances]),
+  timetable: ToOne<Timetable>(),
+  examSchedule: ToMany<ExamSchedule>(items: []),
+  marks: ToMany<Mark>(items: []),
+  capstoneAttendance: ToOne<CapstoneAttendance>(target: capstoneAttendance),
+);
 
 void main() {
   group('applyRefreshedUser', () {

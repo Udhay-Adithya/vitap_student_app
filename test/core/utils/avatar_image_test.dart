@@ -46,10 +46,7 @@ void main() {
         validPhoto,
       );
       expect(provider, isA<AssetImage>());
-      expect(
-        (provider as AssetImage).assetName,
-        'assets/images/pfp/panda.png',
-      );
+      expect((provider as AssetImage).assetName, 'assets/images/pfp/panda.png');
     });
 
     test('resolves the sentinel to the decoded photo', () {
@@ -78,10 +75,7 @@ void main() {
       // Someone picks their VTOP photo, then signs in to an account that has
       // none — the stale sentinel must still resolve to an avatar.
       for (final String? photo in <String?>[null, '', 'not base64!!']) {
-        final ImageProvider provider = avatarImageProvider(
-          kVtopPfpPath,
-          photo,
-        );
+        final ImageProvider provider = avatarImageProvider(kVtopPfpPath, photo);
         expect(provider, isA<AssetImage>());
         expect((provider as AssetImage).assetName, kDefaultPfpPath);
       }

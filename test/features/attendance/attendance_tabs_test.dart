@@ -11,7 +11,9 @@ Future<void> pumpTabBar(WidgetTester tester, List<String> tabs) async {
         child: Scaffold(
           appBar: AppBar(bottom: CourseTypeTabBar(tabs: tabs)),
           body: TabBarView(
-            children: [for (final tab in tabs) Center(child: Text('$tab body'))],
+            children: [
+              for (final tab in tabs) Center(child: Text('$tab body')),
+            ],
           ),
         ),
       ),
@@ -32,8 +34,10 @@ void main() {
     test('keeps Capstone last so the course tabs never move', () {
       // The tab order is also the order of the TabBarView children; putting
       // Capstone anywhere but last would silently re-point the other tabs.
-      expect(attendanceTabs(hasCapstone: true).take(2),
-          attendanceTabs(hasCapstone: false));
+      expect(
+        attendanceTabs(hasCapstone: true).take(2),
+        attendanceTabs(hasCapstone: false),
+      );
     });
   });
 
@@ -56,8 +60,9 @@ void main() {
       expect(find.text('Capstone'), findsNothing);
     });
 
-    testWidgets('shows a Capstone tab that opens the capstone body',
-        (tester) async {
+    testWidgets('shows a Capstone tab that opens the capstone body', (
+      tester,
+    ) async {
       await pumpTabBar(tester, attendanceTabs(hasCapstone: true));
 
       expect(find.text('Capstone'), findsOneWidget);
@@ -68,8 +73,9 @@ void main() {
       expect(find.text('Capstone body'), findsOneWidget);
     });
 
-    testWidgets('a student without a capstone never sees the tab',
-        (tester) async {
+    testWidgets('a student without a capstone never sees the tab', (
+      tester,
+    ) async {
       await pumpTabBar(tester, attendanceTabs(hasCapstone: false));
 
       expect(find.text('Theory'), findsOneWidget);

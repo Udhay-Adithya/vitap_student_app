@@ -16,7 +16,8 @@ void showClassDetailBottomSheet(
     showDragHandle: true,
     useSafeArea: true,
     isScrollControlled: true,
-    builder: (BuildContext context) => _ClassDetailSheet(occurrence: occurrence),
+    builder: (BuildContext context) =>
+        _ClassDetailSheet(occurrence: occurrence),
   );
 }
 
@@ -169,10 +170,7 @@ class _DetailRow extends StatelessWidget {
                   style: tt.labelMedium?.copyWith(color: cs.onSurfaceVariant),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  text,
-                  style: tt.bodyLarge?.copyWith(color: cs.onSurface),
-                ),
+                Text(text, style: tt.bodyLarge?.copyWith(color: cs.onSurface)),
               ],
             ),
           ),

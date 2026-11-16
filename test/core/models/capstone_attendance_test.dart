@@ -98,8 +98,9 @@ void main() {
     });
 
     test('treats missing counts as zero rather than throwing', () {
-      final capstone = _parse(_wire.replaceFirst('"on_duty": "4"',
-          '"on_duty": ""'));
+      final capstone = _parse(
+        _wire.replaceFirst('"on_duty": "4"', '"on_duty": ""'),
+      );
 
       expect(capstone.onDutyDays, 0);
       expect(capstone.totalDays, 26);

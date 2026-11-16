@@ -3,10 +3,7 @@ class WebViewCookieData {
   final String name;
   final String value;
 
-  const WebViewCookieData({
-    required this.name,
-    required this.value,
-  });
+  const WebViewCookieData({required this.name, required this.value});
 
   @override
   String toString() => '$name=$value';

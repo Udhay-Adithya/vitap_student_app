@@ -24,15 +24,18 @@ class AuthLocalRepository {
 
   /// Save or update list of semesters
   Future<Either<Failure, void>> saveSemesters(
-      List<SemesterInfo> semesters) async {
+    List<SemesterInfo> semesters,
+  ) async {
     try {
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final semesterCaches = semesters
-          .map((semester) => SemesterCache(
-                semesterId: semester.id,
-                semesterName: semester.name,
-                updatedAt: timestamp,
-              ))
+          .map(
+            (semester) => SemesterCache(
+              semesterId: semester.id,
+              semesterName: semester.name,
+              updatedAt: timestamp,
+            ),
+          )
           .toList();
 
       // Clear existing semesters and insert new ones
@@ -55,10 +58,10 @@ class AuthLocalRepository {
       }
 
       final semesters = semesterCaches
-          .map((cache) => SemesterInfo(
-                id: cache.semesterId,
-                name: cache.semesterName,
-              ))
+          .map(
+            (cache) =>
+                SemesterInfo(id: cache.semesterId, name: cache.semesterName),
+          )
           .toList();
 
       return Right(semesters);
@@ -94,15 +97,17 @@ class AuthLocalRepository {
       return const Right(null);
     } catch (e) {
       return Left(
-          Failure('Failed to update selected semester: ${e.toString()}'));
+        Failure('Failed to update selected semester: ${e.toString()}'),
+      );
     }
   }
 
   /// Get the currently selected semester
   Future<Either<Failure, SemesterInfo?>> getSelectedSemester() async {
     try {
-      final query =
-          _semesterBox.query(SemesterCache_.isSelected.equals(true)).build();
+      final query = _semesterBox
+          .query(SemesterCache_.isSelected.equals(true))
+          .build();
       final selected = query.findFirst();
       query.close();
 
@@ -110,13 +115,13 @@ class AuthLocalRepository {
         return const Right(null);
       }
 
-      return Right(SemesterInfo(
-        id: selected.semesterId,
-        name: selected.semesterName,
-      ));
+      return Right(
+        SemesterInfo(id: selected.semesterId, name: selected.semesterName),
+      );
     } catch (e) {
       return Left(
-          Failure('Failed to retrieve selected semester: ${e.toString()}'));
+        Failure('Failed to retrieve selected semester: ${e.toString()}'),
+      );
     }
   }
 

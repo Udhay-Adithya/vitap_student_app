@@ -61,10 +61,7 @@ class HomeAppBar extends ConsumerWidget {
           ),
         ],
       ),
-      actions: const <Widget>[
-        WeatherPill(),
-        SizedBox(width: 16),
-      ],
+      actions: const <Widget>[WeatherPill(), SizedBox(width: 16)],
     );
   }
 }

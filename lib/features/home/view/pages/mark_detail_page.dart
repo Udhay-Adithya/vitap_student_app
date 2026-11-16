@@ -23,9 +23,7 @@ class _MarkDetailPageState extends ConsumerState<MarkDetailPage> {
     // Lazily load the class statistics (a no-op if the course is not graded or
     // the stats are already cached on the Mark).
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(markDetailViewModelProvider.notifier)
-          .loadStats(widget.course);
+      ref.read(markDetailViewModelProvider.notifier).loadStats(widget.course);
     });
   }
 
@@ -287,25 +285,26 @@ class _GradesSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ColorScheme cs = Theme.of(context).colorScheme;
     final TextTheme tt = Theme.of(context).textTheme;
-    final AsyncValue<GradeStatisticsModel?>? statsState =
-        ref.watch(markDetailViewModelProvider);
+    final AsyncValue<GradeStatisticsModel?>? statsState = ref.watch(
+      markDetailViewModelProvider,
+    );
 
     return switch (statsState) {
       AsyncData(:final value?) => _StatsBody(course: course, stats: value),
       // The course is graded but has no statistics payload.
       AsyncData() => const SizedBox.shrink(),
       AsyncError() => Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Text(
-            "Couldn't load class statistics.",
-            style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
-          ),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Text(
+          "Couldn't load class statistics.",
+          style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
         ),
+      ),
       // null (not started) or loading.
       _ => const Padding(
-          padding: EdgeInsets.symmetric(vertical: 24),
-          child: Center(child: CircularProgressIndicator()),
-        ),
+        padding: EdgeInsets.symmetric(vertical: 24),
+        child: Center(child: CircularProgressIndicator()),
+      ),
     };
   }
 }
@@ -322,7 +321,9 @@ class _StatsBody extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(child: _MetricTile(label: 'Class mean', value: stats.mean)),
+            Expanded(
+              child: _MetricTile(label: 'Class mean', value: stats.mean),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: _MetricTile(label: 'Std deviation', value: stats.sd),
@@ -333,17 +334,14 @@ class _StatsBody extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             'Grade cutoffs',
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.w600),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           ...stats.gradeRanges.map(
-            (range) => _CutoffRow(
-              range: range,
-              isMine: range.grade == course.grade,
-            ),
+            (range) =>
+                _CutoffRow(range: range, isMine: range.grade == course.grade),
           ),
         ],
       ],
@@ -376,7 +374,10 @@ class _MetricTile extends StatelessWidget {
             style: tt.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 2),
-          Text(label, style: tt.labelMedium?.copyWith(color: cs.onSurfaceVariant)),
+          Text(
+            label,
+            style: tt.labelMedium?.copyWith(color: cs.onSurfaceVariant),
+          ),
         ],
       ),
     );
@@ -385,9 +386,7 @@ class _MetricTile extends StatelessWidget {
   String _trimNumber(String raw) {
     final parsed = double.tryParse(raw);
     if (parsed == null) return raw;
-    return parsed
-        .toStringAsFixed(2)
-        .replaceFirst(RegExp(r'\.?0+$'), '');
+    return parsed.toStringAsFixed(2).replaceFirst(RegExp(r'\.?0+$'), '');
   }
 }
 

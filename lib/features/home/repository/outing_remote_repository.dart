@@ -41,9 +41,7 @@ class OutingRemoteRepository {
       // Use the new executeWithRetry method for robust session handling
       final generalOutingRecords = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.fetchGeneralOutingReports(
-          client: client,
-        ),
+        operation: (client) => vtop.fetchGeneralOutingReports(client: client),
       );
 
       return Right(generalOutingReportFromJson(generalOutingRecords));
@@ -66,9 +64,7 @@ class OutingRemoteRepository {
       // Use the new executeWithRetry method for robust session handling
       final generalOutingRecords = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.fetchWeekendOutingReports(
-          client: client,
-        ),
+        operation: (client) => vtop.fetchWeekendOutingReports(client: client),
       );
 
       log(generalOutingRecords);
@@ -94,10 +90,8 @@ class OutingRemoteRepository {
       // Use the new executeWithRetry method for robust session handling
       final weekendOutingReport = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.fetchWeekendOutingPdf(
-          client: client,
-          bookingId: leaveId,
-        ),
+        operation: (client) =>
+            vtop.fetchWeekendOutingPdf(client: client, bookingId: leaveId),
       );
 
       return Right(weekendOutingReport);
@@ -121,10 +115,8 @@ class OutingRemoteRepository {
       // Use the new executeWithRetry method for robust session handling
       final generalOutingReport = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.fetchGeneralOutingPdf(
-          client: client,
-          leaveId: leaveId,
-        ),
+        operation: (client) =>
+            vtop.fetchGeneralOutingPdf(client: client, leaveId: leaveId),
       );
 
       return Right(generalOutingReport);
@@ -217,10 +209,8 @@ class OutingRemoteRepository {
 
       final response = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.deleteGeneralOuting(
-          client: client,
-          leaveId: leaveId,
-        ),
+        operation: (client) =>
+            vtop.deleteGeneralOuting(client: client, leaveId: leaveId),
       );
 
       return Right(response);
@@ -243,10 +233,8 @@ class OutingRemoteRepository {
 
       final response = await vtopService.executeWithRetry(
         credentials: credentials,
-        operation: (client) => vtop.deleteWeekendOuting(
-          client: client,
-          bookingId: bookingId,
-        ),
+        operation: (client) =>
+            vtop.deleteWeekendOuting(client: client, bookingId: bookingId),
       );
 
       return Right(response);

@@ -77,10 +77,7 @@ class ScheduleTimeline extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          formatTo12Hour(startTime),
-          style: const TextStyle(fontSize: 16),
-        ),
+        Text(formatTo12Hour(startTime), style: const TextStyle(fontSize: 16)),
         if (endLabel.isNotEmpty)
           Text(
             endLabel,
@@ -111,12 +108,12 @@ class ScheduleTimeline extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildInfoText(classInfo.courseName, context, isTitle: true),
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
               _buildInfoText(classInfo.faculty, context),
               _buildInfoText(
-                  '${classInfo.courseCode} - ${classInfo.courseType}', context),
+                '${classInfo.courseCode} - ${classInfo.courseType}',
+                context,
+              ),
               _buildInfoText(classInfo.venue, context),
               _buildInfoText(classInfo.slot?.split('-').first, context),
             ],
@@ -126,8 +123,11 @@ class ScheduleTimeline extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoText(String? text, BuildContext context,
-      {bool isTitle = false}) {
+  Widget _buildInfoText(
+    String? text,
+    BuildContext context, {
+    bool isTitle = false,
+  }) {
     return Text(
       text ?? 'N/A',
       style: TextStyle(

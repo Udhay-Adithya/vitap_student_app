@@ -5,7 +5,9 @@ import 'package:vit_ap_student_app/core/common/widget/user_info_tile.dart';
 
 Future<void> pumpTile(WidgetTester tester, Widget tile) {
   return tester.pumpWidget(
-    MaterialApp(home: Scaffold(body: Column(children: [tile]))),
+    MaterialApp(
+      home: Scaffold(body: Column(children: [tile])),
+    ),
   );
 }
 
@@ -49,7 +51,10 @@ void main() {
     );
 
     testWidgets('an empty value is treated the same as N/A', (tester) async {
-      await pumpTile(tester, const UserInfoTile('Cabin', '   ', copyable: true));
+      await pumpTile(
+        tester,
+        const UserInfoTile('Cabin', '   ', copyable: true),
+      );
 
       expect(find.text('N/A'), findsOneWidget);
       expect(find.byType(InkWell), findsNothing);
@@ -77,8 +82,11 @@ void main() {
 
       await pumpTile(
         tester,
-        const UserInfoTile('Email', ' someone@vitapstudent.ac.in ',
-            copyable: true),
+        const UserInfoTile(
+          'Email',
+          ' someone@vitapstudent.ac.in ',
+          copyable: true,
+        ),
       );
       await tester.tap(find.text('someone@vitapstudent.ac.in'));
       await tester.pump();

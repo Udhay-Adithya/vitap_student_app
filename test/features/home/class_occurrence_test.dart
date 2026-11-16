@@ -55,14 +55,8 @@ void main() {
     });
 
     test('is ongoing exactly on the boundaries', () {
-      expect(
-        tenToEleven.phaseAt(DateTime(2026, 8, 3, 10)),
-        ClassPhase.ongoing,
-      );
-      expect(
-        tenToEleven.phaseAt(DateTime(2026, 8, 3, 11)),
-        ClassPhase.ongoing,
-      );
+      expect(tenToEleven.phaseAt(DateTime(2026, 8, 3, 10)), ClassPhase.ongoing);
+      expect(tenToEleven.phaseAt(DateTime(2026, 8, 3, 11)), ClassPhase.ongoing);
     });
 
     test('is completed after the end time', () {
@@ -88,10 +82,7 @@ void main() {
         tenToEleven.remainingAt(DateTime(2026, 8, 3, 10, 38)),
         const Duration(minutes: 22),
       );
-      expect(
-        tenToEleven.remainingAt(DateTime(2026, 8, 3, 14)),
-        Duration.zero,
-      );
+      expect(tenToEleven.remainingAt(DateTime(2026, 8, 3, 14)), Duration.zero);
     });
 
     test('startsInAt counts down and clamps at zero', () {
@@ -129,9 +120,10 @@ void main() {
       );
 
       expect(
-        classesOn(timetable, monday)
-            .map((ClassOccurrence c) => c.info.courseName)
-            .toList(),
+        classesOn(
+          timetable,
+          monday,
+        ).map((ClassOccurrence c) => c.info.courseName).toList(),
         <String>['Early', 'Middle', 'Late'],
       );
     });
@@ -145,9 +137,10 @@ void main() {
       );
 
       expect(
-        classesOn(timetable, monday)
-            .map((ClassOccurrence c) => c.info.courseName)
-            .toList(),
+        classesOn(
+          timetable,
+          monday,
+        ).map((ClassOccurrence c) => c.info.courseName).toList(),
         <String>['Known', 'Unknown'],
       );
     });

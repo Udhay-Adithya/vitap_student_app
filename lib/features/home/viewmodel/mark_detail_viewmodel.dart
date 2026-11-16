@@ -62,7 +62,9 @@ class MarkDetailViewModel extends _$MarkDetailViewModel {
     final Credentials? credentials = await userNotifier.getSavedCredentials();
     if (credentials == null) {
       state = AsyncValue.error(
-          'User not found. Please Logout and Login.', StackTrace.current);
+        'User not found. Please Logout and Login.',
+        StackTrace.current,
+      );
       return;
     }
 
@@ -79,14 +81,13 @@ class MarkDetailViewModel extends _$MarkDetailViewModel {
       // Cache onto the Mark and persist, so the next open reads from cache.
       mark.gradeStatsJson = jsonEncode(detail.statistics.toJson());
       if (user != null) {
-        await userNotifier.updateUser(
-          user.copyWith(marks: user.marks),
-        );
+        await userNotifier.updateUser(user.copyWith(marks: user.marks));
       }
       state = AsyncValue.data(detail.statistics);
     }
   }
 
-  GradeStatisticsModel _decode(String jsonStr) =>
-      GradeStatisticsModel.fromJson(json.decode(jsonStr) as Map<String, dynamic>);
+  GradeStatisticsModel _decode(String jsonStr) => GradeStatisticsModel.fromJson(
+    json.decode(jsonStr) as Map<String, dynamic>,
+  );
 }

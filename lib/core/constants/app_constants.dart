@@ -29,14 +29,14 @@ class AppConstants {
     'Guntur',
     'Tenali',
     'Eluru',
-    'Others'
+    'Others',
   ];
 
   static const List<String> outingTimeSlots = [
     '9:30 AM- 3:30PM',
     '10:30 AM- 4:30PM',
     '11:30 AM- 5:30PM',
-    '12:30 PM- 6:30PM'
+    '12:30 PM- 6:30PM',
   ];
 
   // ForYou Item Types
@@ -60,5 +60,11 @@ class AppConstants {
   static const int kMaxFileSizeBytes = 4 * 1024 * 1024;
 
   /// Accepted file extensions for digital assignment uploads.
-  static const List<String> kAllowedExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
+  static const List<String> kAllowedExtensions = [
+    'pdf',
+    'doc',
+    'docx',
+    'xls',
+    'xlsx',
+  ];
 }

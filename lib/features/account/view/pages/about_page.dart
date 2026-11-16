@@ -32,9 +32,7 @@ class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('About'),
-      ),
+      appBar: AppBar(title: const Text('About')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -43,30 +41,26 @@ class _AboutPageState extends State<AboutPage> {
               height: 125,
               width: 125,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(26),
-                  color: const Color(0xFFFFC68D),
-                  image: const DecorationImage(
-                    scale: 1.2,
-                    image: AssetImage('assets/images/logo/app_icon.png'),
-                  )),
+                borderRadius: BorderRadius.circular(26),
+                color: const Color(0xFFFFC68D),
+                image: const DecorationImage(
+                  scale: 1.2,
+                  image: AssetImage('assets/images/logo/app_icon.png'),
+                ),
+              ),
               // child: Image.asset(
               //   "assets/images/logo/app_icon.png",
               //   height: 150,
               // ),
             ),
-            const SizedBox(
-              height: 18,
-            ),
+            const SizedBox(height: 18),
             Text(
               'VITAP Student',
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
-            const SizedBox(
-              height: 8,
-            ),
+            const SizedBox(height: 8),
             Text(
               'Version: $_version',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(),
@@ -75,16 +69,12 @@ class _AboutPageState extends State<AboutPage> {
               '© 2026 Udhay Adithya & Sai Sanjay',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(),
             ),
-            const SizedBox(
-              height: 12,
-            ),
+            const SizedBox(height: 12),
             const Text(
               'An unofficial app built by students for\nstudents of VIT-AP to access academic\ninformation from VTOP with ease.',
               textAlign: TextAlign.center,
             ),
-            const SizedBox(
-              height: 24,
-            ),
+            const SizedBox(height: 24),
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -93,13 +83,9 @@ class _AboutPageState extends State<AboutPage> {
                   color: Theme.of(context).colorScheme.outlineVariant,
                 ),
               ),
-              child: const Footer(
-                hideVersion: true,
-              ),
+              child: const Footer(hideVersion: true),
             ),
-            const SizedBox(
-              height: 24,
-            ),
+            const SizedBox(height: 24),
             MenuSection(
               children: [
                 MenuTile(

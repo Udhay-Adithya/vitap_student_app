@@ -42,10 +42,9 @@ class _MentorPageState extends ConsumerState<MentorPage> {
         automaticallyImplyLeading: true,
         title: Text(
           'Mentor',
-          style: Theme.of(context)
-              .textTheme
-              .headlineSmall
-              ?.copyWith(fontWeight: FontWeight.w500),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w500),
         ),
       ),
       body: Padding(
@@ -87,17 +86,18 @@ class _MentorPageState extends ConsumerState<MentorPage> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color:
-                            Theme.of(context).colorScheme.surfaceContainerHigh,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHigh,
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
                         user?.profile.target?.mentorDetails.target?.facultyId ??
                             'N/A',
-                        style:
-                            Theme.of(context).textTheme.labelMedium!.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
+                        style: Theme.of(context).textTheme.labelMedium!
+                            .copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                       ),
                     ),
                   ],
@@ -111,14 +111,15 @@ class _MentorPageState extends ConsumerState<MentorPage> {
               copyable: true,
             ),
             UserInfoTile(
-                'Department',
-                user?.profile.target?.mentorDetails.target?.facultyDepartment ??
-                    'N/A'),
+              'Department',
+              user?.profile.target?.mentorDetails.target?.facultyDepartment ??
+                  'N/A',
+            ),
             UserInfoTile(
-                'Designation',
-                user?.profile.target?.mentorDetails.target
-                        ?.facultyDesignation ??
-                    'N/A'),
+              'Designation',
+              user?.profile.target?.mentorDetails.target?.facultyDesignation ??
+                  'N/A',
+            ),
             // Contact rows lead with the thing you actually want: writing to
             // your mentor, or calling them. Copying is still there beside it.
             UserInfoTile(
@@ -131,9 +132,11 @@ class _MentorPageState extends ConsumerState<MentorPage> {
                 onTap: () => _open(() => launchEmail(email), 'mail app'),
               ),
             ),
-            UserInfoTile('Cabin',
-                user?.profile.target?.mentorDetails.target?.cabin ?? 'N/A',
-                copyable: true),
+            UserInfoTile(
+              'Cabin',
+              user?.profile.target?.mentorDetails.target?.cabin ?? 'N/A',
+              copyable: true,
+            ),
             UserInfoTile(
               'Mobile Number',
               mobile,

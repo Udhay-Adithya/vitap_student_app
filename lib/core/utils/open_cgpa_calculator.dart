@@ -9,8 +9,9 @@ import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'launch_web.dart';
 
 String generateCgpaCalculatorUrl(GradeHistory gradeHistory) {
-  final compressed =
-      gzip.encode(utf8.encode(jsonEncode(gradeHistory.toJson())));
+  final compressed = gzip.encode(
+    utf8.encode(jsonEncode(gradeHistory.toJson())),
+  );
   final encodedData = base64Url.encode(compressed);
 
   const baseUrl = ServerConstants.cgpaCalculatorBaseUrl;

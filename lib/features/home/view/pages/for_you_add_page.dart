@@ -561,9 +561,10 @@ class _ForYouAddPageState extends ConsumerState<ForYouAddPage> {
         .submitItem(submission);
 
     if (success && mounted) {
-      ref.read(analyticsServiceProvider).logEvent(AnalyticsEvents.forYouItemSubmitted, {
-        AnalyticsParams.type: submission.type,
-      });
+      ref.read(analyticsServiceProvider).logEvent(
+        AnalyticsEvents.forYouItemSubmitted,
+        {AnalyticsParams.type: submission.type},
+      );
 
       await showDialog<void>(
         context: context,

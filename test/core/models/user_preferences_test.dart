@@ -27,19 +27,19 @@ void main() {
 
   group('withoutAccountData', () {
     UserPreferences signedIn() => UserPreferences(
-          id: 3,
-          appTheme: 'sakura',
-          isDarkModeEnabled: true,
-          isTimetableNotificationsEnabled: false,
-          timetableNotificationDelay: 25,
-          isAnalyticsEnabled: false,
-          isFirstLaunch: false,
-          pfpPath: 'vtop://profile-photo',
-          lastSync: DateTime(2026, 8, 1),
-          attendanceLastSync: DateTime(2026, 8, 2),
-          marksLastSync: DateTime(2026, 8, 3),
-          examScheduleLastSync: DateTime(2026, 8, 4),
-        );
+      id: 3,
+      appTheme: 'sakura',
+      isDarkModeEnabled: true,
+      isTimetableNotificationsEnabled: false,
+      timetableNotificationDelay: 25,
+      isAnalyticsEnabled: false,
+      isFirstLaunch: false,
+      pfpPath: 'vtop://profile-photo',
+      lastSync: DateTime(2026, 8, 1),
+      attendanceLastSync: DateTime(2026, 8, 2),
+      marksLastSync: DateTime(2026, 8, 3),
+      examScheduleLastSync: DateTime(2026, 8, 4),
+    );
 
     /// The stamps belong to the account that fetched the data. Left behind,
     /// the next student to sign in sees "Last Synced: 3 days ago" on pages

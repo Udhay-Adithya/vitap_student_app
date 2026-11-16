@@ -62,9 +62,7 @@ class AuthRemoteRepository {
         password: password,
       );
 
-      final response = await vtop.fetchSemesters(
-        client: client,
-      );
+      final response = await vtop.fetchSemesters(client: client);
       return Right((response.semesters));
     } catch (e) {
       return Left(

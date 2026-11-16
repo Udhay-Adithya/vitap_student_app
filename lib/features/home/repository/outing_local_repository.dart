@@ -36,7 +36,8 @@ class OutingLocalRepository {
   }
 
   Future<void> saveGeneralOutingReports(
-      List<GeneralOutingReport> reports) async {
+    List<GeneralOutingReport> reports,
+  ) async {
     try {
       // Clear existing data and save new
       generalOutingBox.removeAll();
@@ -66,7 +67,8 @@ class OutingLocalRepository {
   }
 
   Future<void> saveWeekendOutingReports(
-      List<WeekendOutingReport> reports) async {
+    List<WeekendOutingReport> reports,
+  ) async {
     try {
       // Clear existing data and save new
       weekendOutingBox.removeAll();

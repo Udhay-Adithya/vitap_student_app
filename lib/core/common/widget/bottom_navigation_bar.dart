@@ -27,16 +27,10 @@ class BottomNavBarState extends ConsumerState<BottomNavBar> {
       if (!mounted) return;
       AppFeedback.promoterSurvey(context);
     });
-
   }
 
   List<Widget> _buildPages() {
-    return const [
-      HomePage(),
-      TimetablePage(),
-      AttendancePage(),
-      AccountPage(),
-    ];
+    return const [HomePage(), TimetablePage(), AttendancePage(), AccountPage()];
   }
 
   @override
@@ -49,23 +43,20 @@ class BottomNavBarState extends ConsumerState<BottomNavBar> {
         if (!didPop && currentIndex != 0) {
           ref.read(bottomNavIndexProvider.notifier).state = 0;
           // Log navigation to home via back button
-          ref.read(analyticsServiceProvider).logEvent(
-            AnalyticsEvents.navigationTapped,
-            {
-              AnalyticsParams.source: _tabNames[currentIndex],
-              AnalyticsParams.target: _tabNames[0],
-              AnalyticsParams.method: 'back_button',
-            },
-          );
+          ref
+              .read(analyticsServiceProvider)
+              .logEvent(AnalyticsEvents.navigationTapped, {
+                AnalyticsParams.source: _tabNames[currentIndex],
+                AnalyticsParams.target: _tabNames[0],
+                AnalyticsParams.method: 'back_button',
+              });
         }
       },
       child: Scaffold(
         body: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
-          transitionBuilder: (child, animation) => FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          transitionBuilder: (child, animation) =>
+              FadeTransition(opacity: animation, child: child),
           child: _buildPages()[currentIndex],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -78,14 +69,13 @@ class BottomNavBarState extends ConsumerState<BottomNavBar> {
               final toTab = _tabNames[index];
 
               // Log tab switch
-              ref.read(analyticsServiceProvider).logEvent(
-                AnalyticsEvents.navigationTapped,
-                {
-                  AnalyticsParams.source: fromTab,
-                  AnalyticsParams.target: toTab,
-                  AnalyticsParams.method: 'tab_bar',
-                },
-              );
+              ref
+                  .read(analyticsServiceProvider)
+                  .logEvent(AnalyticsEvents.navigationTapped, {
+                    AnalyticsParams.source: fromTab,
+                    AnalyticsParams.target: toTab,
+                    AnalyticsParams.method: 'tab_bar',
+                  });
 
               ref.read(bottomNavIndexProvider.notifier).state = index;
             }

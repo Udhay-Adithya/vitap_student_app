@@ -65,16 +65,15 @@ class User {
     ToOne<GradeHistory>? gradeHistory,
     ToMany<Mark>? marks,
     ToOne<CapstoneAttendance>? capstoneAttendance,
-  }) =>
-      User(
-        id: id ?? this.id,
-        profile: profile ?? this.profile,
-        attendance: attendance ?? this.attendance,
-        timetable: timetable ?? this.timetable,
-        examSchedule: examSchedule ?? this.examSchedule,
-        marks: marks ?? this.marks,
-        capstoneAttendance: capstoneAttendance ?? this.capstoneAttendance,
-      );
+  }) => User(
+    id: id ?? this.id,
+    profile: profile ?? this.profile,
+    attendance: attendance ?? this.attendance,
+    timetable: timetable ?? this.timetable,
+    examSchedule: examSchedule ?? this.examSchedule,
+    marks: marks ?? this.marks,
+    capstoneAttendance: capstoneAttendance ?? this.capstoneAttendance,
+  );
   Map<String, dynamic> toJson() => _$UserToJson(this);
 
   @override
@@ -102,7 +101,8 @@ class _AttendanceRelToManyConverter
 
   @override
   ToMany<Attendance> fromJson(List<dynamic>? json) {
-    final items = json
+    final items =
+        json
             ?.map((e) => Attendance.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [];
@@ -121,7 +121,8 @@ class _CapstoneAttendanceRelToOneConverter
   @override
   ToOne<CapstoneAttendance> fromJson(Map<String, dynamic>? json) =>
       ToOne<CapstoneAttendance>(
-          target: json == null ? null : CapstoneAttendance.fromJson(json));
+        target: json == null ? null : CapstoneAttendance.fromJson(json),
+      );
 
   @override
   Map<String, dynamic>? toJson(ToOne<CapstoneAttendance> rel) =>
@@ -146,7 +147,8 @@ class _ExamScheduleRelToManyConverter
 
   @override
   ToMany<ExamSchedule> fromJson(List<dynamic>? json) {
-    final items = json
+    final items =
+        json
             ?.map((e) => ExamSchedule.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [];
@@ -166,7 +168,7 @@ class _MarkRelToManyConverter
   ToMany<Mark> fromJson(List<dynamic>? json) {
     final items =
         json?.map((e) => Mark.fromJson(e as Map<String, dynamic>)).toList() ??
-            [];
+        [];
     return ToMany<Mark>(items: items);
   }
 
