@@ -39,7 +39,7 @@ class AuthViewModel extends _$AuthViewModel {
       final user = await DemoService.instance.loadDemoUser();
       final credentials = DemoService.instance.credentials;
 
-      await DemoService.instance.setDemoMode(true);
+      await ref.read(demoModeProvider.notifier).set(true);
       await _currentUserNotifier.loginUser(user, credentials);
 
       _analytics.logLogin('demo');
@@ -50,7 +50,7 @@ class AuthViewModel extends _$AuthViewModel {
       state = AsyncValue.data(user);
     } catch (e) {
       // Roll back the flag so the app doesn't get stuck in a broken demo state.
-      await DemoService.instance.setDemoMode(false);
+      await ref.read(demoModeProvider.notifier).set(false);
       _analytics.logError('auth_error', e, location: 'loginDemoUser');
       state = AsyncValue.error(
         'Failed to start the demo. Please try again.',

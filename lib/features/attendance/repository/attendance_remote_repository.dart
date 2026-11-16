@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -8,8 +9,10 @@ import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/attendance.dart';
 import 'package:vit_ap_student_app/core/models/capstone_attendance.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/attendance/model/attendance_detail.dart';
+import 'package:vit_ap_student_app/features/attendance/repository/demo_attendance_repository.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'attendance_remote_repository.g.dart';
@@ -27,6 +30,9 @@ typedef AttendanceFetch = ({
 @riverpod
 AttendanceRemoteRepository attendanceRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
+  if (ref.watch(demoModeProvider)) {
+    return DemoAttendanceRepository(DemoService.instance);
+  }
   return VtopAttendanceRepository(vtopService);
 }
 

@@ -97,7 +97,7 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
 
       // Exit demo mode (no-op for normal accounts) so a subsequent real login
       // is not treated as a demo session.
-      await DemoService.instance.setDemoMode(false);
+      await ref.read(demoModeProvider.notifier).set(false);
 
       // Remove credentials
       await ref.read(secureStorageServiceProvider).clearCredentials();

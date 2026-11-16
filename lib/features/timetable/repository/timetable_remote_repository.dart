@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/timetable.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
+import 'package:vit_ap_student_app/features/timetable/repository/demo_timetable_repository.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'timetable_remote_repository.g.dart';
@@ -14,6 +17,9 @@ part 'timetable_remote_repository.g.dart';
 @riverpod
 TimetableRemoteRepository timetableRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
+  if (ref.watch(demoModeProvider)) {
+    return DemoTimetableRepository(DemoService.instance);
+  }
   return VtopTimetableRepository(vtopService);
 }
 
