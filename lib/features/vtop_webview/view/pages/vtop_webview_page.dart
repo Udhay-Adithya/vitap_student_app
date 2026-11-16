@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vit_ap_student_app/core/constants/server_constants.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
-import 'package:vit_ap_student_app/core/services/secure_store_service.dart';
-import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/vtop_webview/models/webview_cookie_data.dart';
+import 'package:vit_ap_student_app/features/vtop_webview/models/webview_session.dart';
 import 'package:vit_ap_student_app/features/vtop_webview/view/widgets/url_bar.dart';
-import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart';
+import 'package:vit_ap_student_app/features/vtop_webview/viewmodel/webview_session_viewmodel.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 /// A page that displays VTOP portal in a WebView with authenticated session.
@@ -34,70 +33,29 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
   @override
   void initState() {
     super.initState();
-    _initializeWebView();
     ref.read(analyticsServiceProvider).logScreen('VtopWebViewPage');
+    // Opened by an explicit tap, so the session is fetched straight away.
+    // After the first frame: a provider cannot change while the tree builds.
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => ref.read(webViewSessionViewModelProvider.notifier).open(),
+    );
   }
 
-  /// Initialize the WebView with cookies from the authenticated Rust session
-  Future<void> _initializeWebView() async {
-    // Read before the first await: the page can close while this is loading.
-    final secureStorage = ref.read(secureStorageServiceProvider);
-    final vtopService = ref.read(vtopClientServiceProvider);
+  /// Points a fresh WebView at the portal, continuing [session].
+  Future<void> _loadSession(WebViewSession session) async {
     try {
       _setState(() {
         _isLoading = true;
         _isContentLoaded = false;
         _errorMessage = null;
+        _controller = null;
       });
+      _csrfToken = session.csrfToken;
+      _authorizedId = session.authorizedId;
 
-      // Get credentials from secure storage
-      final credentials = await secureStorage.getCredentials();
+      await _injectCookies(session.cookies);
 
-      if (credentials == null) {
-        _setState(() {
-          _isLoading = false;
-          _errorMessage = 'No credentials found. Please login first.';
-        });
-        return;
-      }
-
-      // Get or create an authenticated VTOP client
-      final client = await vtopService.getClientFromCredentials(credentials);
-
-      // Check if client is authenticated
-      final isAuth = await fetchIsAuth(client: client);
-      if (!isAuth) {
-        _setState(() {
-          _isLoading = false;
-          _errorMessage = 'Session not authenticated. Please refresh.';
-        });
-        return;
-      }
-
-      // Fetch cookies from the authenticated session
-      final cookieBytes = await fetchCookies(client: client);
-      final cookieString = String.fromCharCodes(cookieBytes);
-
-      if (cookieString.isEmpty) {
-        _setState(() {
-          _isLoading = false;
-          _errorMessage = 'No session cookies found. Please refresh.';
-        });
-        return;
-      }
-
-      // Get CSRF token and username from Rust session
-      _csrfToken = await fetchCsrfToken(client: client);
-      _authorizedId = await fetchUsername(client: client);
-
-      await _injectCookies(cookieString);
-
-      // The WebView and the Rust client share one server session, so they have
-      // to look like one client. VtopConfig picks a random browser UA per
-      // session, so the only way to match is to ask the session which one it
-      // used — inventing a device UA here guaranteed a mismatch on every
-      // request the WebView made.
-      final userAgent = await fetchUserAgent(client: client);
+      final userAgent = session.userAgent;
       _trace('session user agent: $userAgent');
 
       // Configured with awaits rather than a cascade so the order is
@@ -188,7 +146,7 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
 
       _setState(() {});
     } catch (e) {
-      _trace('initialization failed: $e');
+      _trace('webview setup failed: $e');
       _setState(() {
         _isLoading = false;
         _errorMessage = 'Failed to load VTOP: ${e.toString()}';
@@ -299,13 +257,11 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
     }
   }
 
-  /// Parse the cookie string and inject each cookie into the WebView
-  Future<void> _injectCookies(String cookieString) async {
+  /// Replaces the WebView's cookies with the session's.
+  Future<void> _injectCookies(List<WebViewCookieData> cookies) async {
     final cookieManager = WebViewCookieManager();
 
     await cookieManager.clearCookies();
-
-    final cookies = parseCookieString(cookieString);
 
     for (final cookie in cookies) {
       await cookieManager.setCookie(
@@ -319,14 +275,18 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
     }
   }
 
-  /// Refresh the session by resetting the client and reinitializing
-  Future<void> _refreshSession() async {
-    ref.read(vtopClientServiceProvider).resetClient();
-    await _initializeWebView();
+  /// Starts over with a fresh VTOP login.
+  void _refreshSession() {
+    _setState(() => _errorMessage = null);
+    ref.read(webViewSessionViewModelProvider.notifier).refresh();
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(webViewSessionViewModelProvider, (_, next) {
+      if (next case AsyncData(value: final session)) _loadSession(session);
+    });
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -353,8 +313,12 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
   }
 
   Widget _buildBody() {
-    if (_errorMessage != null) {
-      return _buildErrorView();
+    final session = ref.watch(webViewSessionViewModelProvider);
+    final String? error = session?.hasError == true
+        ? session!.error.toString()
+        : _errorMessage;
+    if (error != null) {
+      return _buildErrorView(error);
     }
 
     if (_controller == null) {
@@ -429,7 +393,7 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
     );
   }
 
-  Widget _buildErrorView() {
+  Widget _buildErrorView(String message) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -448,7 +412,7 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              _errorMessage ?? 'An unknown error occurred',
+              message,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
