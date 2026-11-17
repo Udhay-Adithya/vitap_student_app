@@ -6,7 +6,6 @@ import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/mark.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
-import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/grade_view/model/grade_view_detail.dart';
 import 'package:vit_ap_student_app/features/grade_view/repository/grade_view_remote_repository.dart';
 
@@ -49,13 +48,6 @@ class MarkDetailViewModel extends _$MarkDetailViewModel {
     }
 
     state = const AsyncValue.loading();
-
-    if (DemoService.isDemoMode) {
-      final detail = await DemoService.instance.gradeViewDetail();
-      mark.gradeStatsJson = jsonEncode(detail.statistics.toJson());
-      state = AsyncValue.data(detail.statistics);
-      return;
-    }
 
     final User? user = ref.read(currentUserProvider);
     final userNotifier = ref.read(currentUserProvider.notifier);

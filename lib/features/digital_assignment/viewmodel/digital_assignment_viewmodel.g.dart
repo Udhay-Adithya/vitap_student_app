@@ -48,7 +48,7 @@ final class DigitalAssignmentViewModelProvider
 }
 
 String _$digitalAssignmentViewModelHash() =>
-    r'04def5e55edc0c5c4a7479c430af84910a55b5a2';
+    r'e96b82104ee8fb3f3bde48bb885c63c63f01d32d';
 
 abstract class _$DigitalAssignmentViewModel
     extends $Notifier<AsyncValue<List<DigitalAssignment>>?> {

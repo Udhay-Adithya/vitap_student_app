@@ -1,14 +1,17 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/course_page/model/course_page_detail.dart';
 import 'package:vit_ap_student_app/features/course_page/model/courses_response.dart';
 import 'package:vit_ap_student_app/features/course_page/model/slots_response.dart';
+import 'package:vit_ap_student_app/features/course_page/repository/demo_course_page_repository.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'course_page_remote_repository.g.dart';
@@ -16,6 +19,9 @@ part 'course_page_remote_repository.g.dart';
 @riverpod
 CoursePageRemoteRepository coursePageRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
+  if (ref.watch(demoModeProvider)) {
+    return DemoCoursePageRepository(DemoService.instance);
+  }
   return VtopCoursePageRepository(vtopService);
 }
 

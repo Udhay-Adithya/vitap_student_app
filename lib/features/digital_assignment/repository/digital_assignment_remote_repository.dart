@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/digital_assignment/model/digital_assignment_model.dart';
+import 'package:vit_ap_student_app/features/digital_assignment/repository/demo_digital_assignment_repository.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/vtop_errors.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
@@ -16,6 +19,9 @@ part 'digital_assignment_remote_repository.g.dart';
 @riverpod
 DigitalAssignmentRemoteRepository digitalAssignmentRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
+  if (ref.watch(demoModeProvider)) {
+    return DemoDigitalAssignmentRepository(DemoService.instance);
+  }
   return VtopDigitalAssignmentRepository(vtopService);
 }
 

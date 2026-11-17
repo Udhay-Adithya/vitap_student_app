@@ -5,8 +5,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/home/model/faculty.dart';
+import 'package:vit_ap_student_app/features/home/repository/demo_faculty_repository.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/types/faculty.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
@@ -15,7 +17,10 @@ part 'faculty_repository.g.dart';
 @riverpod
 FacultyRepository facultyRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
-  return VtopFacultyRepository(vtopService);
+  final live = VtopFacultyRepository(vtopService);
+  return ref.watch(demoModeProvider)
+      ? DemoFacultyRepository(DemoService.instance, live)
+      : live;
 }
 
 abstract interface class FacultyRepository {
