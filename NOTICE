@@ -1,0 +1,76 @@
+VITAP Student
+https://github.com/Udhay-Adithya/vitap_student_app
+
+Copyright (C) 2025, 2026 Udhay Adithya and the VITAP Student contributors
+
+This program is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License, version 3 only, as
+published by the Free Software Foundation, together with the additional
+terms below. The full license text is in LICENSE.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+Public License for more details.
+
+SPDX-License-Identifier: GPL-3.0-only
+
+
+Additional terms (GNU GPL version 3, section 7)
+-----------------------------------------------
+
+These terms apply to every work based on this program, in source or
+object form, including apps published on any app store.
+
+1. Attribution (section 7(b)).
+
+   Every conveyed copy or modified version must preserve the following
+   attribution, unaltered:
+
+       Based on VITAP Student
+       https://github.com/Udhay-Adithya/vitap_student_app
+       Licensed under the GNU General Public License, version 3
+
+   It must appear:
+
+   a. in the Appropriate Legal Notices of the app, meaning an About,
+      Licenses or similar screen that a user can reach from the app's
+      settings or main menu without special knowledge, and
+
+   b. in the top-level README, or equivalent primary documentation, of
+      the corresponding source code.
+
+   Keeping this file (NOTICE) in the source tree is also required.
+
+2. Marking of modified versions (section 7(c)).
+
+   A modified version must be clearly marked as different from the
+   original. It must not be presented as VITAP Student, as an
+   official release of it, or as published or endorsed by its
+   maintainers.
+
+3. Name and icon (sections 7(c) and 7(e)).
+
+   A modified version must use a different name and a different app
+   icon, so it cannot be mistaken for this app. This license grants no
+   rights under trademark law in the name "VITAP Student". See
+   BRANDING.md.
+
+
+Components under other licenses
+-------------------------------
+
+- assets/images/logo/ and the launcher icons generated from it: built on
+  "Mortarboard icons created by Magnific - Flaticon"
+  (https://www.flaticon.com/free-icon/mortarboard_3845897), used under
+  the Flaticon license, which this license does not override. See
+  assets/licenses/mortarboard.txt and BRANDING.md.
+- assets/weather_icons/: Meteocons by Bas Milius
+  (https://github.com/basmilius/meteocons), MIT License. See
+  assets/licenses/meteocons.txt.
+- rust/ (lib_vtop): Apache License 2.0. See rust/LICENSE and
+  rust/NOTICE.
+- rust_builder/cargokit/: its own license, in that directory.
+- assets/fonts/: SIL Open Font License 1.1. See assets/fonts/OFL.txt.
+- Third-party Dart and Rust packages: their own licenses, as listed in
+  pubspec.lock and rust/Cargo.lock.

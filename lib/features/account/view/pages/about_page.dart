@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:vit_ap_student_app/core/utils/app_licenses.dart';
 import 'package:vit_ap_student_app/core/utils/launch_web.dart';
 import 'package:vit_ap_student_app/core/utils/package_version.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/footer.dart';
@@ -33,7 +34,7 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('About')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -101,6 +102,16 @@ class _AboutPageState extends State<AboutPage> {
                   onTap: () async {
                     await directToWeb('https://vitap.udhay-adithya.me/terms');
                   },
+                ),
+                MenuTile(
+                  icon: Iconsax.document_code_copy,
+                  title: 'Open Source Licenses',
+                  onTap: () => showLicensePage(
+                    context: context,
+                    applicationName: appLicensePackage,
+                    applicationVersion: _version,
+                    applicationLegalese: appLegalese,
+                  ),
                 ),
               ],
             ),
