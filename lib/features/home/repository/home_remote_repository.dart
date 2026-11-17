@@ -28,7 +28,7 @@ HomeRemoteRepository homeRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
   final live = VtopHomeRepository(client, vtopService);
   return ref.watch(demoModeProvider)
-      ? DemoHomeRepository(DemoService.instance, live)
+      ? DemoHomeRepository(ref.watch(demoServiceProvider), live)
       : live;
 }
 

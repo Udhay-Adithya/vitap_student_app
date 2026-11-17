@@ -36,8 +36,9 @@ class AuthViewModel extends _$AuthViewModel {
     });
 
     try {
-      final user = await DemoService.instance.loadDemoUser();
-      final credentials = DemoService.instance.credentials;
+      final demo = ref.read(demoServiceProvider);
+      final user = await demo.loadDemoUser();
+      final credentials = demo.credentials;
 
       await ref.read(demoModeProvider.notifier).set(true);
       await _currentUserNotifier.loginUser(user, credentials);

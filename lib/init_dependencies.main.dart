@@ -22,9 +22,9 @@ Future<ProviderContainer> initDependencies() async {
   // Dotenv
   await dotenv.load(fileName: '.env');
 
-  await HomeWidget.setAppGroupId('group.com.udhay.vitapstudentapp');
+  await container.read(homeWidgetServiceProvider).initialize();
 
-  await NotificationService.initialize();
+  await container.read(notificationServiceProvider).initialize();
 
   // Block Landscape View
   await SystemChrome.setPreferredOrientations([

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:home_widget/home_widget.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/models/timetable.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/services/home_widget_service.dart';
 
 part 'schedule_home_widget_notifier.g.dart';
 
@@ -17,10 +17,9 @@ class ScheduleHomeWidgetNotifier extends _$ScheduleHomeWidgetNotifier {
 
   Future<void> saveTimetable(Timetable timetableData) async {
     try {
-      await HomeWidget.saveWidgetData<String>(
-        'timetable',
-        json.encode(timetableData.toJson()),
-      );
+      await ref
+          .read(homeWidgetServiceProvider)
+          .save('timetable', json.encode(timetableData.toJson()));
       state = timetableData;
     } catch (e, stackTrace) {
       debugPrint('Error saving timetable: $e');
@@ -30,11 +29,7 @@ class ScheduleHomeWidgetNotifier extends _$ScheduleHomeWidgetNotifier {
 
   Future<void> updateWidget() async {
     try {
-      await HomeWidget.updateWidget(
-        name: 'UpcomingClassWidget',
-        iOSName: 'UpcomingClassWidget',
-        androidName: 'UpcomingClassWidget',
-      );
+      await ref.read(homeWidgetServiceProvider).refresh();
     } catch (e, stackTrace) {
       debugPrint('Error updating widget: $e');
       debugPrint('Stack trace: $stackTrace');
@@ -58,7 +53,7 @@ class ScheduleHomeWidgetNotifier extends _$ScheduleHomeWidgetNotifier {
   /// Clears saved timetable data from the widget storage
   Future<void> clearTimetable() async {
     try {
-      await HomeWidget.saveWidgetData<String>('timetable', '');
+      await ref.read(homeWidgetServiceProvider).save('timetable', '');
       state = null;
     } catch (e, stackTrace) {
       debugPrint('Error clearing timetable: $e');
@@ -69,7 +64,9 @@ class ScheduleHomeWidgetNotifier extends _$ScheduleHomeWidgetNotifier {
   /// For testing and internal use: reads the saved timetable from widget storage
   Future<Timetable?> readSavedTimetable() async {
     try {
-      final jsonString = await HomeWidget.getWidgetData<String>('timetable');
+      final jsonString = await ref
+          .read(homeWidgetServiceProvider)
+          .read('timetable');
       if (jsonString == null || jsonString.isEmpty) return null;
       return Timetable.fromJson(
         json.decode(jsonString) as Map<String, dynamic>,

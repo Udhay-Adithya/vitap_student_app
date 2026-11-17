@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:vit_ap_student_app/core/models/exam_schedule.dart';
@@ -9,6 +10,8 @@ import 'package:vit_ap_student_app/core/models/timetable.dart' as td;
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/models/user_preferences.dart';
 import 'package:vit_ap_student_app/core/utils/request_notification_permission.dart';
+
+part 'notification_service.g.dart';
 
 /// Type of file download for notification display
 enum DownloadType {
@@ -47,10 +50,18 @@ const _classGroupSummaryId = 0x7F000002;
 // ignore: unused_element
 const _examGroupSummaryId = 0x7F000003;
 
-class NotificationService {
-  static final _notifications = FlutterLocalNotificationsPlugin();
+/// The app's one notification service. Tests override it: under
+/// `flutter test` the plugin is never initialised, so every call throws.
+@Riverpod(keepAlive: true)
+NotificationService notificationService(Ref ref) => NotificationService();
 
-  static Future<void> initialize() async {
+class NotificationService {
+  NotificationService({FlutterLocalNotificationsPlugin? plugin})
+    : _notifications = plugin ?? FlutterLocalNotificationsPlugin();
+
+  final FlutterLocalNotificationsPlugin _notifications;
+
+  Future<void> initialize() async {
     tz.initializeTimeZones();
     await requestNotificationPermission();
     const android = AndroidInitializationSettings('app_icon');
@@ -86,7 +97,7 @@ class NotificationService {
   ///
   /// [downloadType] — the type of download for display text
   /// [fileName] — the human-readable name (e.g. course code, leave ID)
-  static Future<void> showDownloadCompleteNotification({
+  Future<void> showDownloadCompleteNotification({
     required DownloadType downloadType,
     required String fileName,
   }) async {
@@ -134,7 +145,7 @@ class NotificationService {
   /// Android group summary notification for downloads.
   /// This is the "header" that bundles individual download notifications together
   /// (e.g. "3 downloads"). It must use [setAsGroupSummary: true].
-  static Future<void> _showDownloadGroupSummary() async {
+  Future<void> _showDownloadGroupSummary() async {
     const androidDetails = AndroidNotificationDetails(
       'file_downloads',
       'File Downloads',
@@ -174,7 +185,7 @@ class NotificationService {
   /// [showDownloadCompleteNotification] replaces it.
   ///
   /// Returns the [notificationId] so callers can update/complete it later.
-  static Future<int> showDownloadProgressIndeterminate({
+  Future<int> showDownloadProgressIndeterminate({
     required DownloadType downloadType,
     required String fileName,
   }) async {
@@ -217,7 +228,7 @@ class NotificationService {
   /// progress bar showing [progress] out of [maxProgress].
   ///
   /// Use when the total size is known (e.g. from a Content-Length header).
-  static Future<void> updateDownloadProgress({
+  Future<void> updateDownloadProgress({
     required int notificationId,
     required DownloadType downloadType,
     required String fileName,
@@ -257,11 +268,11 @@ class NotificationService {
   }
 
   /// Cancels an in-progress download notification (e.g. on error or cancel).
-  static Future<void> cancelDownloadProgress(int notificationId) async {
+  Future<void> cancelDownloadProgress(int notificationId) async {
     await _notifications.cancel(id: notificationId);
   }
 
-  static Future<void> scheduleTimetableNotifications({
+  Future<void> scheduleTimetableNotifications({
     required User user,
     required UserPreferences prefs,
   }) async {
@@ -296,7 +307,7 @@ class NotificationService {
     }
   }
 
-  static Future<void> _scheduleClassNotification({
+  Future<void> _scheduleClassNotification({
     required td.Day slot,
     required int weekday,
     required int delayMinutes,
@@ -341,7 +352,7 @@ class NotificationService {
     );
   }
 
-  static tz.TZDateTime _calculateNotificationTime({
+  tz.TZDateTime _calculateNotificationTime({
     required int weekday,
     required TimeOfDay time,
     required int delayMinutes,
@@ -363,7 +374,7 @@ class NotificationService {
     return scheduledDate.subtract(Duration(minutes: delayMinutes));
   }
 
-  static TimeOfDay? _parseTime(String startTime) {
+  TimeOfDay? _parseTime(String startTime) {
     try {
       final components = startTime.split(RegExp(r'[\s:]'));
       var hour = int.parse(components[0]);
@@ -388,11 +399,11 @@ class NotificationService {
     }
   }
 
-  static Future<void> _cancelTimetableNotifications() async {
+  Future<void> _cancelTimetableNotifications() async {
     await _notifications.cancelAllPendingNotifications();
   }
 
-  static Future<void> scheduleExamNotifications({
+  Future<void> scheduleExamNotifications({
     required User user,
     required UserPreferences prefs,
   }) async {
@@ -409,7 +420,7 @@ class NotificationService {
     }
   }
 
-  static Future<void> _scheduleExamNotification({
+  Future<void> _scheduleExamNotification({
     required Subject subject,
     required int delayMinutes,
   }) async {
@@ -451,7 +462,7 @@ class NotificationService {
     );
   }
 
-  static tz.TZDateTime? _parseExamDateTime(String dateStr, String timeStr) {
+  tz.TZDateTime? _parseExamDateTime(String dateStr, String timeStr) {
     try {
       // Parse date in "27 - Jan - 2025" format
       final dateParts = dateStr.split(' - ').map((s) => s.trim()).toList();
@@ -497,7 +508,7 @@ class NotificationService {
     }
   }
 
-  static Future<void> _cancelExamNotifications() async {
+  Future<void> _cancelExamNotifications() async {
     // Cancel only exam notifications
     final pending = await _notifications.pendingNotificationRequests();
     for (final notification in pending) {
@@ -507,13 +518,13 @@ class NotificationService {
     }
   }
 
-  static Future<void> cancelAllNotifications() async {
+  Future<void> cancelAllNotifications() async {
     await _notifications.cancelAll();
     await _notifications.cancelAllPendingNotifications();
   }
 
   /// Cancels only pending (scheduled) notifications, leaving active ones intact
-  static Future<void> cancelAllScheduledNotifications() async {
+  Future<void> cancelAllScheduledNotifications() async {
     await _notifications.cancelAllPendingNotifications();
   }
 }

@@ -10,8 +10,10 @@ import 'package:vit_ap_student_app/core/services/review_prompt_policy.dart';
 part 'review_prompt_service.g.dart';
 
 @riverpod
-ReviewPromptService reviewPromptService(Ref ref) =>
-    ReviewPromptService(ref.watch(analyticsServiceProvider));
+ReviewPromptService reviewPromptService(Ref ref) => ReviewPromptService(
+  ref.watch(analyticsServiceProvider),
+  isDemoMode: ref.watch(demoModeProvider),
+);
 
 /// Asks for a store rating after something has just gone right.
 ///
@@ -25,9 +27,11 @@ ReviewPromptService reviewPromptService(Ref ref) =>
 /// legitimately show nothing. [reviewPromptCooldown] is what stops the app
 /// retrying a silently-ignored prompt forever.
 class ReviewPromptService {
-  const ReviewPromptService(this._analytics);
+  const ReviewPromptService(this._analytics, {required bool isDemoMode})
+    : _isDemoMode = isDemoMode;
 
   final AnalyticsService _analytics;
+  final bool _isDemoMode;
 
   static const EngagementStore _store = EngagementStore();
 
@@ -45,7 +49,7 @@ class ReviewPromptService {
         firstSeenAt: snapshot.firstSeenAt,
         lastPromptedAt: snapshot.reviewPromptedAt,
         now: DateTime.now(),
-        isDemoMode: DemoService.isDemoMode,
+        isDemoMode: _isDemoMode,
       )) {
         return;
       }

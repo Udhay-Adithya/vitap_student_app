@@ -8,6 +8,48 @@ part of 'demo_service.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+
+@ProviderFor(demoService)
+final demoServiceProvider = DemoServiceProvider._();
+
+final class DemoServiceProvider
+    extends $FunctionalProvider<DemoService, DemoService, DemoService>
+    with $Provider<DemoService> {
+  DemoServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'demoServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$demoServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<DemoService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  DemoService create(Ref ref) {
+    return demoService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DemoService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DemoService>(value),
+    );
+  }
+}
+
+String _$demoServiceHash() => r'901091cb2b6aed02fbb12b03a894b3e445560af5';
+
 /// Whether the demo account is signed in.
 ///
 /// Repository providers watch this to choose between VTOP and the bundled

@@ -25,6 +25,9 @@ import 'package:vit_ap_student_app/src/rust/api/vtop/types/faculty.dart';
 
 part 'demo_service.g.dart';
 
+@Riverpod(keepAlive: true)
+DemoService demoService(Ref ref) => DemoService.instance;
+
 /// Whether the demo account is signed in.
 ///
 /// Repository providers watch this to choose between VTOP and the bundled

@@ -25,6 +25,7 @@ class SettingsPage extends ConsumerStatefulWidget {
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
   Future<void> _resetNotifications() async {
+    final notifications = ref.read(notificationServiceProvider);
     try {
       final user = ref.read(currentUserProvider);
       final prefs = ref.read(userPreferencesProvider);
@@ -35,20 +36,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       }
 
       // Cancel all and reschedule
-      await NotificationService.cancelAllNotifications();
+      await notifications.cancelAllNotifications();
 
       if (prefs.isTimetableNotificationsEnabled) {
-        await NotificationService.scheduleTimetableNotifications(
+        await notifications.scheduleTimetableNotifications(
           user: user,
           prefs: prefs,
         );
       }
 
       if (prefs.isExamScheduleNotificationEnabled) {
-        await NotificationService.scheduleExamNotifications(
-          user: user,
-          prefs: prefs,
-        );
+        await notifications.scheduleExamNotifications(user: user, prefs: prefs);
       }
 
       if (mounted) showToast(context, 'Notifications rescheduled');

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vit_ap_student_app/core/services/demo_service.dart';
 
 /// Heading for a group of choices.
@@ -99,7 +100,7 @@ class OutingChoiceChips extends StatelessWidget {
 /// Applying writes an official record to VTOP, and it used to be a `TextButton`
 /// in `Colors.blue` — the same visual weight as the "view history" link beside
 /// it, and off-palette in both themes.
-class OutingApplyButton extends StatelessWidget {
+class OutingApplyButton extends ConsumerWidget {
   const OutingApplyButton({
     super.key,
     required this.isLoading,
@@ -110,13 +111,13 @@ class OutingApplyButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final ColorScheme cs = Theme.of(context).colorScheme;
 
     // Submitting is a write to VTOP, so the demo account cannot do it. The
     // button stays visible and says why — it used to vanish entirely, leaving a
     // filled-in form with no way to submit and no explanation.
-    final bool isDemo = DemoService.isDemoMode;
+    final bool isDemo = ref.watch(demoModeProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -20,7 +20,7 @@ part 'digital_assignment_remote_repository.g.dart';
 DigitalAssignmentRemoteRepository digitalAssignmentRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
   if (ref.watch(demoModeProvider)) {
-    return DemoDigitalAssignmentRepository(DemoService.instance);
+    return DemoDigitalAssignmentRepository(ref.watch(demoServiceProvider));
   }
   return VtopDigitalAssignmentRepository(vtopService);
 }

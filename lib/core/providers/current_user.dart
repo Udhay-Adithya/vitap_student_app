@@ -44,6 +44,7 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
 
   // Update user in state and ObjectBox
   Future<void> updateUser(User updatedUser) async {
+    final notifications = ref.read(notificationServiceProvider);
     try {
       // Preserve the existing ID when updating
       final userWithId = state?.id != null
@@ -57,7 +58,7 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
       throw Exception('Failed to update user data: $e');
     }
 
-    await NotificationService.cancelAllNotifications();
+    await notifications.cancelAllNotifications();
     await _scheduleNotifications(state ?? updatedUser);
   }
 
@@ -70,16 +71,14 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
   /// credentials in place, and (because nothing awaited the call) said nothing
   /// at all.
   Future<void> _scheduleNotifications(User user) async {
+    final notifications = ref.read(notificationServiceProvider);
     try {
       final prefs = ref.read(userPreferencesProvider);
-      await NotificationService.scheduleTimetableNotifications(
+      await notifications.scheduleTimetableNotifications(
         user: user,
         prefs: prefs,
       );
-      await NotificationService.scheduleExamNotifications(
-        user: user,
-        prefs: prefs,
-      );
+      await notifications.scheduleExamNotifications(user: user, prefs: prefs);
     } catch (e, stackTrace) {
       debugPrint('Failed to schedule notifications: $e');
       ref
@@ -90,6 +89,7 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
   }
 
   Future<void> logout() async {
+    final notifications = ref.read(notificationServiceProvider);
     try {
       // Clear user state and storage
       state = null;
@@ -107,7 +107,7 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
       await ref.read(analyticsServiceProvider).reset();
 
       // Clear Notifications
-      await NotificationService.cancelAllNotifications();
+      await notifications.cancelAllNotifications();
 
       // Preferences are the device's and mostly survive a logout, but the
       // last-synced stamps belong to the account that fetched the data.

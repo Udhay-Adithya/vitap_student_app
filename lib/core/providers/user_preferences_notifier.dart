@@ -18,6 +18,7 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
   }
 
   Future<void> updatePreferences(UserPreferences newPreferences) async {
+    final notifications = ref.read(notificationServiceProvider);
     try {
       final store = ref.read(storeProvider);
       final box = store.box<UserPreferences>();
@@ -31,11 +32,11 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
       final user = ref.read(currentUserProvider);
       if (user != null) {
         // Cancel all notifications first
-        await NotificationService.cancelAllNotifications();
+        await notifications.cancelAllNotifications();
 
         // Reschedule timetable notifications if enabled
         if (newPreferences.isTimetableNotificationsEnabled) {
-          await NotificationService.scheduleTimetableNotifications(
+          await notifications.scheduleTimetableNotifications(
             user: user,
             prefs: newPreferences,
           );
@@ -43,7 +44,7 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
 
         // Reschedule exam notifications if enabled
         if (newPreferences.isExamScheduleNotificationEnabled) {
-          await NotificationService.scheduleExamNotifications(
+          await notifications.scheduleExamNotifications(
             user: user,
             prefs: newPreferences,
           );

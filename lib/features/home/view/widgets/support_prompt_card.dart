@@ -40,7 +40,7 @@ class _SupportPromptCardState extends ConsumerState<SupportPromptCard> {
         firstSeenAt: snapshot.firstSeenAt,
         dismissedAt: snapshot.supportDismissedAt,
         now: DateTime.now(),
-        isDemoMode: DemoService.isDemoMode,
+        isDemoMode: ref.read(demoModeProvider),
       );
     });
   }

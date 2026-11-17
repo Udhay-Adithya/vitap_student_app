@@ -22,7 +22,7 @@ OutingRemoteRepository outingRemoteRepository(Ref ref) {
   final client = ref.watch(httpClientProvider);
   final vtopService = ref.watch(vtopClientServiceProvider);
   if (ref.watch(demoModeProvider)) {
-    return DemoOutingRepository(DemoService.instance);
+    return DemoOutingRepository(ref.watch(demoServiceProvider));
   }
   return VtopOutingRepository(client, vtopService);
 }

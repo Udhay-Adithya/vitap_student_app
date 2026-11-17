@@ -18,7 +18,7 @@ part 'timetable_remote_repository.g.dart';
 TimetableRemoteRepository timetableRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
   if (ref.watch(demoModeProvider)) {
-    return DemoTimetableRepository(DemoService.instance);
+    return DemoTimetableRepository(ref.watch(demoServiceProvider));
   }
   return VtopTimetableRepository(vtopService);
 }

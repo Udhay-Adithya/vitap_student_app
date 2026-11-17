@@ -18,7 +18,7 @@ part 'grade_view_remote_repository.g.dart';
 GradeViewRemoteRepository gradeViewRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
   if (ref.watch(demoModeProvider)) {
-    return DemoGradeViewRepository(DemoService.instance);
+    return DemoGradeViewRepository(ref.watch(demoServiceProvider));
   }
   return VtopGradeViewRepository(vtopService);
 }

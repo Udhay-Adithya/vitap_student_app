@@ -56,4 +56,4 @@ final class CoursePageRemoteRepositoryProvider
 }
 
 String _$coursePageRemoteRepositoryHash() =>
-    r'46eb29945fedc36ddb49fd5182084d335b9c4f5f';
+    r'67d0b38e08da95e3dce48179683fe784d70b169b';

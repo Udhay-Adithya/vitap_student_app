@@ -55,4 +55,4 @@ final class GradeViewRemoteRepositoryProvider
 }
 
 String _$gradeViewRemoteRepositoryHash() =>
-    r'03e2f8995db1c6a9c981c7d30c1974fba68d15fa';
+    r'c7fc52ae0a2553e473e2d2eaf16437bb35af843c';
