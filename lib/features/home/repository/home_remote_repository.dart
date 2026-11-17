@@ -24,15 +24,48 @@ part 'home_remote_repository.g.dart';
 HomeRemoteRepository homeRemoteRepository(Ref ref) {
   final client = ref.watch(httpClientProvider);
   final vtopService = ref.watch(vtopClientServiceProvider);
-  return HomeRemoteRepository(client, vtopService);
+  return VtopHomeRepository(client, vtopService);
 }
 
-class HomeRemoteRepository {
+abstract interface class HomeRemoteRepository {
+  Future<Either<Failure, Weather>> fetchWeather();
+
+  Future<Either<Failure, List<Biometric>>> fetchBiometric({
+    required String registrationNumber,
+    required String password,
+    required String date,
+  });
+
+  Future<Either<Failure, List<Mark>>> fetchMarks({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+
+  Future<Either<Failure, List<ExamSchedule>>> fetchExamSchedule({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+
+  Future<Either<Failure, List<PendingPayment>>> fetchPendingPayments({
+    required String registrationNumber,
+    required String password,
+  });
+
+  Future<Either<Failure, List<PaymentReceipt>>> fetchPaymentReceipts({
+    required String registrationNumber,
+    required String password,
+  });
+}
+
+class VtopHomeRepository implements HomeRemoteRepository {
   final http.Client client;
   final VtopClientService vtopService;
 
-  HomeRemoteRepository(this.client, this.vtopService);
+  VtopHomeRepository(this.client, this.vtopService);
 
+  @override
   Future<Either<Failure, Weather>> fetchWeather() async {
     try {
       final response = await client.get(
@@ -54,6 +87,7 @@ class HomeRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, List<Biometric>>> fetchBiometric({
     required String registrationNumber,
     required String password,
@@ -79,6 +113,7 @@ class HomeRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, List<Mark>>> fetchMarks({
     required String registrationNumber,
     required String password,
@@ -104,6 +139,7 @@ class HomeRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, List<ExamSchedule>>> fetchExamSchedule({
     required String registrationNumber,
     required String password,
@@ -129,6 +165,7 @@ class HomeRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, List<PendingPayment>>> fetchPendingPayments({
     required String registrationNumber,
     required String password,
@@ -152,6 +189,7 @@ class HomeRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, List<PaymentReceipt>>> fetchPaymentReceipts({
     required String registrationNumber,
     required String password,

@@ -2,14 +2,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
-import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/auth/repository/auth_remote_repository.dart';
 import 'package:vit_ap_student_app/features/auth/viewmodel/login_otp_viewmodel.dart';
 
 /// VTOP's OTP step, with the answers under the test's control.
-class _FakeAuthRepository extends AuthRemoteRepository {
-  _FakeAuthRepository({this.submitFailure, this.resendFailure})
-    : super(VtopClientService());
+class _FakeAuthRepository extends Fake implements AuthRemoteRepository {
+  _FakeAuthRepository({this.submitFailure, this.resendFailure});
 
   final String? submitFailure;
   final String? resendFailure;

@@ -15,14 +15,32 @@ part 'auth_remote_repository.g.dart';
 @riverpod
 AuthRemoteRepository authRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
-  return AuthRemoteRepository(vtopService);
+  return VtopAuthRepository(vtopService);
 }
 
-class AuthRemoteRepository {
+abstract interface class AuthRemoteRepository {
+  Future<Either<Failure, User>> login({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+
+  Future<Either<Failure, List<SemesterInfo>>> fetchSemesters({
+    required String registrationNumber,
+    required String password,
+  });
+
+  Future<Either<Failure, void>> submitLoginOtp(String otpCode);
+
+  Future<Either<Failure, void>> resendLoginOtp();
+}
+
+class VtopAuthRepository implements AuthRemoteRepository {
   final VtopClientService vtopService;
 
-  AuthRemoteRepository(this.vtopService);
+  VtopAuthRepository(this.vtopService);
 
+  @override
   Future<Either<Failure, User>> login({
     required String registrationNumber,
     required String password,
@@ -51,6 +69,7 @@ class AuthRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, List<SemesterInfo>>> fetchSemesters({
     required String registrationNumber,
     required String password,
@@ -73,6 +92,7 @@ class AuthRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, void>> submitLoginOtp(String otpCode) async {
     try {
       await vtopService.submitLoginOtp(otpCode);
@@ -87,6 +107,7 @@ class AuthRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, void>> resendLoginOtp() async {
     try {
       await vtopService.resendLoginOtp();

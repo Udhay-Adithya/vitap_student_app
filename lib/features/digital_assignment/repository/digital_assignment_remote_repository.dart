@@ -16,15 +16,52 @@ part 'digital_assignment_remote_repository.g.dart';
 @riverpod
 DigitalAssignmentRemoteRepository digitalAssignmentRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
-  return DigitalAssignmentRemoteRepository(vtopService);
+  return VtopDigitalAssignmentRepository(vtopService);
 }
 
-class DigitalAssignmentRemoteRepository {
+abstract interface class DigitalAssignmentRemoteRepository {
+  /// Fetch all digital assignments for a semester
+  Future<Either<Failure, List<DigitalAssignment>>> fetchDigitalAssignments({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+
+  /// Upload a digital assignment file
+  Future<Either<Failure, String>> uploadDigitalAssignment({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+    required String classId,
+    required String mode,
+    required String fileName,
+    required List<int> fileBytes,
+  });
+
+  /// Complete upload with OTP verification
+  Future<Either<Failure, String>> uploadDigitalAssignmentWithOtp({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+    required String otpEmail,
+  });
+
+  /// Download a digital assignment file (question paper or submitted document)
+  Future<Either<Failure, Uint8List>> downloadAssignmentFile({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+    required String downloadPath,
+  });
+}
+
+class VtopDigitalAssignmentRepository
+    implements DigitalAssignmentRemoteRepository {
   final VtopClientService vtopService;
 
-  DigitalAssignmentRemoteRepository(this.vtopService);
+  VtopDigitalAssignmentRepository(this.vtopService);
 
-  /// Fetch all digital assignments for a semester
+  @override
   Future<Either<Failure, List<DigitalAssignment>>> fetchDigitalAssignments({
     required String registrationNumber,
     required String password,
@@ -56,7 +93,7 @@ class DigitalAssignmentRemoteRepository {
     }
   }
 
-  /// Upload a digital assignment file
+  @override
   Future<Either<Failure, String>> uploadDigitalAssignment({
     required String registrationNumber,
     required String password,
@@ -98,7 +135,7 @@ class DigitalAssignmentRemoteRepository {
     }
   }
 
-  /// Complete upload with OTP verification
+  @override
   Future<Either<Failure, String>> uploadDigitalAssignmentWithOtp({
     required String registrationNumber,
     required String password,
@@ -130,7 +167,7 @@ class DigitalAssignmentRemoteRepository {
     }
   }
 
-  /// Download a digital assignment file (question paper or submitted document)
+  @override
   Future<Either<Failure, Uint8List>> downloadAssignmentFile({
     required String registrationNumber,
     required String password,

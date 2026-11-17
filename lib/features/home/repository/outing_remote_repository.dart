@@ -19,15 +19,73 @@ part 'outing_remote_repository.g.dart';
 OutingRemoteRepository outingRemoteRepository(Ref ref) {
   final client = ref.watch(httpClientProvider);
   final vtopService = ref.watch(vtopClientServiceProvider);
-  return OutingRemoteRepository(client, vtopService);
+  return VtopOutingRepository(client, vtopService);
 }
 
-class OutingRemoteRepository {
+abstract interface class OutingRemoteRepository {
+  Future<Either<Failure, List<GeneralOutingReport>>> fetchGeneralOutingReports({
+    required String registrationNumber,
+    required String password,
+  });
+
+  Future<Either<Failure, List<WeekendOutingReport>>> fetchWeekendOutingReports({
+    required String registrationNumber,
+    required String password,
+  });
+
+  Future<Either<Failure, Uint8List>> downloadWeekendOutingReport({
+    required String registrationNumber,
+    required String password,
+    required String leaveId,
+  });
+
+  Future<Either<Failure, Uint8List>> downloadGeneralOutingReport({
+    required String registrationNumber,
+    required String password,
+    required String leaveId,
+  });
+
+  Future<Either<Failure, String>> submitGeneralOutingForm({
+    required String registrationNumber,
+    required String password,
+    required String outPlace,
+    required String purposeOfVisit,
+    required String outingDate,
+    required String outTime,
+    required String inDate,
+    required String inTime,
+  });
+
+  Future<Either<Failure, String>> submitWeekendOutingForm({
+    required String registrationNumber,
+    required String password,
+    required String outPlace,
+    required String purposeOfVisit,
+    required String outingDate,
+    required String outTime,
+    required String contactNumber,
+  });
+
+  Future<Either<Failure, String>> deleteGeneralOuting({
+    required String registrationNumber,
+    required String password,
+    required String leaveId,
+  });
+
+  Future<Either<Failure, String>> deleteWeekendOuting({
+    required String registrationNumber,
+    required String password,
+    required String bookingId,
+  });
+}
+
+class VtopOutingRepository implements OutingRemoteRepository {
   final http.Client client;
   final VtopClientService vtopService;
 
-  OutingRemoteRepository(this.client, this.vtopService);
+  VtopOutingRepository(this.client, this.vtopService);
 
+  @override
   Future<Either<Failure, List<GeneralOutingReport>>> fetchGeneralOutingReports({
     required String registrationNumber,
     required String password,
@@ -51,6 +109,7 @@ class OutingRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, List<WeekendOutingReport>>> fetchWeekendOutingReports({
     required String registrationNumber,
     required String password,
@@ -76,6 +135,7 @@ class OutingRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, Uint8List>> downloadWeekendOutingReport({
     required String registrationNumber,
     required String password,
@@ -101,6 +161,7 @@ class OutingRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, Uint8List>> downloadGeneralOutingReport({
     required String registrationNumber,
     required String password,
@@ -126,6 +187,7 @@ class OutingRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, String>> submitGeneralOutingForm({
     required String registrationNumber,
     required String password,
@@ -162,6 +224,7 @@ class OutingRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, String>> submitWeekendOutingForm({
     required String registrationNumber,
     required String password,
@@ -196,6 +259,7 @@ class OutingRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, String>> deleteGeneralOuting({
     required String registrationNumber,
     required String password,
@@ -220,6 +284,7 @@ class OutingRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, String>> deleteWeekendOuting({
     required String registrationNumber,
     required String password,

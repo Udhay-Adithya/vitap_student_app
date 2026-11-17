@@ -1,9 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:http/http.dart' as http;
 import 'package:vit_ap_student_app/core/error/failure.dart';
-import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/home/model/general_outing_report.dart';
 import 'package:vit_ap_student_app/features/home/repository/outing_remote_repository.dart';
 import 'package:vit_ap_student_app/features/home/viewmodel/outing_reports_viewmodel.dart';
@@ -26,9 +24,7 @@ GeneralOutingReport report(String serial) => GeneralOutingReport(
 );
 
 /// Fails every fetch, the way a call does when the device is offline.
-class _OfflineOutingRepository extends OutingRemoteRepository {
-  _OfflineOutingRepository() : super(http.Client(), VtopClientService());
-
+class _OfflineOutingRepository extends Fake implements OutingRemoteRepository {
   @override
   Future<Either<Failure, List<GeneralOutingReport>>> fetchGeneralOutingReports({
     required String registrationNumber,

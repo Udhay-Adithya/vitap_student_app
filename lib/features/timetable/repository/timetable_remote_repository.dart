@@ -14,15 +14,24 @@ part 'timetable_remote_repository.g.dart';
 @riverpod
 TimetableRemoteRepository timetableRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
-  return TimetableRemoteRepository(vtopService);
+  return VtopTimetableRepository(vtopService);
 }
 
-class TimetableRemoteRepository {
+abstract interface class TimetableRemoteRepository {
+  /// Fetch timetable data with enhanced session management and automatic retry
+  Future<Either<Failure, Timetable>> fetchTimetable({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+}
+
+class VtopTimetableRepository implements TimetableRemoteRepository {
   final VtopClientService vtopService;
 
-  TimetableRemoteRepository(this.vtopService);
+  VtopTimetableRepository(this.vtopService);
 
-  /// Fetch timetable data with enhanced session management and automatic retry
+  @override
   Future<Either<Failure, Timetable>> fetchTimetable({
     required String registrationNumber,
     required String password,

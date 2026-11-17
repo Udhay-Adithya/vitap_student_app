@@ -1,9 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:http/http.dart' as http;
 import 'package:vit_ap_student_app/core/error/failure.dart';
-import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/home/model/biometric.dart';
 import 'package:vit_ap_student_app/features/home/repository/home_remote_repository.dart';
 import 'package:vit_ap_student_app/features/home/viewmodel/biometric_viewmodel.dart';
@@ -12,9 +10,8 @@ import '../../helpers/object_box_test_store.dart';
 import '../../helpers/provider_harness.dart';
 
 /// Counts calls and remembers the date asked for.
-class _FakeHomeRepository extends HomeRemoteRepository {
-  _FakeHomeRepository({this.failure})
-    : super(http.Client(), VtopClientService());
+class _FakeHomeRepository extends Fake implements HomeRemoteRepository {
+  _FakeHomeRepository({this.failure});
 
   final String? failure;
   int calls = 0;
