@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
-import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/account/repository/account_remote_repository.dart';
 import 'package:vit_ap_student_app/features/account/viewmodel/account_viewmodel.dart';
 
@@ -11,9 +10,7 @@ import '../../helpers/object_box_test_store.dart';
 import '../../helpers/provider_harness.dart';
 
 /// Counts calls, so a test can assert that a sync made none.
-class _FakeAccountRepository extends AccountRemoteRepository {
-  _FakeAccountRepository() : super(VtopClientService());
-
+class _FakeAccountRepository extends Fake implements AccountRemoteRepository {
   int calls = 0;
 
   @override

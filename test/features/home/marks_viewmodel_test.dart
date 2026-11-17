@@ -1,10 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:http/http.dart' as http;
 import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/models/mark.dart';
-import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/grade_view/model/grade_view_course.dart';
 import 'package:vit_ap_student_app/features/grade_view/repository/grade_view_remote_repository.dart';
 import 'package:vit_ap_student_app/features/home/repository/home_remote_repository.dart';
@@ -14,9 +12,7 @@ import '../../helpers/object_box_test_store.dart';
 import '../../helpers/provider_harness.dart';
 
 /// Counts calls, so a test can assert that a refresh made none.
-class _FakeHomeRepository extends HomeRemoteRepository {
-  _FakeHomeRepository() : super(http.Client(), VtopClientService());
-
+class _FakeHomeRepository extends Fake implements HomeRemoteRepository {
   int calls = 0;
 
   @override
@@ -30,9 +26,8 @@ class _FakeHomeRepository extends HomeRemoteRepository {
   }
 }
 
-class _FakeGradeViewRepository extends GradeViewRemoteRepository {
-  _FakeGradeViewRepository() : super(VtopClientService());
-
+class _FakeGradeViewRepository extends Fake
+    implements GradeViewRemoteRepository {
   int calls = 0;
 
   @override
