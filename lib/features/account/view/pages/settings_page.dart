@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:vit_ap_student_app/core/constants/analytics_constants.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/providers/reminder_scheduler.dart';
 import 'package:vit_ap_student_app/core/providers/theme_mode_notifier.dart';
 import 'package:vit_ap_student_app/core/providers/user_preferences_notifier.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
-import 'package:vit_ap_student_app/core/services/notification_service.dart';
 import 'package:vit_ap_student_app/core/theme/app_theme_enum.dart';
 import 'package:vit_ap_student_app/core/utils/show_toast.dart';
 import 'package:vit_ap_student_app/features/account/view/widgets/circular_theme_indicator.dart';
@@ -25,38 +25,25 @@ class SettingsPage extends ConsumerStatefulWidget {
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
   Future<void> _resetNotifications() async {
-    final notifications = ref.read(notificationServiceProvider);
-    try {
-      final user = ref.read(currentUserProvider);
-      final prefs = ref.read(userPreferencesProvider);
+    // Read before the first await: the page can close while this runs.
+    final reminders = ref.read(reminderSchedulerProvider);
+    final analytics = ref.read(analyticsServiceProvider);
+    final user = ref.read(currentUserProvider);
 
-      if (user == null) {
-        if (mounted) showToast(context, 'No user data available');
-        return;
-      }
-
-      // Cancel all and reschedule
-      await notifications.cancelAllNotifications();
-
-      if (prefs.isTimetableNotificationsEnabled) {
-        await notifications.scheduleTimetableNotifications(
-          user: user,
-          prefs: prefs,
-        );
-      }
-
-      if (prefs.isExamScheduleNotificationEnabled) {
-        await notifications.scheduleExamNotifications(user: user, prefs: prefs);
-      }
-
-      if (mounted) showToast(context, 'Notifications rescheduled');
-      ref
-          .read(analyticsServiceProvider)
-          .logEvent(AnalyticsEvents.notificationsReset);
-    } catch (e) {
-      if (mounted) showToast(context, 'Failed to reset notifications');
-      debugPrint('Notification reset failed: $e');
+    if (user == null) {
+      if (mounted) showToast(context, 'No user data available');
+      return;
     }
+
+    // The scheduler logs its own failures; this only owes the student a toast.
+    final rescheduled = await reminders.apply(user);
+    if (!rescheduled) {
+      if (mounted) showToast(context, 'Failed to reset notifications');
+      return;
+    }
+
+    if (mounted) showToast(context, 'Notifications rescheduled');
+    analytics.logEvent(AnalyticsEvents.notificationsReset);
   }
 
   @override

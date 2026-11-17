@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:timezone/data/latest.dart' as tzlt;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:vit_ap_student_app/core/models/user_preferences.dart';
+import 'package:vit_ap_student_app/core/providers/reminder_scheduler.dart';
 import 'package:vit_ap_student_app/core/providers/store.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/services/demo_service.dart';

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/models/user_preferences.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/providers/reminder_scheduler.dart';
 import 'package:vit_ap_student_app/core/services/notification_service.dart';
 
 import '../../helpers/object_box_test_store.dart';
@@ -10,6 +11,9 @@ import '../../helpers/provider_harness.dart';
 
 /// Refuses to schedule, the way a denied exact-alarm permission does.
 class _RefusingNotificationService extends Fake implements NotificationService {
+  @override
+  Future<void> cancelAllNotifications() async {}
+
   @override
   Future<void> scheduleTimetableNotifications({
     required User user,
@@ -43,6 +47,8 @@ void main() {
           ],
         );
         addTearDown(container.dispose);
+        // Started at app launch; reminders follow the user from there.
+        container.read(reminderSyncProvider);
         return container;
       }
 
@@ -64,11 +70,35 @@ void main() {
         await ref
             .read(currentUserProvider.notifier)
             .loginUser(newUser(), testCredentials());
+        // Reminders are scheduled off the back of the state change.
+        await pumpEventQueue();
 
         expect(deps.analytics.errorTypes, contains('notification_error'));
         expect(deps.store.count<User>(), 1);
         expect(ref.read(currentUserProvider), isNotNull);
         expect(deps.secureStorage.saved?.registrationNumber, '23BCE0001');
+      });
+
+      /// Changing semester logs in again on top of a signed-in session. When
+      /// the keychain refused the new credentials, the rollback deleted the
+      /// stored user but left the old one in state, so every screen went on
+      /// reading relations whose rows were gone.
+      test('signs out when storing a repeat login fails', () async {
+        final ref = newContainer();
+        await ref
+            .read(currentUserProvider.notifier)
+            .loginUser(newUser(), testCredentials());
+        deps.secureStorage.refuseSaves = true;
+
+        await expectLater(
+          ref
+              .read(currentUserProvider.notifier)
+              .loginUser(newUser(), testCredentials(semSubId: 'AP2026273')),
+          throwsException,
+        );
+
+        expect(ref.read(currentUserProvider), isNull);
+        expect(deps.store.count<User>(), 0);
       });
     },
     skip: objectBoxAvailable ? false : objectBoxMissingReason,
