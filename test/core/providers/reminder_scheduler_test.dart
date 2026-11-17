@@ -1,18 +1,29 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/models/user_preferences.dart';
+import 'package:vit_ap_student_app/core/providers/current_user.dart';
 import 'package:vit_ap_student_app/core/providers/reminder_scheduler.dart';
+import 'package:vit_ap_student_app/core/providers/user_preferences_notifier.dart';
 import 'package:vit_ap_student_app/core/services/notification_service.dart';
 
+import '../../helpers/object_box_test_store.dart';
 import '../../helpers/provider_harness.dart';
 
 /// Records calls in order, taking a turn of the event loop on each one the
 /// way the real plugin does, so overlapping runs would interleave.
+///
+/// Set [hold] to keep timetable scheduling in flight until it completes, the
+/// way a slow plugin does with a full timetable.
 class _RecordingNotifications extends Fake implements NotificationService {
   _RecordingNotifications({this.failTimetable = false});
 
   final bool failTimetable;
   final List<String> calls = [];
+  Completer<void>? hold;
 
   @override
   Future<void> cancelAllNotifications() async {
@@ -26,6 +37,9 @@ class _RecordingNotifications extends Fake implements NotificationService {
     required UserPreferences prefs,
   }) async {
     await Future<void>.delayed(Duration.zero);
+    // The real service checks the switch itself.
+    if (!prefs.isTimetableNotificationsEnabled) return;
+    if (hold != null) await hold!.future;
     if (failTimetable) throw StateError('exact alarms not permitted');
     calls.add('timetable ${user.id}');
   }
@@ -85,10 +99,64 @@ void main() {
     final failing = _RecordingNotifications(failTimetable: true);
     final s = scheduler(failing);
 
-    await s.apply(newUser(id: 1));
-    await s.apply(null);
+    expect(await s.apply(newUser(id: 1)), isFalse);
+    expect(await s.apply(null), isTrue);
 
     expect(analytics.errorTypes, ['notification_error']);
     expect(failing.calls.last, 'cancel', reason: 'the queue is not stuck');
   });
+
+  group(
+    'every writer of the schedule',
+    () {
+      late _RecordingNotifications notifications;
+
+      setUp(() => SharedPreferences.setMockInitialValues(<String, Object>{}));
+
+      /// Signed in, with the rebuild that sign-in started still in flight.
+      Future<ProviderContainer> signedInMidRebuild() async {
+        final deps = testDependencies();
+        notifications = _RecordingNotifications()..hold = Completer<void>();
+        final container = ProviderContainer(
+          overrides: [
+            ...deps.overrides,
+            notificationServiceProvider.overrideWithValue(notifications),
+          ],
+        );
+        addTearDown(container.dispose);
+        container.read(reminderSyncProvider);
+        await container
+            .read(currentUserProvider.notifier)
+            .loginUser(newUser(), testCredentials());
+        await pumpEventQueue();
+        return container;
+      }
+
+      /// Settings used to cancel and reschedule on their own, beside the
+      /// scheduler's queue. A refresh mid-rebuild had read the old settings,
+      /// so switching class reminders off cancelled them only for that
+      /// rebuild to schedule them again.
+      test('a settings change lands after a rebuild in flight', () async {
+        final ref = await signedInMidRebuild();
+
+        final change = ref
+            .read(userPreferencesProvider.notifier)
+            .updatePreferences(
+              ref
+                  .read(userPreferencesProvider)
+                  .copyWith(isTimetableNotificationsEnabled: false),
+            );
+        await pumpEventQueue();
+        notifications.hold!.complete();
+        await change;
+
+        final lastRun = notifications.calls.sublist(
+          notifications.calls.lastIndexOf('cancel'),
+        );
+        expect(lastRun, isNot(contains(startsWith('timetable'))));
+        expect(lastRun, contains(startsWith('exams')));
+      });
+    },
+    skip: objectBoxAvailable ? false : objectBoxMissingReason,
+  );
 }

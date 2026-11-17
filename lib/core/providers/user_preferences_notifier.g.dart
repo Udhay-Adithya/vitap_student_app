@@ -42,7 +42,7 @@ final class UserPreferencesNotifierProvider
 }
 
 String _$userPreferencesNotifierHash() =>
-    r'30121b54b51a6ae19e27787b1c19f2e036da56ed';
+    r'db9d24fc73d69d7f082ee29145fa8eeec5a3771d';
 
 abstract class _$UserPreferencesNotifier extends $Notifier<UserPreferences> {
   UserPreferences build();

@@ -45,30 +45,39 @@ class ReminderScheduler {
 
   Future<void> _pending = Future<void>.value();
 
-  /// Rebuilds the schedule for [user], or clears it when there is none.
+  /// Rebuilds the schedule for [user], or clears it when there is none, and
+  /// completes with whether that worked.
   ///
-  /// Runs one at a time: two refreshes landing together would otherwise
-  /// interleave their cancels and schedules, and the plugin keeps whichever
-  /// write came last.
+  /// Runs one at a time, and every writer of the schedule goes through here:
+  /// two rebuilds side by side interleave their cancels and schedules, and the
+  /// plugin keeps whichever write came last. A settings change racing a
+  /// refresh could switch reminders off only for the refresh to put them back.
   ///
   /// Never throws. Reminders are a convenience laid on top of data the
   /// student already has, so a failure here must not fail the sign-in or
   /// refresh that triggered it. Scheduling once shared `loginUser`'s `catch`,
   /// which rolled the account back: a refused alarm deleted every row the
-  /// student had just signed in to see.
-  Future<void> apply(User? user) =>
-      _pending = _pending.then((_) => _apply(user));
+  /// student had just signed in to see. Callers that owe someone an answer,
+  /// like the reset button, read the result instead.
+  Future<bool> apply(User? user) {
+    final run = _pending.then((_) => _apply(user));
+    _pending = run;
+    return run;
+  }
 
-  Future<void> _apply(User? user) async {
+  Future<bool> _apply(User? user) async {
     try {
       await _notifications.cancelAllNotifications();
-      if (user == null) return;
+      if (user == null) return true;
+      // Read per run rather than captured at enqueue, so a run queued behind a
+      // settings change schedules with the settings that won.
       final prefs = _preferences();
       await _notifications.scheduleTimetableNotifications(
         user: user,
         prefs: prefs,
       );
       await _notifications.scheduleExamNotifications(user: user, prefs: prefs);
+      return true;
     } catch (e, stackTrace) {
       debugPrint('Failed to schedule notifications: $e');
       _analytics.logError(
@@ -77,6 +86,7 @@ class ReminderScheduler {
         location: 'scheduleNotifications',
       );
       debugPrintStack(stackTrace: stackTrace, label: 'scheduleNotifications');
+      return false;
     }
   }
 }
