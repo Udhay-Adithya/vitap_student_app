@@ -30,8 +30,12 @@ class FakeSecureStorageService extends SecureStorageService {
 
   Credentials? saved;
 
+  /// Makes every save fail, the way a keychain that has lost its key does.
+  bool refuseSaves = false;
+
   @override
   Future<void> saveCredentials(Credentials credentials) async {
+    if (refuseSaves) throw StateError('keychain refused the write');
     saved = credentials;
   }
 

@@ -78,6 +78,28 @@ void main() {
         expect(ref.read(currentUserProvider), isNotNull);
         expect(deps.secureStorage.saved?.registrationNumber, '23BCE0001');
       });
+
+      /// Changing semester logs in again on top of a signed-in session. When
+      /// the keychain refused the new credentials, the rollback deleted the
+      /// stored user but left the old one in state, so every screen went on
+      /// reading relations whose rows were gone.
+      test('signs out when storing a repeat login fails', () async {
+        final ref = newContainer();
+        await ref
+            .read(currentUserProvider.notifier)
+            .loginUser(newUser(), testCredentials());
+        deps.secureStorage.refuseSaves = true;
+
+        await expectLater(
+          ref
+              .read(currentUserProvider.notifier)
+              .loginUser(newUser(), testCredentials(semSubId: 'AP2026273')),
+          throwsException,
+        );
+
+        expect(ref.read(currentUserProvider), isNull);
+        expect(deps.store.count<User>(), 0);
+      });
     },
     skip: objectBoxAvailable ? false : objectBoxMissingReason,
   );

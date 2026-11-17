@@ -28,8 +28,11 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
       await _session.saveCredentials(credentials);
       state = saved;
     } catch (e) {
-      // Only a failure to *store* the account rolls it back.
+      // Only a failure to *store* the account rolls it back. A student who was
+      // already signed in (changing semester logs in again) loses the stored
+      // graph here too, so the state that pointed at it has to go with it.
       _session.clearUserData();
+      state = null;
       throw Exception('Login failed: $e');
     }
   }
