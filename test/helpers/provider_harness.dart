@@ -41,6 +41,9 @@ class FakeSecureStorageService extends SecureStorageService {
 
   @override
   Future<Credentials?> getCredentials() async => saved;
+
+  @override
+  Future<void> clearCredentials() async => saved = null;
 }
 
 /// Records the error types reported, so a test can tell a swallowed failure

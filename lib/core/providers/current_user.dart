@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
+import 'package:vit_ap_student_app/core/providers/reminder_scheduler.dart';
 import 'package:vit_ap_student_app/core/providers/user_preferences_notifier.dart';
 import 'package:vit_ap_student_app/core/repository/session_repository.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
@@ -53,6 +54,11 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
     try {
       state = null;
       _session.clearUserData();
+
+      // The listener has already queued a cancel, but nothing waits on it.
+      // Logout must not finish while the last student's reminders can still be
+      // written behind it: if the app closes then, they stay registered.
+      await ref.read(reminderSchedulerProvider).apply(null);
 
       // Exit demo mode (no-op for normal accounts) so a subsequent real login
       // is not treated as a demo session.

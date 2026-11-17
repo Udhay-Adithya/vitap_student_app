@@ -156,6 +156,27 @@ void main() {
         expect(lastRun, isNot(contains(startsWith('timetable'))));
         expect(lastRun, contains(startsWith('exams')));
       });
+
+      /// Logout used to leave its cancel queued behind the rebuild without
+      /// waiting for it. Closing the app in that gap kept the previous
+      /// student's reminders registered, and nothing clears them on a
+      /// signed-out launch.
+      test('logout finishes only once reminders are cancelled', () async {
+        final ref = await signedInMidRebuild();
+
+        var loggedOut = false;
+        final logout = ref
+            .read(currentUserProvider.notifier)
+            .logout()
+            .then((_) => loggedOut = true);
+        await pumpEventQueue();
+        expect(loggedOut, isFalse, reason: 'the rebuild is still running');
+
+        notifications.hold!.complete();
+        await logout;
+
+        expect(notifications.calls.last, 'cancel');
+      });
     },
     skip: objectBoxAvailable ? false : objectBoxMissingReason,
   );
