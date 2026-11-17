@@ -277,7 +277,14 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
 
   /// Starts over with a fresh VTOP login.
   void _refreshSession() {
-    _setState(() => _errorMessage = null);
+    // Drop the old WebView too: the portal it shows is the one that just
+    // failed, and logging in again can take a while.
+    _setState(() {
+      _isLoading = true;
+      _isContentLoaded = false;
+      _errorMessage = null;
+      _controller = null;
+    });
     ref.read(webViewSessionViewModelProvider.notifier).refresh();
   }
 
