@@ -9,19 +9,25 @@ import 'package:vit_ap_student_app/core/services/notification_service.dart';
 
 part 'reminder_scheduler.g.dart';
 
-/// Keeps class and exam reminders in step with the signed-in user.
+/// The one queue every writer of class and exam reminders goes through.
+///
+/// Knows nothing of the current user, so the current user's own notifier can
+/// wait on it. The listener lives apart, in [reminderSync].
+@Riverpod(keepAlive: true)
+ReminderScheduler reminderScheduler(Ref ref) => ReminderScheduler(
+  notifications: ref.watch(notificationServiceProvider),
+  preferences: () => ref.read(userPreferencesProvider),
+  analytics: ref.watch(analyticsServiceProvider),
+);
+
+/// Keeps reminders in step with the signed-in user.
 ///
 /// Read once at startup so the listener is in place: every change to the
 /// current user rebuilds the schedule from it, and signing out cancels it.
 @Riverpod(keepAlive: true)
-ReminderScheduler reminderScheduler(Ref ref) {
-  final scheduler = ReminderScheduler(
-    notifications: ref.watch(notificationServiceProvider),
-    preferences: () => ref.read(userPreferencesProvider),
-    analytics: ref.watch(analyticsServiceProvider),
-  );
+void reminderSync(Ref ref) {
+  final scheduler = ref.watch(reminderSchedulerProvider);
   ref.listen<User?>(currentUserProvider, (_, user) => scheduler.apply(user));
-  return scheduler;
 }
 
 class ReminderScheduler {

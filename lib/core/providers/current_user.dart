@@ -12,7 +12,7 @@ part 'current_user.g.dart';
 /// The signed-in student, or null when nobody is.
 ///
 /// Storage belongs to [SessionRepository] and reminders follow this state on
-/// their own (see `reminderSchedulerProvider`). State is assigned once per
+/// their own (see `reminderSyncProvider`). State is assigned once per
 /// transition, after storage has succeeded, so listeners never see a user that
 /// was not actually saved.
 @Riverpod(keepAlive: true)

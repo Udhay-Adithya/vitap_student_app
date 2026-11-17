@@ -65,7 +65,7 @@ Future<ProviderContainer> initDependencies() async {
   );
 
   // Reminders follow the signed-in user from here on.
-  container.read(reminderSchedulerProvider);
+  container.read(reminderSyncProvider);
 
   // Warm up the fonts before the first frame paints.
   await _preloadFonts();

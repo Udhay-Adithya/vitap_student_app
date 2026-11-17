@@ -48,7 +48,7 @@ void main() {
         );
         addTearDown(container.dispose);
         // Started at app launch; reminders follow the user from there.
-        container.read(reminderSchedulerProvider);
+        container.read(reminderSyncProvider);
         return container;
       }
 
