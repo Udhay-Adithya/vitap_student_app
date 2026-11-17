@@ -11,11 +11,13 @@ import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/exam_schedule.dart';
 import 'package:vit_ap_student_app/core/models/mark.dart';
 import 'package:vit_ap_student_app/core/providers/http_client.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/home/model/biometric.dart';
 import 'package:vit_ap_student_app/features/home/model/payment_receipt.dart';
 import 'package:vit_ap_student_app/features/home/model/pending_payment.dart';
 import 'package:vit_ap_student_app/features/home/model/weather.dart';
+import 'package:vit_ap_student_app/features/home/repository/demo_home_repository.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'home_remote_repository.g.dart';
@@ -24,15 +26,51 @@ part 'home_remote_repository.g.dart';
 HomeRemoteRepository homeRemoteRepository(Ref ref) {
   final client = ref.watch(httpClientProvider);
   final vtopService = ref.watch(vtopClientServiceProvider);
-  return HomeRemoteRepository(client, vtopService);
+  final live = VtopHomeRepository(client, vtopService);
+  return ref.watch(demoModeProvider)
+      ? DemoHomeRepository(ref.watch(demoServiceProvider), live)
+      : live;
 }
 
-class HomeRemoteRepository {
+abstract interface class HomeRemoteRepository {
+  Future<Either<Failure, Weather>> fetchWeather();
+
+  Future<Either<Failure, List<Biometric>>> fetchBiometric({
+    required String registrationNumber,
+    required String password,
+    required String date,
+  });
+
+  Future<Either<Failure, List<Mark>>> fetchMarks({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+
+  Future<Either<Failure, List<ExamSchedule>>> fetchExamSchedule({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+
+  Future<Either<Failure, List<PendingPayment>>> fetchPendingPayments({
+    required String registrationNumber,
+    required String password,
+  });
+
+  Future<Either<Failure, List<PaymentReceipt>>> fetchPaymentReceipts({
+    required String registrationNumber,
+    required String password,
+  });
+}
+
+class VtopHomeRepository implements HomeRemoteRepository {
   final http.Client client;
   final VtopClientService vtopService;
 
-  HomeRemoteRepository(this.client, this.vtopService);
+  VtopHomeRepository(this.client, this.vtopService);
 
+  @override
   Future<Either<Failure, Weather>> fetchWeather() async {
     try {
       final response = await client.get(
@@ -54,6 +92,7 @@ class HomeRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, List<Biometric>>> fetchBiometric({
     required String registrationNumber,
     required String password,
@@ -79,6 +118,7 @@ class HomeRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, List<Mark>>> fetchMarks({
     required String registrationNumber,
     required String password,
@@ -104,6 +144,7 @@ class HomeRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, List<ExamSchedule>>> fetchExamSchedule({
     required String registrationNumber,
     required String password,
@@ -129,6 +170,7 @@ class HomeRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, List<PendingPayment>>> fetchPendingPayments({
     required String registrationNumber,
     required String password,
@@ -152,6 +194,7 @@ class HomeRemoteRepository {
     }
   }
 
+  @override
   Future<Either<Failure, List<PaymentReceipt>>> fetchPaymentReceipts({
     required String registrationNumber,
     required String password,

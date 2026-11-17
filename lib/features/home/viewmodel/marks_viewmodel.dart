@@ -5,7 +5,6 @@ import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/mark.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
-import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/grade_view/model/grade_view_course.dart';
 import 'package:vit_ap_student_app/features/grade_view/repository/grade_view_remote_repository.dart';
 import 'package:vit_ap_student_app/features/home/repository/home_remote_repository.dart';
@@ -26,16 +25,6 @@ class MarksViewModel extends _$MarksViewModel {
   }
 
   Future<void> refreshMarks() async {
-    // Demo mode: serve the marks seeded into the user at login, with demo
-    // grades merged in so the grade UI can be exercised.
-    if (DemoService.isDemoMode) {
-      final demoUser = ref.read(currentUserProvider);
-      final marks = demoUser?.marks.toList() ?? [];
-      _mergeGrades(marks, await DemoService.instance.gradeView());
-      state = AsyncValue.data(marks);
-      return;
-    }
-
     state = const AsyncValue.loading();
     final User? user = ref.read(currentUserProvider);
     final userNotifier = ref.read(currentUserProvider.notifier);

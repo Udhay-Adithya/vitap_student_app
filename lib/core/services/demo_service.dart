@@ -1,7 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:fpdart/fpdart.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vit_ap_student_app/core/error/exceptions.dart';
+import 'package:vit_ap_student_app/core/error/failure.dart';
+import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
 import 'package:vit_ap_student_app/features/attendance/model/attendance_detail.dart';
@@ -18,6 +23,41 @@ import 'package:vit_ap_student_app/features/home/model/pending_payment.dart';
 import 'package:vit_ap_student_app/features/home/model/weekend_outing_report.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop/types/faculty.dart';
 
+part 'demo_service.g.dart';
+
+@Riverpod(keepAlive: true)
+DemoService demoService(Ref ref) => DemoService.instance;
+
+/// Whether the demo account is signed in.
+///
+/// Repository providers watch this to choose between VTOP and the bundled
+/// dataset, so flipping it swaps every data source at once. Change it through
+/// [DemoMode.set], which also persists the flag in [DemoService].
+@Riverpod(keepAlive: true)
+class DemoMode extends _$DemoMode {
+  @override
+  bool build() => DemoService.isDemoMode;
+
+  Future<void> set(bool value) async {
+    await DemoService.instance.setDemoMode(value);
+    state = value;
+  }
+}
+
+/// Serves one section of the demo dataset the way a repository answers.
+Future<Either<Failure, T>> serveDemo<T>(Future<T> Function() load) async {
+  try {
+    return Right(await load());
+  } catch (e) {
+    return Left(failureFrom(e));
+  }
+}
+
+/// The answer for anything the demo account cannot do: it would have to reach
+/// VTOP, and the demo never does.
+Future<Either<Failure, T>> unavailableInDemo<T>() async =>
+    Left(Failure(const DemoModeException().message));
+
 /// Provides the "Demo Login" experience used for App Store review and product
 /// demonstrations.
 ///
@@ -28,7 +68,7 @@ import 'package:vit_ap_student_app/src/rust/api/vtop/types/faculty.dart';
 /// no network request reaches VTOP while demo mode is active.
 ///
 /// [isDemoMode] is cached in memory (so it can be read synchronously from hot
-/// paths like [VtopClientService.getClient] and feature view models) and
+/// paths like [VtopClientService.getClient]) and
 /// persisted in [SharedPreferences] so the demo survives app restarts. Call
 /// [init] once during dependency setup to hydrate the cached flag.
 class DemoService {

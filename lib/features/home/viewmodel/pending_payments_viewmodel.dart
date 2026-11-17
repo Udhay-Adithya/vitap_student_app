@@ -1,7 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
-import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/home/model/pending_payment.dart';
 import 'package:vit_ap_student_app/features/home/repository/home_remote_repository.dart';
 
@@ -20,12 +19,6 @@ class PendingPaymentsViewModel extends _$PendingPaymentsViewModel {
 
   Future<void> fetchPendingPayments() async {
     state = const AsyncValue.loading();
-
-    // Demo mode: serve bundled sample pending payments.
-    if (DemoService.isDemoMode) {
-      state = AsyncValue.data(await DemoService.instance.pendingPayments());
-      return;
-    }
 
     final credentials = await ref
         .read(currentUserProvider.notifier)

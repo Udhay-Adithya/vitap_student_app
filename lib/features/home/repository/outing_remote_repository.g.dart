@@ -55,4 +55,4 @@ final class OutingRemoteRepositoryProvider
 }
 
 String _$outingRemoteRepositoryHash() =>
-    r'51a2442040eaa65d6d05626ee43c36dcd30f4266';
+    r'c3fc138bfd4e31d72491f9102ba08d639cb6f72e';

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -8,8 +9,10 @@ import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/attendance.dart';
 import 'package:vit_ap_student_app/core/models/capstone_attendance.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/attendance/model/attendance_detail.dart';
+import 'package:vit_ap_student_app/features/attendance/repository/demo_attendance_repository.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'attendance_remote_repository.g.dart';
@@ -27,16 +30,43 @@ typedef AttendanceFetch = ({
 @riverpod
 AttendanceRemoteRepository attendanceRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
-  return AttendanceRemoteRepository(vtopService);
+  if (ref.watch(demoModeProvider)) {
+    return DemoAttendanceRepository(ref.watch(demoServiceProvider));
+  }
+  return VtopAttendanceRepository(vtopService);
 }
 
-class AttendanceRemoteRepository {
-  final VtopClientService vtopService;
-
-  AttendanceRemoteRepository(this.vtopService);
-
+abstract interface class AttendanceRemoteRepository {
   /// Fetch attendance data with automatic session management and retry
   /// This method demonstrates the new robust approach to handling VTOP requests
+  Future<Either<Failure, AttendanceFetch>> fetchAttendance({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+
+  /// Fetch detailed attendance with automatic session management and retry
+  Future<Either<Failure, List<AttendanceDetail>>> fetchDetailedAttendance({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+    required String courseId,
+    required String courseType,
+  });
+
+  Future<Either<Failure, List<Attendance>>> fetchAttendanceLegacy({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+}
+
+class VtopAttendanceRepository implements AttendanceRemoteRepository {
+  final VtopClientService vtopService;
+
+  VtopAttendanceRepository(this.vtopService);
+
+  @override
   Future<Either<Failure, AttendanceFetch>> fetchAttendance({
     required String registrationNumber,
     required String password,
@@ -80,7 +110,7 @@ class AttendanceRemoteRepository {
     }
   }
 
-  /// Fetch detailed attendance with automatic session management and retry
+  @override
   Future<Either<Failure, List<AttendanceDetail>>> fetchDetailedAttendance({
     required String registrationNumber,
     required String password,
@@ -121,6 +151,7 @@ class AttendanceRemoteRepository {
   /// Legacy method - kept for backward compatibility but marked for migration
   /// @deprecated Use fetchAttendance instead which has better session handling
   @Deprecated('Use fetchAttendance with the new session management')
+  @override
   Future<Either<Failure, List<Attendance>>> fetchAttendanceLegacy({
     required String registrationNumber,
     required String password,

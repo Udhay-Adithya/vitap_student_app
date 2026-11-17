@@ -229,19 +229,20 @@ class _LecturesPageState extends ConsumerState<LecturesPage> {
     required Future<Uint8List?> Function() fetch,
     required PreparedFile Function(Uint8List bytes) prepare,
   }) async {
+    final notifications = ref.read(notificationServiceProvider);
     if (_busyKey != null) return;
     setState(() => _busyKey = busyKey);
 
     int? progressId;
     try {
-      progressId = await NotificationService.showDownloadProgressIndeterminate(
+      progressId = await notifications.showDownloadProgressIndeterminate(
         downloadType: downloadType,
         fileName: notificationName,
       );
 
       final bytes = await fetch();
 
-      await NotificationService.cancelDownloadProgress(progressId);
+      await notifications.cancelDownloadProgress(progressId);
       progressId = null;
 
       if (bytes == null || !mounted) return;
@@ -252,7 +253,7 @@ class _LecturesPageState extends ConsumerState<LecturesPage> {
       if (savedPath == null) {
         showSnackBar(context, 'Save cancelled', SnackBarType.warning);
       } else {
-        await NotificationService.showDownloadCompleteNotification(
+        await notifications.showDownloadCompleteNotification(
           downloadType: downloadType,
           fileName: notificationName,
         );
@@ -267,7 +268,7 @@ class _LecturesPageState extends ConsumerState<LecturesPage> {
       }
     } finally {
       if (progressId != null) {
-        await NotificationService.cancelDownloadProgress(progressId);
+        await notifications.cancelDownloadProgress(progressId);
       }
       if (mounted) setState(() => _busyKey = null);
     }

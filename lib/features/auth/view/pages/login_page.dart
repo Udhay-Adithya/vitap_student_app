@@ -90,10 +90,9 @@ class LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _fetchSemestersAndNavigate() async {
     // Demo account: bypass VTOP entirely (no network, no OTP, no semester
     // selection) and seed the app from the bundled sample dataset.
-    if (DemoService.instance.isDemoCredentials(
-      usernameController.text,
-      passwordController.text,
-    )) {
+    if (ref
+        .read(demoServiceProvider)
+        .isDemoCredentials(usernameController.text, passwordController.text)) {
       await _loginDemo();
       return;
     }

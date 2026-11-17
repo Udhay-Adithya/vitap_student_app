@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
-import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/digital_assignment/repository/digital_assignment_remote_repository.dart';
 import 'package:vit_ap_student_app/features/digital_assignment/viewmodel/upload_assignment_viewmodel.dart';
 
@@ -13,8 +12,9 @@ import '../../helpers/provider_harness.dart';
 
 /// An upload that finishes only when the test lets it, so the state partway
 /// through can be inspected.
-class _FakeAssignmentRepository extends DigitalAssignmentRemoteRepository {
-  _FakeAssignmentRepository({this.failure}) : super(VtopClientService());
+class _FakeAssignmentRepository extends Fake
+    implements DigitalAssignmentRemoteRepository {
+  _FakeAssignmentRepository({this.failure});
 
   final String? failure;
   int uploads = 0;

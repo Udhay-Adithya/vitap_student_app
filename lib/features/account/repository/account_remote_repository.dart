@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -7,7 +8,9 @@ import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
+import 'package:vit_ap_student_app/features/account/repository/demo_account_repository.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'account_remote_repository.g.dart';
@@ -15,16 +18,34 @@ part 'account_remote_repository.g.dart';
 @riverpod
 AccountRemoteRepository accountRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
-  return AccountRemoteRepository(vtopService);
+  if (ref.watch(demoModeProvider)) {
+    return DemoAccountRepository(ref.watch(demoServiceProvider));
+  }
+  return VtopAccountRepository(vtopService);
 }
 
-class AccountRemoteRepository {
-  final VtopClientService vtopService;
-
-  AccountRemoteRepository(this.vtopService);
-
+abstract interface class AccountRemoteRepository {
   /// Sync user data with enhanced session management and automatic retry
   /// This method demonstrates the new robust approach for critical user data operations
+  Future<Either<Failure, User>> syncUser({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+
+  Future<Either<Failure, User>> syncUserLegacy({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+}
+
+class VtopAccountRepository implements AccountRemoteRepository {
+  final VtopClientService vtopService;
+
+  VtopAccountRepository(this.vtopService);
+
+  @override
   Future<Either<Failure, User>> syncUser({
     required String registrationNumber,
     required String password,
@@ -68,6 +89,7 @@ class AccountRemoteRepository {
   /// Legacy method - kept for backward compatibility but marked for migration
   /// @deprecated Use syncUser instead which has better session handling
   @Deprecated('Use syncUser with the new session management')
+  @override
   Future<Either<Failure, User>> syncUserLegacy({
     required String registrationNumber,
     required String password,

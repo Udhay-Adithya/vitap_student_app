@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/models/attendance.dart';
-import 'package:vit_ap_student_app/core/services/vtop_service.dart';
 import 'package:vit_ap_student_app/features/attendance/repository/attendance_remote_repository.dart';
 import 'package:vit_ap_student_app/features/attendance/viewmodel/attendance_viewmodel.dart';
 
@@ -27,8 +26,9 @@ Attendance attendance(String courseCode) => Attendance(
 );
 
 /// Counts calls, so a test can assert that opening the page made none.
-class _FakeAttendanceRepository extends AttendanceRemoteRepository {
-  _FakeAttendanceRepository({this.failure}) : super(VtopClientService());
+class _FakeAttendanceRepository extends Fake
+    implements AttendanceRemoteRepository {
+  _FakeAttendanceRepository({this.failure});
 
   final String? failure;
   int calls = 0;

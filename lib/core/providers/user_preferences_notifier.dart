@@ -1,9 +1,9 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/models/user_preferences.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
+import 'package:vit_ap_student_app/core/providers/reminder_scheduler.dart';
 import 'package:vit_ap_student_app/core/providers/store.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
-import 'package:vit_ap_student_app/core/services/notification_service.dart';
 
 part 'user_preferences_notifier.g.dart';
 
@@ -18,6 +18,7 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
   }
 
   Future<void> updatePreferences(UserPreferences newPreferences) async {
+    final reminders = ref.read(reminderSchedulerProvider);
     try {
       final store = ref.read(storeProvider);
       final box = store.box<UserPreferences>();
@@ -29,25 +30,10 @@ class UserPreferencesNotifier extends _$UserPreferencesNotifier {
       state = newPreferences;
 
       final user = ref.read(currentUserProvider);
-      if (user != null) {
-        // Cancel all notifications first
-        await NotificationService.cancelAllNotifications();
-
-        // Reschedule timetable notifications if enabled
-        if (newPreferences.isTimetableNotificationsEnabled) {
-          await NotificationService.scheduleTimetableNotifications(
-            user: user,
-            prefs: newPreferences,
-          );
-        }
-
-        // Reschedule exam notifications if enabled
-        if (newPreferences.isExamScheduleNotificationEnabled) {
-          await NotificationService.scheduleExamNotifications(
-            user: user,
-            prefs: newPreferences,
-          );
-        }
+      // Through the scheduler's queue, so a refresh rebuilding the schedule at
+      // the same time cannot undo the settings just saved.
+      if (user != null && !await reminders.apply(user)) {
+        throw StateError('reminders could not be rescheduled');
       }
     } catch (e) {
       throw Exception('Failed to update preferences: $e');

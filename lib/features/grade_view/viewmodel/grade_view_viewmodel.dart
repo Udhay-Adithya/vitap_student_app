@@ -2,7 +2,6 @@ import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/providers/current_user.dart';
-import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/features/grade_view/model/grade_view_course.dart';
 import 'package:vit_ap_student_app/features/grade_view/repository/grade_view_remote_repository.dart';
 
@@ -23,12 +22,6 @@ class GradeViewViewmodel extends _$GradeViewViewmodel {
   /// the saved credentials (grades are usually viewed for a past semester).
   Future<void> fetchGrades({required String semesterId}) async {
     state = const AsyncValue.loading();
-
-    // Demo mode: serve bundled sample grades.
-    if (DemoService.isDemoMode) {
-      state = AsyncValue.data(await DemoService.instance.gradeView());
-      return;
-    }
 
     final userNotifier = ref.read(currentUserProvider.notifier);
     final Credentials? credentials = await userNotifier.getSavedCredentials();

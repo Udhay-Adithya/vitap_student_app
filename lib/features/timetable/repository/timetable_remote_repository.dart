@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
 import 'package:vit_ap_student_app/core/error/failure_from.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/timetable.dart';
+import 'package:vit_ap_student_app/core/services/demo_service.dart';
 import 'package:vit_ap_student_app/core/services/vtop_service.dart';
+import 'package:vit_ap_student_app/features/timetable/repository/demo_timetable_repository.dart';
 import 'package:vit_ap_student_app/src/rust/api/vtop_get_client.dart' as vtop;
 
 part 'timetable_remote_repository.g.dart';
@@ -14,15 +17,27 @@ part 'timetable_remote_repository.g.dart';
 @riverpod
 TimetableRemoteRepository timetableRemoteRepository(Ref ref) {
   final vtopService = ref.watch(vtopClientServiceProvider);
-  return TimetableRemoteRepository(vtopService);
+  if (ref.watch(demoModeProvider)) {
+    return DemoTimetableRepository(ref.watch(demoServiceProvider));
+  }
+  return VtopTimetableRepository(vtopService);
 }
 
-class TimetableRemoteRepository {
+abstract interface class TimetableRemoteRepository {
+  /// Fetch timetable data with enhanced session management and automatic retry
+  Future<Either<Failure, Timetable>> fetchTimetable({
+    required String registrationNumber,
+    required String password,
+    required String semSubId,
+  });
+}
+
+class VtopTimetableRepository implements TimetableRemoteRepository {
   final VtopClientService vtopService;
 
-  TimetableRemoteRepository(this.vtopService);
+  VtopTimetableRepository(this.vtopService);
 
-  /// Fetch timetable data with enhanced session management and automatic retry
+  @override
   Future<Either<Failure, Timetable>> fetchTimetable({
     required String registrationNumber,
     required String password,

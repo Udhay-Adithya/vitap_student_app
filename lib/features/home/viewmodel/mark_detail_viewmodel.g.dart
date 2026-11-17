@@ -69,7 +69,7 @@ final class MarkDetailViewModelProvider
 }
 
 String _$markDetailViewModelHash() =>
-    r'874c70853e6754383bc9e61faf5062f078db24f6';
+    r'31cbd056b164300ed34881e3cbafdd17dac86c64';
 
 /// Drives the class-statistics section of the mark detail page.
 ///

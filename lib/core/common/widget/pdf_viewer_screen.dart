@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:vit_ap_student_app/core/common/widget/loader.dart';
@@ -8,7 +9,7 @@ import 'package:vit_ap_student_app/core/services/notification_service.dart';
 import 'package:vit_ap_student_app/core/utils/file_saver.dart';
 import 'package:vit_ap_student_app/core/utils/show_snackbar.dart';
 
-class PdfViewerScreen extends StatefulWidget {
+class PdfViewerScreen extends ConsumerStatefulWidget {
   final Uint8List pdfBytes;
   final String title;
   final String fileName;
@@ -21,10 +22,10 @@ class PdfViewerScreen extends StatefulWidget {
   });
 
   @override
-  State<PdfViewerScreen> createState() => _PdfViewerScreenState();
+  ConsumerState<PdfViewerScreen> createState() => _PdfViewerScreenState();
 }
 
-class _PdfViewerScreenState extends State<PdfViewerScreen> {
+class _PdfViewerScreenState extends ConsumerState<PdfViewerScreen> {
   final PdfViewerController _pdfViewerController = PdfViewerController();
   bool _isDownloading = false;
 
@@ -35,6 +36,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
   }
 
   Future<void> _downloadPdf() async {
+    final notifications = ref.read(notificationServiceProvider);
     if (_isDownloading) return;
 
     setState(() {
@@ -49,7 +51,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
       );
 
       if (savedPath != null) {
-        await NotificationService.showDownloadCompleteNotification(
+        await notifications.showDownloadCompleteNotification(
           downloadType: DownloadType.pdf,
           fileName: widget.fileName,
         );

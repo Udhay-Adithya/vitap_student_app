@@ -1,113 +1,74 @@
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/models/credentials.dart';
 import 'package:vit_ap_student_app/core/models/user.dart';
-import 'package:vit_ap_student_app/core/providers/store.dart';
-import 'package:vit_ap_student_app/core/providers/user_persistence.dart';
+import 'package:vit_ap_student_app/core/providers/reminder_scheduler.dart';
 import 'package:vit_ap_student_app/core/providers/user_preferences_notifier.dart';
+import 'package:vit_ap_student_app/core/repository/session_repository.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/core/services/demo_service.dart';
-import 'package:vit_ap_student_app/core/services/notification_service.dart';
-import 'package:vit_ap_student_app/core/services/secure_store_service.dart';
 import 'package:vit_ap_student_app/core/utils/avatar_image.dart';
-import 'package:vit_ap_student_app/objectbox.g.dart';
 
 part 'current_user.g.dart';
 
+/// The signed-in student, or null when nobody is.
+///
+/// Storage belongs to [SessionRepository] and reminders follow this state on
+/// their own (see `reminderSyncProvider`). State is assigned once per
+/// transition, after storage has succeeded, so listeners never see a user that
+/// was not actually saved.
 @Riverpod(keepAlive: true)
 class CurrentUserNotifier extends _$CurrentUserNotifier {
+  SessionRepository get _session => ref.read(sessionRepositoryProvider);
+
   @override
-  User? build() {
-    // Load cached user from ObjectBox with proper ordering
-    final store = ref.watch(storeProvider);
-    return store.box<User>().query().order(User_.id).build().findFirst();
-  }
+  User? build() => ref.watch(sessionRepositoryProvider).loadUser();
 
   Future<void> loginUser(User user, Credentials credentials) async {
     try {
-      // Save user to state and ObjectBox
-      state = user;
-      _saveUserToObjectBox(user);
-
-      // Save credentials
-      await ref.read(secureStorageServiceProvider).saveCredentials(credentials);
+      final saved = _session.saveUserGraph(user);
+      await _session.saveCredentials(credentials);
+      state = saved;
     } catch (e) {
-      // Only a failure to *store* the account rolls it back. Anything after
-      // this point has the student signed in already.
+      // Only a failure to *store* the account rolls it back. A student who was
+      // already signed in (changing semester logs in again) loses the stored
+      // graph here too, so the state that pointed at it has to go with it.
+      _session.clearUserData();
       state = null;
-      _clearUserDataObjectBox();
       throw Exception('Login failed: $e');
     }
-
-    await _scheduleNotifications(user);
   }
 
-  // Update user in state and ObjectBox
   Future<void> updateUser(User updatedUser) async {
     try {
       // Preserve the existing ID when updating
-      final userWithId = state?.id != null
+      final withId = state?.id != null
           ? updatedUser.copyWith(id: state!.id)
           : updatedUser;
-
-      state = userWithId;
-      _saveUserToObjectBox(userWithId);
+      state = _session.saveUserGraph(withId);
     } catch (e) {
-      debugPrint('Failed to update user data: $e');
       throw Exception('Failed to update user data: $e');
-    }
-
-    await NotificationService.cancelAllNotifications();
-    await _scheduleNotifications(state ?? updatedUser);
-  }
-
-  /// Rebuilds the reminder schedule, swallowing anything that goes wrong.
-  ///
-  /// Reminders are a convenience laid on top of data the student already has,
-  /// so a failure here must not fail the sign-in that triggered it. It used to
-  /// share `loginUser`'s `catch`, which rolled the account back — so a refused
-  /// alarm deleted every row the student had just signed in to see, left their
-  /// credentials in place, and (because nothing awaited the call) said nothing
-  /// at all.
-  Future<void> _scheduleNotifications(User user) async {
-    try {
-      final prefs = ref.read(userPreferencesProvider);
-      await NotificationService.scheduleTimetableNotifications(
-        user: user,
-        prefs: prefs,
-      );
-      await NotificationService.scheduleExamNotifications(
-        user: user,
-        prefs: prefs,
-      );
-    } catch (e, stackTrace) {
-      debugPrint('Failed to schedule notifications: $e');
-      ref
-          .read(analyticsServiceProvider)
-          .logError('notification_error', e, location: 'scheduleNotifications');
-      debugPrintStack(stackTrace: stackTrace, label: 'scheduleNotifications');
     }
   }
 
   Future<void> logout() async {
     try {
-      // Clear user state and storage
       state = null;
-      _clearUserDataObjectBox();
+      _session.clearUserData();
+
+      // The listener has already queued a cancel, but nothing waits on it.
+      // Logout must not finish while the last student's reminders can still be
+      // written behind it: if the app closes then, they stay registered.
+      await ref.read(reminderSchedulerProvider).apply(null);
 
       // Exit demo mode (no-op for normal accounts) so a subsequent real login
       // is not treated as a demo session.
-      await DemoService.instance.setDemoMode(false);
+      await ref.read(demoModeProvider.notifier).set(false);
 
-      // Remove credentials
-      await ref.read(secureStorageServiceProvider).clearCredentials();
+      await _session.clearCredentials();
 
       // Drop the analytics identity so the next account on a shared device
       // does not inherit this student's cohort properties.
       await ref.read(analyticsServiceProvider).reset();
-
-      // Clear Notifications
-      await NotificationService.cancelAllNotifications();
 
       // Preferences are the device's and mostly survive a logout, but the
       // last-synced stamps belong to the account that fetched the data.
@@ -123,33 +84,10 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
     }
   }
 
-  Future<Credentials?> getSavedCredentials() async {
-    return await ref.read(secureStorageServiceProvider).getCredentials();
-  }
+  Future<Credentials?> getSavedCredentials() => _session.readCredentials();
 
-  Future<void> updateSavedCredentials({
-    required Credentials newCredentials,
-  }) async {
-    return await ref
-        .read(secureStorageServiceProvider)
-        .saveCredentials(newCredentials);
-  }
-
-  // Manually save user
-  void _saveUserToObjectBox(User user) {
-    final newId = saveUser(ref.read(storeProvider), user);
-    debugPrint('Saved user with ID: $newId');
-
-    // A fresh sign-in has no id until it is written.
-    if (user.id == null || user.id! <= 0) {
-      state = state?.copyWith(id: newId);
-    }
-  }
-
-  // Manually clear user data
-  void _clearUserDataObjectBox() {
-    removeAllUserData(ref.read(storeProvider));
-  }
+  Future<void> updateSavedCredentials({required Credentials newCredentials}) =>
+      _session.saveCredentials(newCredentials);
 
   bool get isLoggedIn => state != null;
 }

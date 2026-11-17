@@ -8,12 +8,30 @@ part of 'current_user.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// The signed-in student, or null when nobody is.
+///
+/// Storage belongs to [SessionRepository] and reminders follow this state on
+/// their own (see `reminderSyncProvider`). State is assigned once per
+/// transition, after storage has succeeded, so listeners never see a user that
+/// was not actually saved.
 
 @ProviderFor(CurrentUserNotifier)
 final currentUserProvider = CurrentUserNotifierProvider._();
 
+/// The signed-in student, or null when nobody is.
+///
+/// Storage belongs to [SessionRepository] and reminders follow this state on
+/// their own (see `reminderSyncProvider`). State is assigned once per
+/// transition, after storage has succeeded, so listeners never see a user that
+/// was not actually saved.
 final class CurrentUserNotifierProvider
     extends $NotifierProvider<CurrentUserNotifier, User?> {
+  /// The signed-in student, or null when nobody is.
+  ///
+  /// Storage belongs to [SessionRepository] and reminders follow this state on
+  /// their own (see `reminderSyncProvider`). State is assigned once per
+  /// transition, after storage has succeeded, so listeners never see a user that
+  /// was not actually saved.
   CurrentUserNotifierProvider._()
     : super(
         from: null,
@@ -42,7 +60,14 @@ final class CurrentUserNotifierProvider
 }
 
 String _$currentUserNotifierHash() =>
-    r'28e2110f10b60faf7928a3ed398057ca77d5b2b1';
+    r'f3d2cb6e07d321e665f3a4ab588e3dfdc883e2d7';
+
+/// The signed-in student, or null when nobody is.
+///
+/// Storage belongs to [SessionRepository] and reminders follow this state on
+/// their own (see `reminderSyncProvider`). State is assigned once per
+/// transition, after storage has succeeded, so listeners never see a user that
+/// was not actually saved.
 
 abstract class _$CurrentUserNotifier extends $Notifier<User?> {
   User? build();

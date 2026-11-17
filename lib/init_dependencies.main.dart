@@ -22,9 +22,9 @@ Future<ProviderContainer> initDependencies() async {
   // Dotenv
   await dotenv.load(fileName: '.env');
 
-  await HomeWidget.setAppGroupId('group.com.udhay.vitapstudentapp');
+  await container.read(homeWidgetServiceProvider).initialize();
 
-  await NotificationService.initialize();
+  await container.read(notificationServiceProvider).initialize();
 
   // Block Landscape View
   await SystemChrome.setPreferredOrientations([
@@ -65,6 +65,9 @@ Future<ProviderContainer> initDependencies() async {
     store: objectbox.store,
     secureStorage: container.read(secureStorageServiceProvider),
   );
+
+  // Reminders follow the signed-in user from here on.
+  container.read(reminderSyncProvider);
 
   // Warm up the fonts before the first frame paints.
   await _preloadFonts();
