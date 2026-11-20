@@ -17,8 +17,10 @@ class ServerConstants {
       'https://hfw.vitap.ac.in:8090/httpclient.html';
   static const String universityWifiBaseUrl = 'http://172.18.10.10:1000';
 
-  static const String cgpaCalculatorBaseUrl =
-      'https://cgpa-calculator-vitap.vercel.app/api/app/';
+  /// The grade history goes after `#data=`, never in the query string: see
+  /// [cgpaCalculatorUrlFor].
+  static const String cgpaCalculatorReportUrl =
+      'https://cgpa-calculator-vitap.vercel.app/report';
 
   static const String githubBaseUrl =
       'https://raw.githubusercontent.com/Udhay-Adithya/vitap_student_app/main';

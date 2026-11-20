@@ -7,16 +7,20 @@ import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 
 import 'launch_web.dart';
 
-String generateCgpaCalculatorUrl(GradeHistory gradeHistory) {
-  final compressed = gzip.encode(
-    utf8.encode(jsonEncode(gradeHistory.toJson())),
-  );
+String generateCgpaCalculatorUrl(GradeHistory gradeHistory) =>
+    cgpaCalculatorUrlFor(gradeHistory.toJson());
+
+/// The calculator link carrying [payload], gzipped and base64url-encoded.
+///
+/// The payload is the student's whole grade history, so it goes in the URL
+/// fragment. Browsers never send the fragment to the server, which keeps it out
+/// of the calculator host's request logs; the report page decodes it in the
+/// browser. Taking the JSON rather than a [GradeHistory] keeps this testable
+/// without an ObjectBox store.
+String cgpaCalculatorUrlFor(Map<String, dynamic> payload) {
+  final compressed = gzip.encode(utf8.encode(jsonEncode(payload)));
   final encodedData = base64Url.encode(compressed);
-
-  const baseUrl = ServerConstants.cgpaCalculatorBaseUrl;
-  final url = '$baseUrl?data=$encodedData';
-
-  return url;
+  return '${ServerConstants.cgpaCalculatorReportUrl}#data=$encodedData';
 }
 
 void openCgpaCalculator(
