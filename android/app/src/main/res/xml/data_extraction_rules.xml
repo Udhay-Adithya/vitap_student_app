@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Nothing leaves the device, by backup or by device-to-device transfer.
+
+  On Android 12+ allowBackup="false" stops cloud backup but, on some devices,
+  not device-to-device transfer, so both are excluded here explicitly. The data
+  is a student's grades, attendance and profile, all of which can be fetched
+  again from VTOP. The secure storage file holding the VTOP password is
+  encrypted with a Keystore key that never transfers, so a copied file could
+  not be decrypted on the new device anyway.
+
+  A directory path covers everything beneath it, so "." excludes each domain
+  whole.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" path="." />
+        <exclude domain="file" path="." />
+        <exclude domain="database" path="." />
+        <exclude domain="sharedpref" path="." />
+        <exclude domain="external" path="." />
+        <exclude domain="device_root" path="." />
+        <exclude domain="device_file" path="." />
+        <exclude domain="device_database" path="." />
+        <exclude domain="device_sharedpref" path="." />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" path="." />
+        <exclude domain="file" path="." />
+        <exclude domain="database" path="." />
+        <exclude domain="sharedpref" path="." />
+        <exclude domain="external" path="." />
+        <exclude domain="device_root" path="." />
+        <exclude domain="device_file" path="." />
+        <exclude domain="device_database" path="." />
+        <exclude domain="device_sharedpref" path="." />
+    </device-transfer>
+</data-extraction-rules>
