@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Add the necessary permissions here -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -21,7 +22,10 @@
         android:icon="@mipmap/ic_launcher"
         android:label="VITAP Student"
         android:networkSecurityConfig="@xml/network"
-        android:enableOnBackInvokedCallback="true">
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
+        tools:targetApi="31">
 
         <activity
             android:name=".MainActivity"
@@ -32,9 +36,7 @@
             android:showWhenLocked="false"
             android:theme="@style/LaunchTheme"
             android:turnScreenOn="true"
-            android:windowSoftInputMode="adjustResize"
-            android:allowBackup="false"
-            android:fullBackupContent="false">
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme" />
