@@ -60,7 +60,7 @@ final class CurrentUserNotifierProvider
 }
 
 String _$currentUserNotifierHash() =>
-    r'f3d2cb6e07d321e665f3a4ab588e3dfdc883e2d7';
+    r'f9fbec34dd944ccd6af777e67cc1b8a9827e1bd3';
 
 /// The signed-in student, or null when nobody is.
 ///
