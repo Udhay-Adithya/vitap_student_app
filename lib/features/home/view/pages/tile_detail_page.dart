@@ -4,7 +4,8 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:vit_ap_student_app/core/common/widget/styled_sheet.dart';
 import 'package:vit_ap_student_app/core/constants/analytics_constants.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
-import 'package:vit_ap_student_app/core/utils/launch_web.dart';
+import 'package:vit_ap_student_app/core/utils/remote_link.dart';
+import 'package:vit_ap_student_app/core/utils/show_snackbar.dart';
 import 'package:vit_ap_student_app/features/home/model/for_you_item.dart';
 import 'package:vit_ap_student_app/features/home/view/widgets/for_you_meta.dart';
 
@@ -31,14 +32,19 @@ class _TileDetailPageState extends ConsumerState<TileDetailPage> {
   /// app. Naming the host and saying so before leaving is the honest version of
   /// a link the user has no other way to inspect.
   Future<void> _openLink(ForYouItem item) async {
-    final host = Uri.tryParse(item.url)?.host;
+    final uri = Uri.tryParse(item.url.trim());
+    if (uri == null || !isOpenableRemoteLink(uri)) {
+      showSnackBar(context, "Couldn't open that link", SnackBarType.error);
+      return;
+    }
+    final host = uri.host;
 
     final confirmed = await StyledSheet.show(
       context,
       icon: Icons.open_in_new_rounded,
       title: 'Leaving the app',
       message:
-          'This opens ${host == null || host.isEmpty ? 'an external site' : host} '
+          'This opens $host '
           'in your browser. It is run by whoever submitted it, not by this app, '
           'so we cannot vouch for its content or for what it does with anything '
           'you enter there.',
@@ -49,7 +55,13 @@ class _TileDetailPageState extends ConsumerState<TileDetailPage> {
 
     // Read before the launch: the page can be closed while the browser opens.
     final analytics = ref.read(analyticsServiceProvider);
-    await directToWeb(item.url);
+    final opened = await openRemoteLink(item.url);
+    if (!opened) {
+      if (mounted) {
+        showSnackBar(context, "Couldn't open that link", SnackBarType.error);
+      }
+      return;
+    }
     analytics.logEvent(AnalyticsEvents.tileDetailLinkOpened, {
       AnalyticsParams.target: item.title,
     });
