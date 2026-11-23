@@ -14,6 +14,9 @@ permissions:
 
 env:
   OBJECTBOX_VERSION: 5.3.2
+  # sha256 of objectbox-linux-x64.tar.gz for OBJECTBOX_VERSION. Bump the two
+  # together; GitHub shows the digest on the release asset.
+  OBJECTBOX_SHA256: 6dbb5450c36dd11ee9074f16ecc61e79b45ff43c2082934601f3166b39c8a613
 
 jobs:
   check:
@@ -38,8 +41,10 @@ jobs:
       - name: Install ObjectBox native library
         run: |
           mkdir -p "$RUNNER_TEMP/objectbox"
-          curl -sSfL "https://github.com/objectbox/objectbox-c/releases/download/v${OBJECTBOX_VERSION}/objectbox-linux-x64.tar.gz" \
-            | tar -xz -C "$RUNNER_TEMP/objectbox"
+          curl -sSfL -o "$RUNNER_TEMP/objectbox.tar.gz" \
+            "https://github.com/objectbox/objectbox-c/releases/download/v${OBJECTBOX_VERSION}/objectbox-linux-x64.tar.gz"
+          echo "${OBJECTBOX_SHA256}  $RUNNER_TEMP/objectbox.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/objectbox.tar.gz" -C "$RUNNER_TEMP/objectbox"
           cp "$RUNNER_TEMP/objectbox/lib/libobjectbox.so" lib/
 
       - name: Install dependencies
