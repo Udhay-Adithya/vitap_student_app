@@ -22,10 +22,10 @@ dependencies:
   flutter_dotenv: ^5.2.1
   flutter_file_dialog: ^3.3.1
   flutter_local_notifications: ^22.0.1
-  flutter_m3shapes_extended: ^1.2.0
+  flutter_m3shapes_extended: ^2.0.0
   flutter_markdown: ^0.7.7+1
   flutter_native_splash: ^2.4.6
-  flutter_riverpod: ^3.2.1
+  flutter_riverpod: ^3.5.0
   flutter_rust_bridge: 2.12.0
   flutter_secure_storage: ^10.3.1
   fpdart: ^1.1.1
@@ -36,20 +36,20 @@ dependencies:
   http: ^1.2.1
   iconsax_flutter: ^1.0.0
   in_app_review: ^2.0.12
-  intl: ^0.20.0
+  intl: ^0.20.3
   json_annotation: ^4.9.0
   lib_vtop:
     path: rust_builder
   lottie: ^3.3.1
-  meta: any
-  objectbox: ^5.3.2
-  objectbox_flutter_libs: ^5.3.2
+  meta: 1.19.0
+  objectbox: ^6.0.0-preview.6
+  objectbox_flutter_libs: ^6.0.0-preview.6
   open_file: ^4.0.0
   package_info_plus: ^10.2.1
   path_provider: ^2.1.5
   permission_handler: ^12.0.3
   pinput: ^6.0.2
-  riverpod_annotation: ^4.0.2
+  riverpod_annotation: ^4.0.8
   share_plus: ^13.2.1
   shared_preferences: ^2.5.3
   syncfusion_flutter_pdfviewer: ^34.1.31
@@ -68,12 +68,12 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
-  freezed: ^3.1.0
+  freezed: ^4.0.1
   integration_test:
     sdk: flutter
-  json_serializable: ^6.9.5
-  objectbox_generator: ^5.3.2
-  riverpod_generator: ^4.0.3
+  json_serializable: ^6.13.2
+  objectbox_generator: ^6.0.0-preview.6
+  riverpod_generator: ^4.0.10
 
 dependency_overrides:
   test_api: 0.7.10
