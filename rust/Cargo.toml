@@ -29,13 +29,17 @@ base64 = "0.22.1"
 tokio = { version = "1.51.1", features = ["macros", "rt-multi-thread"] }
 urlencoding = "2"
 chrono = "0.4.44"
-env_logger = "0.11.10"
-dotenv = "0.15"
+dotenvy = { version = "0.15", optional = true }
 ndarray = "0.17.2"
 # Only decodes the login captcha; the default features add every codec and
 # the AVIF encoder, which the app never uses.
 image = { version = "0.25.10", default-features = false, features = ["png", "jpeg", "gif", "bmp", "webp"] }
 lazy_static = "1.5.0"
+
+[features]
+# The dryrun and faculty_fetch bins read credentials from a .env file; the
+# library the app links never does.
+cli = ["dep:dotenvy"]
 
 [dev-dependencies]
 tokio-test = "0.4.5"
@@ -61,7 +65,9 @@ debug = true
 [[bin]]
 name = "dryrun"
 path = "src/dryrun.rs"
+required-features = ["cli"]
 
 [[bin]]
 name = "faculty_fetch"
 path = "src/faculty_fetch.rs"
+required-features = ["cli"]
