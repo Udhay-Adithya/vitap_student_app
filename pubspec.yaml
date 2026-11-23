@@ -19,7 +19,7 @@ dependencies:
   firebase_core: ^3.13.1
   flutter:
     sdk: flutter
-  flutter_dotenv: ^5.2.1
+  flutter_dotenv: ^6.0.2
   flutter_file_dialog: ^3.3.1
   flutter_local_notifications: ^22.0.1
   flutter_m3shapes_extended: ^1.2.0
