@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -82,6 +83,35 @@ void main() {
         FileSaver.preparePdf(bytes: pdf, fileName: 'x').mimeType,
         'application/pdf',
       );
+    });
+  });
+
+  group('clearViewedFilesIn', () {
+    late Directory temp;
+
+    setUp(() {
+      temp = Directory.systemTemp.createTempSync('file_saver_test');
+      addTearDown(() => temp.deleteSync(recursive: true));
+    });
+
+    test('removes viewed files and leaves other caches alone', () async {
+      // Files opened with "View" are a student's marks sheets and outing
+      // passes, and they outlived logout. Other plugins cache in the same
+      // temporary directory, so only the viewed folder may go.
+      final viewed = Directory('${temp.path}/${FileSaver.viewedDirectoryName}')
+        ..createSync();
+      File('${viewed.path}/marks.pdf').writeAsBytesSync(pdf);
+      final other = File('${temp.path}/image_cache.bin')
+        ..writeAsBytesSync([1, 2, 3]);
+
+      await FileSaver.clearViewedFilesIn(temp);
+
+      expect(viewed.existsSync(), isFalse);
+      expect(other.existsSync(), isTrue);
+    });
+
+    test('does nothing when nothing was viewed', () async {
+      await expectLater(FileSaver.clearViewedFilesIn(temp), completes);
     });
   });
 }

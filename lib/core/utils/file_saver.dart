@@ -58,14 +58,36 @@ class FileSaver {
     );
   }
 
+  /// Subfolder of the temporary directory that "View" writes into.
+  ///
+  /// The viewer app reads the file after this call returns, so it can't be
+  /// deleted here. It is kept in its own folder so logout can remove a
+  /// student's marks sheets and outing passes without touching other caches.
+  static const viewedDirectoryName = 'viewed_files';
+
+  /// Deletes everything [openTemporarily] has written under [temporaryDirectory].
+  static Future<void> clearViewedFilesIn(Directory temporaryDirectory) async {
+    final viewedDir = Directory(
+      '${temporaryDirectory.path}/$viewedDirectoryName',
+    );
+    if (await viewedDir.exists()) await viewedDir.delete(recursive: true);
+  }
+
+  /// [clearViewedFilesIn] for the app's own temporary directory.
+  static Future<void> clearViewedFiles() async =>
+      clearViewedFilesIn(await getTemporaryDirectory());
+
   /// Writes [file] to the temporary directory and opens it with the system's
   /// default app — the "View" path. Nothing is persisted.
   ///
   /// Returns false when no installed app can handle the format, in which case
   /// the caller should point the user at "Download" instead.
   static Future<bool> openTemporarily(PreparedFile file) async {
-    final tempDir = await getTemporaryDirectory();
-    final tempFile = File('${tempDir.path}/${file.fileName}');
+    final viewedDir = Directory(
+      '${(await getTemporaryDirectory()).path}/$viewedDirectoryName',
+    );
+    await viewedDir.create(recursive: true);
+    final tempFile = File('${viewedDir.path}/${file.fileName}');
     await tempFile.writeAsBytes(file.bytes);
 
     final result = await OpenFile.open(tempFile.path, type: file.mimeType);

@@ -54,4 +54,4 @@ final class SessionRepositoryProvider
   }
 }
 
-String _$sessionRepositoryHash() => r'a1322fc480d5999a2a44549c01ed063c649ba0d8';
+String _$sessionRepositoryHash() => r'55be0c1d55f19ffda14742aa9785a22b80c858d4';

@@ -66,6 +66,11 @@ class CurrentUserNotifier extends _$CurrentUserNotifier {
 
       await _session.clearCredentials();
 
+      // Without this the signed-out app still holds a live VTOP session: the
+      // client stays in memory until the process dies, and the WebView keeps
+      // its cookies until the next time it opens.
+      await _session.endVtopSession();
+
       // Drop the analytics identity so the next account on a shared device
       // does not inherit this student's cohort properties.
       await ref.read(analyticsServiceProvider).reset();
