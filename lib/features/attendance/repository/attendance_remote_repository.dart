@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vit_ap_student_app/core/error/failure.dart';
@@ -136,7 +135,6 @@ class VtopAttendanceRepository implements AttendanceRemoteRepository {
         ),
       );
 
-      debugPrint(attendanceRecords);
       return Right(attendanceDetailFromJson(attendanceRecords));
     } catch (e) {
       return Left(

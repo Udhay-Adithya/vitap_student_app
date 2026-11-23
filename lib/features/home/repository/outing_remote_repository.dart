@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:http/http.dart' as http;
@@ -131,8 +129,6 @@ class VtopOutingRepository implements OutingRemoteRepository {
         credentials: credentials,
         operation: (client) => vtop.fetchWeekendOutingReports(client: client),
       );
-
-      log(generalOutingRecords);
 
       return Right(weekendOutingReportFromJson(generalOutingRecords));
     } catch (e) {

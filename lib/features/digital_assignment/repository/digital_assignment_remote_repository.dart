@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
@@ -85,8 +84,6 @@ class VtopDigitalAssignmentRepository
         operation: (client) =>
             vtop.fetchDigitalAssignments(client: client, semesterId: semSubId),
       );
-
-      log(jsonString);
 
       return Right(digitalAssignmentsFromJson(jsonString));
     } catch (e) {
