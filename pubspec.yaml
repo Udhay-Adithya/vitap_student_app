@@ -8,7 +8,7 @@ environment:
 
 dependencies:
   animations: ^2.0.11
-  app_settings: ^7.0.0
+  app_settings: ^9.0.1
   cached_network_image: ^3.4.1
   carousel_slider: ^5.0.0
   crypto: ^3.0.7
