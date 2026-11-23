@@ -23,7 +23,7 @@ jobs:
       run:
         working-directory: rust
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       # Pinned so a new stable release can't turn a green branch red with new
       # clippy lints. Bump deliberately.
       - uses: dtolnay/rust-toolchain@df2a88e9fe4098bad09cb42c3dec7187f15861fc # master
