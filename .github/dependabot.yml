@@ -1,0 +1,46 @@
+version: 2
+
+# Minor and patch updates are grouped into one PR per ecosystem a week, so a
+# quiet week costs one review instead of one per crate. Majors still arrive one
+# at a time, since those are the ones that need reading.
+updates:
+  - package-ecosystem: cargo
+    directory: /rust
+    schedule:
+      interval: weekly
+    groups:
+      rust:
+        patterns: ["*"]
+        update-types: [minor, patch]
+    ignore:
+      # Pinned to the same version as the Dart package; bumped by hand with the
+      # bindings regenerated (see bindings.yml).
+      - dependency-name: flutter_rust_bridge
+
+  - package-ecosystem: pub
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      dart:
+        patterns: ["*"]
+        update-types: [minor, patch]
+    ignore:
+      - dependency-name: flutter_rust_bridge
+
+  - package-ecosystem: gradle
+    directory: /android
+    schedule:
+      interval: weekly
+    groups:
+      android:
+        patterns: ["*"]
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
