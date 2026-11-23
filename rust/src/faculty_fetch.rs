@@ -18,7 +18,7 @@
 //! ## Usage
 //! ```sh
 //! # From the rust/ directory:
-//! cargo run --bin faculty_fetch
+//! cargo run --features cli --bin faculty_fetch
 //! ```
 //!
 //! The resulting `faculty_list.json` is intended to be bundled with the
@@ -53,7 +53,7 @@
 //! ## Usage
 //! ```sh
 //! # From the rust/ directory:
-//! cargo run --bin faculty_fetch
+//! cargo run --features cli --bin faculty_fetch
 //! ```
 //!
 //! The resulting `faculty_list.json` is intended to be bundled with the
@@ -72,7 +72,7 @@
 mod api;
 
 use crate::api::vtop::vtop_errors::VtopError;
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use std::env;
 use std::io::{self, Write};
 

@@ -3,7 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vit_ap_student_app/core/common/widget/loader.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
-import 'package:vit_ap_student_app/core/utils/launch_web.dart';
+import 'package:vit_ap_student_app/core/utils/remote_link.dart';
 import 'package:vit_ap_student_app/features/account/viewmodel/github_viewmodel.dart';
 
 class ChangelogPage extends ConsumerStatefulWidget {
@@ -125,9 +125,7 @@ class _ChangelogPageState extends ConsumerState<ChangelogPage> {
         ),
       ),
       onTapLink: (text, href, title) {
-        if (href != null) {
-          directToWeb(href);
-        }
+        if (href != null) openRemoteLink(href);
       },
     );
   }

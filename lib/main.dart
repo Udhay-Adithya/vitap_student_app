@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,6 +22,11 @@ import 'package:vit_ap_student_app/init_dependencies.dart';
 import 'package:wiredash/wiredash.dart';
 
 void main() async {
+  // debugPrint still writes to logcat and the iOS console in release builds,
+  // where any app with log access or a bug report can read it. Several call
+  // sites print VTOP errors and session details, so release builds drop it.
+  if (kReleaseMode) debugPrint = (String? message, {int? wrapWidth}) {};
+
   WidgetsFlutterBinding.ensureInitialized();
   final container = await initDependencies();
 

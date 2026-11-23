@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:url_launcher/url_launcher.dart';
+import 'package:vit_ap_student_app/core/utils/remote_link.dart';
 import 'package:vit_ap_student_app/features/home/model/announcement.dart';
 import 'package:vit_ap_student_app/features/home/view/widgets/announcement_detail_sheet.dart';
 import 'package:vit_ap_student_app/features/home/viewmodel/announcement_viewmodel.dart';
@@ -152,10 +152,7 @@ class AnnouncementCard extends StatelessWidget {
   }
 
   Future<void> _openAction(BuildContext context) async {
-    final Uri? uri = Uri.tryParse(announcement.actionUrl!);
-    final bool launched =
-        uri != null &&
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
+    final bool launched = await openRemoteLink(announcement.actionUrl!);
     // A bad URL in a hand-edited file used to be an invisible dead tap.
     if (!launched && context.mounted) {
       ScaffoldMessenger.of(

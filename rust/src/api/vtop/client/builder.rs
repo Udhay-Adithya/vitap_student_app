@@ -189,8 +189,8 @@ impl VtopClient {
         let mut root_store = RootCertStore::empty();
         root_store.extend(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
 
-        let mut pem_reader = std::io::BufReader::new(VITAP_CUSTOM_CERT_PEM.as_bytes());
-        for cert in rustls_pemfile::certs(&mut pem_reader).flatten() {
+        use rustls::pki_types::{pem::PemObject, CertificateDer};
+        for cert in CertificateDer::pem_slice_iter(VITAP_CUSTOM_CERT_PEM.as_bytes()).flatten() {
             let _ = root_store.add(cert);
         }
 
