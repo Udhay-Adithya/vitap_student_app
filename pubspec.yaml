@@ -11,53 +11,53 @@ dependencies:
   app_settings: ^7.0.0
   cached_network_image: ^3.4.1
   carousel_slider: ^5.0.0
-  crypto: ^3.0.7
+  crypto: ^3.0.8
   cupertino_icons: ^1.0.6
-  device_info_plus: ^13.2.0
+  device_info_plus: ^13.3.0
   file_picker: ^12.0.0-beta.7
   firebase_analytics: ^11.4.6
   firebase_core: ^3.13.1
   flutter:
     sdk: flutter
   flutter_dotenv: ^5.2.1
-  flutter_file_dialog: ^3.3.1
+  flutter_file_dialog: ^3.3.6
   flutter_local_notifications: ^22.0.1
   flutter_m3shapes_extended: ^1.2.0
   flutter_markdown: ^0.7.7+1
   flutter_native_splash: ^2.4.6
-  flutter_riverpod: ^3.2.1
+  flutter_riverpod: ^3.5.0
   flutter_rust_bridge: 2.12.0
   flutter_secure_storage: ^10.3.1
   fpdart: ^1.1.1
   freezed_annotation: ^3.1.0
   google_fonts: ^8.2.0
-  home_widget: ^0.9.3
-  html: ^0.15.6
+  home_widget: ^0.10.0
+  html: ^0.15.7
   http: ^1.2.1
   iconsax_flutter: ^1.0.0
   in_app_review: ^2.0.12
-  intl: ^0.20.0
-  json_annotation: ^4.9.0
+  intl: ^0.20.3
+  json_annotation: ^4.12.0
   lib_vtop:
     path: rust_builder
-  lottie: ^3.3.1
-  meta: any
-  objectbox: ^5.3.2
-  objectbox_flutter_libs: ^5.3.2
+  lottie: ^3.8.2
+  meta: 1.19.0
+  objectbox: ^6.0.0-preview.6
+  objectbox_flutter_libs: ^6.0.0-preview.6
   open_file: ^4.0.0
-  package_info_plus: ^10.2.1
+  package_info_plus: ^10.2.2
   path_provider: ^2.1.5
   permission_handler: ^12.0.3
   pinput: ^6.0.2
-  riverpod_annotation: ^4.0.2
-  share_plus: ^13.2.1
-  shared_preferences: ^2.5.3
+  riverpod_annotation: ^4.0.8
+  share_plus: ^13.3.1
+  shared_preferences: ^2.5.6
   syncfusion_flutter_pdfviewer: ^34.1.31
   timeago: ^3.7.0
   timeline_tile: ^2.0.0
-  timezone: ^0.11.1
+  timezone: ^0.11.2
   upgrader: ^13.5.0
-  url_launcher: ^6.3.1
+  url_launcher: ^6.3.3
   wave: ^0.2.2
   webview_flutter: ^4.13.0
   wiredash: ^2.6.1
@@ -68,12 +68,12 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
-  freezed: ^3.1.0
+  freezed: ^4.0.1
   integration_test:
     sdk: flutter
-  json_serializable: ^6.9.5
-  objectbox_generator: ^5.3.2
-  riverpod_generator: ^4.0.3
+  json_serializable: ^6.13.2
+  objectbox_generator: ^6.0.0-preview.6
+  riverpod_generator: ^4.0.10
 
 dependency_overrides:
   test_api: 0.7.10
