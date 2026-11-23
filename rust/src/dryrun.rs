@@ -2,7 +2,7 @@
 mod api;
 
 use crate::api::vtop::vtop_errors::VtopError;
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use std::env;
 use std::io::{self, Write};
 
