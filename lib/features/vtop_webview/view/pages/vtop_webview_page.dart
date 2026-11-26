@@ -5,6 +5,7 @@ import 'package:vit_ap_student_app/core/constants/server_constants.dart';
 import 'package:vit_ap_student_app/core/services/analytics_service.dart';
 import 'package:vit_ap_student_app/features/vtop_webview/models/webview_cookie_data.dart';
 import 'package:vit_ap_student_app/features/vtop_webview/models/webview_session.dart';
+import 'package:vit_ap_student_app/features/vtop_webview/navigation_policy.dart';
 import 'package:vit_ap_student_app/features/vtop_webview/view/widgets/url_bar.dart';
 import 'package:vit_ap_student_app/features/vtop_webview/viewmodel/webview_session_viewmodel.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -124,8 +125,7 @@ class _VtopWebViewPageState extends ConsumerState<VtopWebViewPage> {
           },
           onNavigationRequest: (NavigationRequest request) {
             _trace('request  -> ${request.url}');
-            // Allow all VTOP navigation
-            if (request.url.startsWith(ServerConstants.vtopBaseUrl)) {
+            if (isVtopNavigation(request.url)) {
               return NavigationDecision.navigate;
             }
             // Block external links
