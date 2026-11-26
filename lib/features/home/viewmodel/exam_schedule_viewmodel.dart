@@ -26,13 +26,14 @@ class ExamScheduleViewModel extends _$ExamScheduleViewModel {
     final userNotifier = ref.read(currentUserProvider.notifier);
     final Credentials? credentials = await userNotifier.getSavedCredentials();
     if (credentials == null) {
-      AsyncValue<List<ExamSchedule>>.error(
+      state = AsyncValue.error(
         'User not found. Please Logout and Login.',
         StackTrace.current,
       );
+      return;
     }
     final res = await _homeRemoteRepository.fetchExamSchedule(
-      registrationNumber: credentials!.registrationNumber,
+      registrationNumber: credentials.registrationNumber,
       password: credentials.password,
       semSubId: credentials.semSubId,
     );
