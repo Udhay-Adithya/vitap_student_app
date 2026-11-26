@@ -167,11 +167,13 @@ class _AssignmentTileState extends ConsumerState<AssignmentTile> {
       return;
     }
 
-    if (file.size > AppConstants.kMaxFileSizeBytes) {
+    final fileSize = await file.length();
+
+    if (fileSize > AppConstants.kMaxFileSizeBytes) {
       if (mounted) {
         showSnackBar(
           context,
-          'File too large (${(file.size / (1024 * 1024)).toStringAsFixed(1)} MB). '
+          'File too large (${(fileSize / (1024 * 1024)).toStringAsFixed(1)} MB). '
           'Maximum allowed size is 4 MB.',
           SnackBarType.error,
         );
@@ -211,7 +213,7 @@ class _AssignmentTileState extends ConsumerState<AssignmentTile> {
           AnalyticsParams.courseCode: widget.courseCode,
           AnalyticsParams.mode: mode,
           AnalyticsParams.fileExtension: file.extension ?? 'unknown',
-          AnalyticsParams.sizeBytes: file.size,
+          AnalyticsParams.sizeBytes: fileSize,
         });
 
     // A 4 MB upload on campus wifi is many seconds long, and the button used to
